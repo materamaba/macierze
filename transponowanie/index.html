@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transponowanie macierzy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 5px 10px;
+            text-align: center;
+        }
+        input {
+            width: 50px;
+            text-align: center;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border: 1px solid #e0e0e0;
+        }
+        .matrix {
+            display: inline-block;
+            margin: 10px;
+        }
+        button {
+            background-color: #3f51b5;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #303f9f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transponowanie macierzy</h1>
+    <div id="matrix" class="matrix"></div>
+    <p>Podaj transponowaną macierz:</p>
+    <div id="transposeInput"></div>
+    <button onclick="checkTranspose()">Sprawdź wynik</button>
+    <p id="feedback"></p>
+    <p id="correctResult"></p>
+
+    <script>
+        function getRandomSize(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateMatrix(rows, cols) {
+            let matrix = [];
+            for (let i = 0; i < rows; i++) {
+                let row = [];
+                for (let j = 0; j < cols; j++) {
+                    row.push(Math.floor(Math.random() * 10) - 5); // Liczby od -5 do 4
+                }
+                matrix.push(row);
+            }
+            return matrix;
+        }
+
+        function displayMatrix(matrix, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<table>' + matrix.map(row => 
+                '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>'
+            ).join('') + '</table>';
+        }
+
+        function transposeMatrix(matrix) {
+            let transposed = [];
+            for (let i = 0; i < matrix[0].length; i++) {
+                let row = [];
+                for (let j = 0; j < matrix.length; j++) {
+                    row.push(matrix[j][i]);
+                }
+                transposed.push(row);
+            }
+            return transposed;
+        }
+
+        function displayTransposeInput(rows, cols) {
+            const container = document.getElementById('transposeInput');
+            container.innerHTML = '<table>' + Array.from({ length: cols }, (_, i) => 
+                '<tr>' + Array.from({ length: rows }, (_, j) => 
+                `<td><input type="number" id="cell-${i}-${j}" /></td>`
+            ).join('') + '</tr>'
+            ).join('') + '</table>';
+        }
+
+        function checkTranspose() {
+            let correct = true;
+            let userMatrix = [];
+            for (let i = 0; i < transposedMatrix.length; i++) {
+                let userRow = [];
+                for (let j = 0; j < transposedMatrix[0].length; j++) {
+                    const userValue = parseInt(document.getElementById(`cell-${i}-${j}`).value);
+                    userRow.push(userValue);
+                    if (userValue !== transposedMatrix[i][j]) {
+                        correct = false;
+                    }
+                }
+                userMatrix.push(userRow);
+            }
+
+            document.getElementById('feedback').textContent = correct ? 'Poprawna odpowiedź!' : 'Błędna odpowiedź!';
+            if (!correct) {
+                document.getElementById('correctResult').textContent = 'Poprawna transponowana macierz: ' + JSON.stringify(transposedMatrix);
+            }
+        }
+
+        // Generowanie losowych wymiarów macierzy
+        const rows = getRandomSize(2, 4);
+        const cols = getRandomSize(2, 4);
+
+        // Generowanie macierzy
+        const matrix = generateMatrix(rows, cols);
+        const transposedMatrix = transposeMatrix(matrix);
+
+        // Wyświetlanie macierzy i pól do wprowadzenia odpowiedzi
+        displayMatrix(matrix, 'matrix');
+        displayTransposeInput(rows, cols);
+    </script>
+</body>
+</html>
