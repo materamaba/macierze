@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mnożenie macierzy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 5px 10px;
+            text-align: center;
+        }
+        input {
+            width: 50px;
+            text-align: center;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border: 1px solid #e0e0e0;
+        }
+        .matrix {
+            display: inline-block;
+            margin: 10px;
+        }
+        button {
+            background-color: #3f51b5;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #303f9f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mnożenie macierzy</h1>
+    <div id="matrix1" class="matrix"></div>
+    <div id="matrix2" class="matrix"></div>
+    <p>Podaj wynik:</p>
+    <div id="resultInput"></div>
+    <button onclick="checkResult()">Sprawdź wynik</button>
+    <p id="feedback"></p>
+    <p id="correctResult"></p>
 
+    <script>
+        function getRandomSize(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateMatrix(rows, cols) {
+            let matrix = [];
+            for (let i = 0; i < rows; i++) {
+                let row = [];
+                for (let j = 0; j < cols; j++) {
+                    row.push(Math.floor(Math.random() * 10));
+                }
+                matrix.push(row);
+            }
+            return matrix;
+        }
+
+        function displayMatrix(matrix, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<table>' + matrix.map(row => 
+                '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>'
+            ).join('') + '</table>';
+        }
+
+        function multiplyMatrices(matrixA, matrixB) {
+            let result = [];
+            for (let i = 0; i < matrixA.length; i++) {
+                let row = [];
+                for (let j = 0; j < matrixB[0].length; j++) {
+                    let sum = 0;
+                    for (let k = 0; k < matrixB.length; k++) {
+                        sum += matrixA[i][k] * matrixB[k][j];
+                    }
+                    row.push(sum);
+                }
+                result.push(row);
+            }
+            return result;
+        }
+
+        function displayResultInput(rows, cols) {
+            const container = document.getElementById('resultInput');
+            container.innerHTML = '<table>' + Array.from({ length: rows }, (_, i) => 
+                '<tr>' + Array.from({ length: cols }, (_, j) => 
+                `<td><input type="number" id="cell-${i}-${j}" /></td>`
+            ).join('') + '</tr>'
+            ).join('') + '</table>';
+        }
+
+        function checkResult() {
+            let correct = true;
+            let userMatrix = [];
+            for (let i = 0; i < resultMatrix.length; i++) {
+                let userRow = [];
+                for (let j = 0; j < resultMatrix[0].length; j++) {
+                    const userValue = parseInt(document.getElementById(`cell-${i}-${j}`).value);
+                    userRow.push(userValue);
+                    if (userValue !== resultMatrix[i][j]) {
+                        correct = false;
+                    }
+                }
+                userMatrix.push(userRow);
+            }
+
+            document.getElementById('feedback').textContent = correct ? 'Poprawna odpowiedź!' : 'Błędna odpowiedź!';
+            if (!correct) {
+                document.getElementById('correctResult').textContent = 'Poprawny wynik: ' + JSON.stringify(resultMatrix);
+            }
+        }
+
+        // Generowanie losowego rozmiaru macierzy (od 2 do 3)
+        const rowsA = getRandomSize(2, 3);
+        const colsA = getRandomSize(2, 3);
+        const rowsB = colsA;  // Liczba kolumn pierwszej macierzy musi równać się liczbie wierszy drugiej
+        const colsB = getRandomSize(2, 3);
+
+        // Generowanie macierzy
+        const matrix1 = generateMatrix(rowsA, colsA);
+        const matrix2 = generateMatrix(rowsB, colsB);
+        const resultMatrix = multiplyMatrices(matrix1, matrix2);
+
+        // Wyświetlanie macierzy i pól do wprowadzenia odpowiedzi
+        displayMatrix(matrix1, 'matrix1');
+        displayMatrix(matrix2, 'matrix2');
+        displayResultInput(rowsA, colsB);
+    </script>
+</body>
+</html>
