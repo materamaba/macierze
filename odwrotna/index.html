@@ -48,7 +48,7 @@
 <body>
     <h1>Obliczanie macierzy odwrotnej</h1>
     <div id="matrix" class="matrix"></div>
-    <p>Podaj macierz odwrotną:</p>
+    <p>Podaj macierz odwrotną (zaokrągloną do 2 miejsc po przecinku):</p>
     <div id="inverseInput"></div>
     <button onclick="checkInverse()">Sprawdź wynik</button>
     <p id="feedback"></p>
@@ -139,7 +139,7 @@
 
                 // Transponowanie macierzy dopełnień i skalowanie przez 1/det
                 return adjugate[0].map((_, col) =>
-                    adjugate.map(row => row[col] / determinant)
+                    adjugate.map(row => Math.round((row[col] / determinant) * 100) / 100)
                 );
             }
         }
@@ -150,7 +150,14 @@
             for (let i = 0; i < inverseMatrix.length; i++) {
                 let userRow = [];
                 for (let j = 0; j < inverseMatrix[0].length; j++) {
-                    const userValue = parseFloat(document.getElementById(`cell-${i}-${j}`).value);
+                    const inputField = document.getElementById(`cell-${i}-${j}`);
+                    const userValue = parseFloat(inputField.value);
+
+                    if (isNaN(userValue)) {
+                        correct = false;
+                        break;
+                    }
+
                     userRow.push(userValue);
                     if (Math.abs(userValue - inverseMatrix[i][j]) > 0.01) {
                         correct = false;
@@ -159,8 +166,12 @@
                 userMatrix.push(userRow);
             }
 
-            document.getElementById('feedback').textContent = correct ? 'Poprawna odpowiedź!' : 'Błędna odpowiedź!';
-            if (!correct) {
+            if (userMatrix.flat().some(isNaN)) {
+                document.getElementById('feedback').textContent = 'Proszę wypełnić wszystkie pola!';
+            } else if (correct) {
+                document.getElementById('feedback').textContent = 'Poprawna odpowiedź!';
+            } else {
+                document.getElementById('feedback').textContent = 'Błędna odpowiedź!';
                 document.getElementById('correctResult').textContent = 'Poprawna macierz odwrotna: ' + JSON.stringify(inverseMatrix);
             }
         }
