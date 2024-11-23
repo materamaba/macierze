@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyznacznik macierzy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 5px 10px;
+            text-align: center;
+        }
+        input {
+            width: 100px;
+            text-align: center;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border: 1px solid #e0e0e0;
+        }
+        .matrix {
+            display: inline-block;
+            margin: 10px;
+        }
+        button {
+            background-color: #3f51b5;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #303f9f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Oblicz wyznacznik macierzy</h1>
+    <div id="matrix" class="matrix"></div>
+    <p>Podaj wynik:</p>
+    <input type="number" id="userDeterminant" /><br>
+    <button onclick="checkDeterminant()">Sprawdź wynik</button>
+    <p id="feedback"></p>
+    <p id="correctResult"></p>
+
+    <script>
+        function getRandomSize(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateMatrix(size) {
+            let matrix = [];
+            for (let i = 0; i < size; i++) {
+                let row = [];
+                for (let j = 0; j < size; j++) {
+                    row.push(Math.floor(Math.random() * 10) - 5); // Liczby od -5 do 4
+                }
+                matrix.push(row);
+            }
+            return matrix;
+        }
+
+        function displayMatrix(matrix, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<table>' + matrix.map(row => 
+                '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>'
+            ).join('') + '</table>';
+        }
+
+        // Funkcja rekurencyjna do obliczania wyznacznika
+        function calculateDeterminant(matrix) {
+            const size = matrix.length;
+
+            if (size === 1) return matrix[0][0]; // Dla 1x1
+            if (size === 2) {
+                // Dla 2x2: ad - bc
+                return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+            }
+
+            let determinant = 0;
+            for (let col = 0; col < size; col++) {
+                // Tworzenie macierzy dopełnienia
+                let subMatrix = matrix.slice(1).map(row => row.filter((_, j) => j !== col));
+                determinant += ((col % 2 === 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix));
+            }
+
+            return determinant;
+        }
+
+        function checkDeterminant() {
+            const userValue = parseInt(document.getElementById("userDeterminant").value);
+            if (userValue === determinant) {
+                document.getElementById('feedback').textContent = 'Poprawna odpowiedź!';
+                document.getElementById('correctResult').textContent = '';
+            } else {
+                document.getElementById('feedback').textContent = 'Błędna odpowiedź!';
+                document.getElementById('correctResult').textContent = 'Poprawny wynik: ' + determinant;
+            }
+        }
+
+        // Generowanie losowego rozmiaru macierzy (od 2x2 do 4x4)
+        const matrixSize = getRandomSize(2, 4);
+        const matrix = generateMatrix(matrixSize);
+
+        // Obliczanie wyznacznika
+        const determinant = calculateDeterminant(matrix);
+
+        // Wyświetlanie macierzy
+        displayMatrix(matrix, 'matrix');
+    </script>
+</body>
+</html>
