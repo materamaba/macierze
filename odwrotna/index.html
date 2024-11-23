@@ -48,27 +48,34 @@
 <body>
     <h1>Obliczanie macierzy odwrotnej</h1>
     <div id="matrix" class="matrix"></div>
-    <p>Podaj macierz odwrotną (zaokrągloną do 2 miejsc po przecinku):</p>
+    <p>Podaj macierz odwrotną (wyniki całkowite):</p>
     <div id="inverseInput"></div>
     <button onclick="checkInverse()">Sprawdź wynik</button>
     <p id="feedback"></p>
     <p id="correctResult"></p>
-
+    notatki
+    <textarea></textarea>
     <script>
-        function getRandomSize(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        function generateInvertibleMatrix() {
+            while (true) {
+                // Losujemy macierz 3x3 o wartościach od -5 do 5
+                let matrix = Array.from({ length: 3 }, () =>
+                    Array.from({ length: 3 }, () => Math.floor(Math.random() * 11) - 5)
+                );
 
-        function generateMatrix(size) {
-            let matrix = [];
-            for (let i = 0; i < size; i++) {
-                let row = [];
-                for (let j = 0; j < size; j++) {
-                    row.push(Math.floor(Math.random() * 10) - 5); // Liczby od -5 do 4
+                try {
+                    // Obliczamy macierz odwrotną
+                    let inverse = calculateInverse(matrix);
+                    
+                    // Sprawdzamy, czy wszystkie elementy macierzy odwrotnej są całkowite
+                    if (inverse.flat().every(num => Number.isInteger(num))) {
+                        return { matrix, inverse };
+                    }
+                } catch (e) {
+                    // Jeśli macierz nie jest odwracalna, próbujemy ponownie
+                    continue;
                 }
-                matrix.push(row);
             }
-            return matrix;
         }
 
         function displayMatrix(matrix, containerId) {
@@ -82,66 +89,47 @@
             const container = document.getElementById('inverseInput');
             container.innerHTML = '<table>' + Array.from({ length: size }, (_, i) => 
                 '<tr>' + Array.from({ length: size }, (_, j) => 
-                `<td><input type="number" step="0.01" id="cell-${i}-${j}" /></td>`
+                `<td><input type="number" id="cell-${i}-${j}" /></td>`
             ).join('') + '</tr>'
             ).join('') + '</table>';
         }
 
         function calculateDeterminant(matrix) {
-            const size = matrix.length;
-            if (size === 2) {
-                // Dla 2x2: ad - bc
-                return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-            }
-            if (size === 3) {
-                // Dla 3x3
-                return (
-                    matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                    matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                    matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-                );
-            }
+            return (
+                matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
+                matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
+                matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
+            );
         }
 
         function calculateInverse(matrix) {
-            const size = matrix.length;
             const determinant = calculateDeterminant(matrix);
 
             if (determinant === 0) {
                 throw new Error("Macierz nieodwracalna (wyznacznik = 0).");
             }
 
-            if (size === 2) {
-                // Dla 2x2: 1/det * [d, -b; -c, a]
-                return [
-                    [matrix[1][1] / determinant, -matrix[0][1] / determinant],
-                    [-matrix[1][0] / determinant, matrix[0][0] / determinant],
-                ];
-            }
+            // Macierz dopełnień algebraicznych
+            let adjugate = [];
+            for (let i = 0; i < 3; i++) {
+                let row = [];
+                for (let j = 0; j < 3; j++) {
+                    // Tworzymy podmacierz
+                    let subMatrix = matrix
+                        .filter((_, r) => r !== i)
+                        .map(row => row.filter((_, c) => c !== j));
 
-            if (size === 3) {
-                // Dla 3x3: metoda dopełnień algebraicznych
-                let adjugate = [];
-                for (let i = 0; i < size; i++) {
-                    let row = [];
-                    for (let j = 0; j < size; j++) {
-                        // Podmacierz do obliczania dopełnienia
-                        let subMatrix = matrix
-                            .filter((_, r) => r !== i)
-                            .map(row => row.filter((_, c) => c !== j));
-
-                        // Obliczanie dopełnienia i znak (-1)^(i+j)
-                        const cofactor = calculateDeterminant(subMatrix) * (i + j % 2 === 0 ? 1 : -1);
-                        row.push(cofactor);
-                    }
-                    adjugate.push(row);
+                    // Obliczamy dopełnienie algebraiczne
+                    const cofactor = calculateDeterminant(subMatrix) * ((i + j) % 2 === 0 ? 1 : -1);
+                    row.push(cofactor);
                 }
-
-                // Transponowanie macierzy dopełnień i skalowanie przez 1/det
-                return adjugate[0].map((_, col) =>
-                    adjugate.map(row => Math.round((row[col] / determinant) * 100) / 100)
-                );
+                adjugate.push(row);
             }
+
+            // Transponujemy macierz dopełnień algebraicznych i dzielimy przez wyznacznik
+            return adjugate[0].map((_, col) =>
+                adjugate.map(row => row[col]).map(value => Math.round(value / determinant))
+            );
         }
 
         function checkInverse() {
@@ -151,7 +139,7 @@
                 let userRow = [];
                 for (let j = 0; j < inverseMatrix[0].length; j++) {
                     const inputField = document.getElementById(`cell-${i}-${j}`);
-                    const userValue = parseFloat(inputField.value);
+                    const userValue = parseInt(inputField.value);
 
                     if (isNaN(userValue)) {
                         correct = false;
@@ -159,7 +147,7 @@
                     }
 
                     userRow.push(userValue);
-                    if (Math.abs(userValue - inverseMatrix[i][j]) > 0.01) {
+                    if (userValue !== inverseMatrix[i][j]) {
                         correct = false;
                     }
                 }
@@ -176,23 +164,12 @@
             }
         }
 
-        // Generowanie macierzy kwadratowej (2x2 lub 3x3)
-        const size = getRandomSize(2, 3);
-        let matrix;
-        let inverseMatrix;
-        while (true) {
-            try {
-                matrix = generateMatrix(size);
-                inverseMatrix = calculateInverse(matrix);
-                break; // Wyjście z pętli, jeśli macierz ma odwrotność
-            } catch (e) {
-                console.log("Wygenerowano macierz nieodwracalną, ponawiam losowanie...");
-            }
-        }
+        // Generowanie macierzy 3x3 z całkowitą macierzą odwrotną
+        const { matrix, inverse: inverseMatrix } = generateInvertibleMatrix();
 
         // Wyświetlanie macierzy i pól do wprowadzenia odpowiedzi
         displayMatrix(matrix, 'matrix');
-        displayInverseInput(size);
+        displayInverseInput(3);
     </script>
 </body>
 </html>
