@@ -56,6 +56,8 @@
     notatki
     <textarea></textarea>
     <script>
+        let inverseMatrix = [];
+
         function generateInvertibleMatrix() {
             while (true) {
                 // Losujemy macierz 3x3 o wartościach od -5 do 5
@@ -89,8 +91,7 @@
             const container = document.getElementById('inverseInput');
             container.innerHTML = '<table>' + Array.from({ length: size }, (_, i) => 
                 '<tr>' + Array.from({ length: size }, (_, j) => 
-                `<td><input type="number" id="cell-${i}-${j}" /></td>`
-            ).join('') + '</tr>'
+                `<td><input type="number" id="cell-${i}-${j}" /></td>`).join('') + '</tr>'
             ).join('') + '</table>';
         }
 
@@ -165,7 +166,8 @@
         }
 
         // Generowanie macierzy 3x3 z całkowitą macierzą odwrotną
-        const { matrix, inverse: inverseMatrix } = generateInvertibleMatrix();
+        const { matrix, inverse } = generateInvertibleMatrix();
+        inverseMatrix = inverse;
 
         // Wyświetlanie macierzy i pól do wprowadzenia odpowiedzi
         displayMatrix(matrix, 'matrix');
