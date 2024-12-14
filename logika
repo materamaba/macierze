@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz o Logice Matematycznej</title>
+
+    <!-- Wczytanie biblioteki MathJax -->
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+    <style>
+   body {
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text color */
+    margin: 0;
+    padding: 20px;
+}
+
+.quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #1e1e1e; /* Dark container background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
+}
+
+.question {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ffffff; /* White text for questions */
+}
+
+.answers {
+    list-style: none;
+    padding: 0;
+}
+
+.answers li {
+    margin: 10px 0;
+}
+
+button {
+    background-color: #6200ea; /* Dark purple button */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #3700b3; /* Darker purple on hover */
+}
+
+.result {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #e0e0e0; /* Light text for result */
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>Quiz o Logice Matematycznej</h1>
+        <div id="quiz">
+            <div class="question" id="question"></div>
+            <ul class="answers" id="answers"></ul>
+            <button onclick="nextQuestion()">Dalej</button>
+
+        </div>
+                  <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Co oznacza zdanie '\\(p \\land q\\)'?",
+                answers: ["Koniunkcja p i q", "Alternatywa p lub q", "Implikacja p implikuje q", "Negacja p i q"],
+                correct: 0
+            },
+            {
+                question: "Jaka jest wartość logiczna zdania '\\(\\neg p \\land p\\)'?",
+                answers: ["Prawda", "Fałsz", "Zależy od p", "Nie ma wartości logicznej"],
+                correct: 1
+            },
+            {
+                question: "Co oznacza symbol '\\(\\neg\\)' w logice matematycznej?",
+                answers: ["Negacja", "Koniunkcja", "Alternatywa", "Implikacja"],
+                correct: 0
+            },
+            {
+                question: "Co to jest sprzeczność w logice?",
+                answers: ["Zdanie, które jest zawsze prawdziwe", "Zdanie, które jest zawsze fałszywe", "Zdanie, które jest prawdziwe lub fałszywe", "Zdanie, które jest prawdziwe w niektórych przypadkach"],
+                correct: 1
+            },
+            {
+                question: "Co oznacza alternatywa '\\(p \\lor q\\)'?",
+                answers: ["p i q", "p lub q", "p implikuje q", "p nie implikuje q"],
+                correct: 1
+            },
+            {
+                question: "Kiedy kwantyfikator egzystencjalny '\\(\\exists x\\)' jest prawdziwy?",
+                answers: ["Gdy dla każdego x spełniony jest warunek", "Gdy istnieje przynajmniej jeden x, dla którego warunek jest spełniony", "Gdy x nie spełnia żadnego warunku", "Gdy dla każdego x warunek jest fałszywy"],
+                correct: 1
+            },
+            {
+                question: "Co oznacza zdanie '\\(p \\to q\\)'?",
+                answers: ["p implikuje q", "p i q", "p lub q", "p nie implikuje q"],
+                correct: 0
+            },
+            {
+                question: "Co to jest tautologia?",
+                answers: ["Zdanie zawsze fałszywe", "Zdanie zawsze prawdziwe", "Zdanie, które może być zarówno prawdziwe, jak i fałszywe", "Zdanie, które nigdy nie jest prawdziwe"],
+                correct: 1
+            },
+            {
+                question: "Co oznacza wyrażenie '\\(\\forall x \\in A: P(x)\\)'?",
+                answers: ["Dla każdego x w zbiorze A, P(x) jest prawdziwe", "Istnieje taki x w zbiorze A, dla którego P(x) jest prawdziwe", "P(x) jest prawdziwe dla niektórych x", "P(x) jest prawdziwe tylko wtedy, gdy x należy do A"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza '\\(p \\to q\\)' w tablicy prawdy?",
+                answers: ["p jest prawdziwe, gdy q jest prawdziwe", "p jest fałszywe, gdy q jest fałszywe", "Jeśli p jest prawdziwe, to q jest prawdziwe", "Jeśli p jest fałszywe, to q jest prawdziwe"],
+                correct: 2
+            },
+            {
+                question: "Kiedy wyrażenie '\\(p \\lor \\neg p\\)' jest prawdziwe?",
+                answers: ["Zawsze", "Zawsze fałszywe", "Tylko gdy p jest fałszywe", "Tylko gdy p jest prawdziwe"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza '\\(p \\iff q\\)' w logice?",
+                answers: ["p implikuje q, a q implikuje p", "p implikuje q", "p lub q", "p i q"],
+                correct: 0
+            },
+            {
+                question: "Co to jest implikacja?",
+                answers: ["Zdanie, które jest prawdziwe, jeśli oba składniki są prawdziwe", "Zdanie, które jest prawdziwe tylko wtedy, gdy pierwszy składnik jest prawdziwy", "Zdanie, które jest fałszywe, gdy pierwszy składnik jest prawdziwy, a drugi fałszywy", "Zdanie, które jest zawsze prawdziwe"],
+                correct: 1
+            },
+            {
+                question: "Co oznacza zdanie '\\(p \\land q \\to r\\)'?",
+                answers: ["Implikacja z koniunkcją", "Implikacja z alternatywą", "Negacja implikacji", "Negacja koniunkcji"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza wyrażenie '\\(\\neg (p \\lor q)\\)'?",
+                answers: ["Negacja alternatywy", "Koniunkcja p i q", "Negacja koniunkcji", "Implikacja p implikuje q"],
+                correct: 0
+            },
+            {
+                question: "Co to jest negacja w logice?",
+                answers: ["Odwrócenie wartości logicznej zdania", "Zmiana koniunkcji na alternatywę", "Zamiana implikacji na alternatywę", "Przeciwieństwo implikacji"],
+                correct: 0
+            },
+            {
+                question: "Które z poniższych zdań jest tautologią?",
+                answers: ["\\(p \\lor \\neg p\\)", "\\(p \\land q\\)", "\\(p \\to q\\)", "\\(\\neg p\\)"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza wyrażenie '\\(\\neg (p \\to q)\\)'?",
+                answers: ["Negacja implikacji", "Koniunkcja p i q", "Alternatywa p lub q", "Implikacja odwrotna"],
+                correct: 0
+            },
+            {
+                question: "Co to jest kwantyfikator ogólny '\\(\\forall x\\)'?",
+                answers: ["Istnieje taki x, dla którego P(x) jest prawdziwe", "Dla każdego x spełniony jest warunek", "P(x) jest prawdziwe dla niektórych x", "P(x) jest fałszywe dla każdego x"],
+                correct: 1
+            },
+            {
+                question: "Które z poniższych wyrażeń jest kontrprzykładem dla kwantyfikatora egzystencjalnego?",
+                answers: ["\\(\\exists x: P(x)\\)", "\\(\\forall x: P(x)\\)", "\\(p \\lor q\\)", "\\(p \\to q\\)"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza '\\(p \\to q\\)' w logice formalnej?",
+                answers: ["Implikacja", "Negacja", "Koniunkcja", "Alternatywa"],
+                correct: 0
+            },
+            {
+                question: "Co oznacza formuła '\\(\\forall x \\in A: P(x)\\)'?",
+                answers: ["Dla każdego x w zbiorze A P(x) jest prawdziwe", "Dla jakiegokolwiek x w zbiorze A P(x) jest fałszywe", "Istnieje taki x w zbiorze A, że P(x) jest prawdziwe", "P(x) jest prawdziwe dla niektórego x w A"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const questionText = document.getElementById('question');
+            const answersList = document.getElementById('answers');
+            
+            questionText.innerHTML = currentQuestion.question;
+            answersList.innerHTML = '';
+            currentQuestion.answers.forEach((answer, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<input type="radio" name="answer" value="${index}"> ${answer}`;
+                answersList.appendChild(li);
+            });
+        }
+
+        function nextQuestion() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            if (selectedAnswer) {
+                const answerValue = parseInt(selectedAnswer.value);
+                if (answerValue === questions[currentQuestionIndex].correct) {
+                    score++;
+                }
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }
+        }
+
+        function showResult() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `Twój wynik to: ${score} z ${questions.length} poprawnych odpowiedzi.`;
+            document.getElementById('quiz').style.display = 'none';
+        }
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
