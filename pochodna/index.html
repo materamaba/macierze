@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz o Pochodnych</title>
+    <!-- Zmieniony sposób ładowania MathJax, aby obsługiwało onload -->
+    <script type="text/javascript" async 
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" 
+        onload="MathJaxLoaded()"></script>
+
+    <style>
+        /* Nowoczesny dark theme */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Ciemne tło */
+            color: #E0E0E0; /* Jasny tekst */
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #F1F1F1;
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            background-color: #1E1E1E; /* Ciemniejsze tło dla quizu */
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #E0E0E0;
+        }
+
+        .answers {
+            margin-bottom: 20px;
+        }
+
+        .answer-button {
+            margin: 5px;
+            padding: 12px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #3A3A3A; /* Szary tło przycisków */
+            border: 2px solid #3A3A3A;
+            color: #E0E0E0; /* Jasny tekst */
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .answer-button:hover {
+            background-color: #575757; /* Jaśniejszy szary przy hoverze */
+            transform: scale(1.05); /* Efekt powiększenia przy hoverze */
+        }
+
+        #result {
+            font-size: 1.5em;
+            color: #66BB6A; /* Kolor dla prawidłowej odpowiedzi */
+            margin-top: 20px;
+        }
+
+        #result.error {
+            color: #FF7043; /* Kolor dla błędnej odpowiedzi */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #3A3A3A;
+            color: #E0E0E0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #575757;
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Quiz o Pochodnych</h1>
+    <div id="quiz" class="quiz-container">
+        <div id="question" class="question"></div>
+        <div id="answers" class="answers"></div>
+        <button onclick="nextQuestion()">Następne pytanie</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        // Flaga, która sprawdza, czy MathJax jest już załadowany
+        let mathJaxReady = false;
+
+        // Funkcja uruchamiana po załadowaniu MathJax
+        function MathJaxLoaded() {
+            mathJaxReady = true;
+            console.log("MathJax załadowany!");
+            nextQuestion();  // Pierwsze pytanie może być teraz wyświetlone
+        }
+
+        const questions = [
+            { 
+                question: "\\( c' \\)", 
+                answer: "0" 
+            },
+            { 
+                question: "\\( \\sin{x}' \\)", 
+                answer: "\\( \\cos{x} \\)" 
+            },
+            { 
+                question: "\\( \\cos{x}' \\)", 
+                answer: "\\( -\\sin{x} \\)" 
+            },
+            { 
+                question: "\\( \\tan{x}' \\)", 
+                answer: "\\( \\frac{1}{\\cos^2{x}} \\)"  // Zmieniony wzór
+            },
+            { 
+                question: "\\( \\cot{x}' \\)", 
+                answer: "\\( -\\frac{1}{\\sin^2{x}} \\)"  // Zmieniony wzór
+            },
+            { 
+                question: "\\( \\arcsin{x}' \\)", 
+                answer: "\\( \\frac{1}{\\sqrt{1 - x^2}} \\)" 
+            },
+            { 
+                question: "\\( \\arccos{x}' \\)", 
+                answer: "\\( -\\frac{1}{\\sqrt{1 - x^2}} \\)" 
+            },
+            { 
+                question: "\\( \\arctan{x}' \\)", 
+                answer: "\\( \\frac{1}{1 + x^2} \\)" 
+            },
+            { 
+                question: "\\( \\arccot{x}' \\)", 
+                answer: "\\( -\\frac{1}{1 + x^2} \\)" 
+            },
+            { 
+                question: "\\( \\ln{x}' \\)", 
+                answer: "\\( \\frac{1}{x} \\)" 
+            },
+            { 
+                question: "\\( \\log_a{x}' \\)", 
+                answer: "\\( \\frac{1}{x \\ln{a}} \\)" 
+            },
+            { 
+                question: "\\( e^x' \\)", 
+                answer: "\\( e^x \\)" 
+            },
+            { 
+                question: "\\( a^x' \\)", 
+                answer: "\\( a^x \\ln{a} \\)" 
+            },
+            { 
+                question: "\\( x^a' \\)", 
+                answer: "\\( a x^{a-1} \\)" 
+            },
+            { 
+                question: "\\( \\sqrt{x}' \\)", 
+                answer: "\\( \\frac{1}{2\\sqrt{x}} \\)" 
+            },
+            { 
+                question: "\\( \\frac{1}{x}' \\)", 
+                answer: "\\( -\\frac{1}{x^2} \\)" 
+            },
+            { 
+                question: "\\( (c \\cdot f(x))' \\)", 
+                answer: "\\( c \\cdot f'(x) \\)" 
+            },
+            { 
+                question: "\\( (c \\cdot x)' \\)", 
+                answer: "\\( c \\)" 
+            },
+            { 
+                question: "\\( (f(x) + g(x))' \\)", 
+                answer: "\\( f'(x) + g'(x) \\)" 
+            },
+            { 
+                question: "\\( (f(x) - g(x))' \\)", 
+                answer: "\\( f'(x) - g'(x) \\)" 
+            },
+            { 
+                question: "\\( (f(x) \\cdot g(x))' \\)", 
+                answer: "\\( f'(x) \\cdot g(x) + f(x) \\cdot g'(x) \\)" 
+            },
+            { 
+                question: "\\( (f(x) / g(x))' \\)", 
+                answer: "\\( \\frac{f'(x) \\cdot g(x) - f(x) \\cdot g'(x)}{g(x)^2} \\)" 
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        // Losowanie pytania
+        function nextQuestion() {
+            if (!mathJaxReady) {
+                console.log("Czekam na załadowanie MathJax...");
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            const answersElement = document.getElementById('answers');
+            const resultElement = document.getElementById('result');
+            const questionElement = document.getElementById('question');
+
+            // Ukrywanie poprzedniego wyniku
+            resultElement.innerHTML = '';
+
+            // Wyświetlanie pytania
+            questionElement.innerHTML = "Jak wygląda pochodna funkcji: " + question.question;
+
+            // Losowanie odpowiedzi (poprawnej + 3 losowych)
+            let options = [question.answer];
+            while (options.length < 4) {
+                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                if (!options.includes(randomQuestion.answer)) {
+                    options.push(randomQuestion.answer);
+                }
+            }
+
+            // Mieszanie odpowiedzi
+            options = options.sort(() => Math.random() - 0.5);
+
+            // Generowanie przycisków z odpowiedziami
+            answersElement.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerHTML = option;
+                button.classList.add('answer-button');
+                button.onclick = function() {
+                    if (option === question.answer) {
+                        resultElement.innerHTML = 'Prawidłowa odpowiedź!';
+                        resultElement.classList.remove('error');
+                    } else {
+                        resultElement.innerHTML = 'Błędna odpowiedź. Spróbuj ponownie!';
+                        resultElement.classList.add('error');
+                    }
+                };
+                answersElement.appendChild(button);
+            });
+
+            // Przechodzenie do następnego pytania
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+    </script>
+</body>
+</html>
