@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz całek nieoznaczonych</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .correct {
+            color: #4CAF50 !important;
+            text-decoration: underline;
+        }
+        .incorrect {
+            color: #FF5252 !important;
+            text-decoration: underline;
+        }
+        button {
+            background-color: #333;
+            color: #e0e0e0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz"></div>
+    <button onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+    <div id="result" class="result"></div>
+
+    <script>
+        const integrals = [
+            { prompt: "\\[\\int 0\\,dx\\]", correctAnswer: "C" },
+            { prompt: "\\[\\int x^{\\alpha}\\,dx\\]", correctAnswer: "\\frac{x^{\\alpha+1}}{\\alpha+1} + C" },
+            { prompt: "\\[\\int \\frac{1}{x}\\,dx\\]", correctAnswer: "\\ln|x| + C" },
+            { prompt: "\\[\\int a^{x}\\,dx\\]", correctAnswer: "\\frac{a^{x}}{\\ln a} + C" },
+            { prompt: "\\[\\int \\sin x\\,dx\\]", correctAnswer: "-\\cos x + C" },
+            { prompt: "\\[\\int \\cos x\\,dx\\]", correctAnswer: "\\sin x + C" },
+            { prompt: "\\[\\int \\frac{1}{\\sin^{2}x}\\,dx\\]", correctAnswer: "-\\operatorname{ctg}x + C" },
+            { prompt: "\\[\\int \\frac{1}{\\cos^{2}x}\\,dx\\]", correctAnswer: "\\operatorname{tg}x + C" },
+            { prompt: "\\[\\int \\frac{1}{1+x^{2}}\\,dx\\]", correctAnswer: "\\operatorname{arctg}x + C" },
+            { prompt: "\\[\\int \\frac{1}{\\sqrt{1-x^{2}}}\\,dx\\]", correctAnswer: "\\operatorname{arcsin}x + C" },
+            { prompt: "\\[\\int \\frac{f'(x)}{f(x)}\\,dx\\]", correctAnswer: "\\ln|f(x)| + C" },
+            { prompt: "\\[\\int \\frac{f'(x)}{\\sqrt{f(x)}}\\,dx\\]", correctAnswer: "2\\sqrt{f(x)} + C" },
+            { prompt: "\\[\\int \\frac{1}{x^{2}+k}\\,dx\\]", correctAnswer: "\\frac{1}{\\sqrt{k}}\\operatorname{arctg}\\frac{x}{\\sqrt{k}} + C" },
+            { prompt: "\\[\\int \\frac{1}{\\sqrt{k-x^{2}}}\\,dx\\]", correctAnswer: "\\operatorname{arcsin}\\frac{x}{\\sqrt{k}} + C" },
+            { prompt: "\\[\\int \\frac{1}{\\sqrt{k+x^{2}}}\\,dx\\]", correctAnswer: "\\ln|x + \\sqrt{k+x^{2}}| + C" }
+        ];
+
+        function generateQuestions() {
+            return integrals.map(question => {
+                const otherAnswers = integrals
+                    .filter(q => q.correctAnswer !== question.correctAnswer)
+                    .map(q => q.correctAnswer)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3);
+                
+                return {
+                    ...question,
+                    choices: [...otherAnswers, question.correctAnswer].sort(() => 0.5 - Math.random())
+                };
+            });
+        }
+
+        function renderQuiz() {
+            const quiz = document.getElementById('quiz');
+            const questions = generateQuestions();
+
+            quiz.innerHTML = questions.map((q, index) => `
+                <div class="question">
+                    <div>${index + 1}. ${q.prompt}</div>
+                    <div class="options">
+                        ${q.choices.map((choice, i) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${choice}">
+                                ${String.fromCharCode(65 + i)}. \\(${choice}\\)
+                            </label><br>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            MathJax.typeset();
+        }
+
+        function checkAnswers() {
+            const questions = generateQuestions();
+            let score = 0;
+
+            questions.forEach((q, index) => {
+                const options = document.querySelectorAll(`.question:nth-child(${index + 1}) .options label`);
+                const selectedInput = document.querySelector(`input[name="q${index}"]:checked`);
+                
+                options.forEach(opt => {
+                    const input = opt.querySelector('input');
+                    opt.classList.remove('correct', 'incorrect');
+                    
+                    if (input.value === q.correctAnswer) {
+                        opt.classList.add('correct');
+                    }
+                    
+                    if (selectedInput && input === selectedInput && input.value !== q.correctAnswer) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+
+                if (selectedInput?.value === q.correctAnswer) score++;
+            });
+
+            document.getElementById('result').textContent = `Wynik: ${score}/${questions.length}`;
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>
