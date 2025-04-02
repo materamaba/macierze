@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ćwiczenie słówek</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+            color: #f5f5f5;
+        }
+        .exercise {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 10px;
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .question {
+            margin: 10px 0;
+        }
+        .blank {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            background-color: #333;
+            color: white;
+            width: 200px;
+            display: inline-block;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .blank:focus {
+            outline: none;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .correct {
+            background-color: #2e7d32;
+            color: #f5f5f5;
+        }
+        .incorrect {
+            background-color: #d32f2f;
+            color: #f5f5f5;
+        }
+        .result {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Ćwiczenie słówek</h1>
+
+<div class="exercise">
+    <div class="question">1. She remains <input type="text" class="blank" id="q1" autocomplete="off"> even in stressful situations.</div>
+    <div class="question">2. The manager evaluates each employee’s <input type="text" class="blank" id="q2" autocomplete="off"> annually.</div>
+    <div class="question">3. <input type="text" class="blank" id="q3" autocomplete="off"> like leadership and communication are useful in any job.</div>
+    <div class="question">4. Doing <input type="text" class="blank" id="q4" autocomplete="off"> can be a great way to gain experience and help others.</div>
+    <div class="question">5. Being <input type="text" class="blank" id="q5" autocomplete="off"> helps in customer service roles.</div>
+    <div class="question">6. A <input type="text" class="blank" id="q6" autocomplete="off"> person can effectively convince others.</div>
+    <div class="question">7. He is <input type="text" class="blank" id="q7" autocomplete="off">, so he quickly adapts to new software.</div>
+    <div class="question">8. The job offers <input type="text" class="blank" id="q8" autocomplete="off"> benefits, from healthcare to flexible hours.</div>
+    <div class="question">9. The company plans to <input type="text" class="blank" id="q9" autocomplete="off"> five new employees next month.</div>
+    <div class="question">10. Make sure you use a <input type="text" class="blank" id="q10" autocomplete="off"> before sharing news.</div>
+    <div class="question">11. It is important to <input type="text" class="blank" id="q11" autocomplete="off"> to ensure a productive work environment.</div>
+    <div class="question">12. She is <input type="text" class="blank" id="q12" autocomplete="off"> her job.</div>
+    <div class="question">13. Creative people tend <input type="text" class="blank" id="q13" autocomplete="off"> when solving problems.</div>
+    <div class="question">14. He completed an <input type="text" class="blank" id="q14" autocomplete="off"> at a marketing agency last summer.</div>
+    <div class="question">15. He enjoys sports, <input type="text" class="blank" id="q15" autocomplete="off"> running and swimming.</div>
+    <div class="question">16. A <input type="text" class="blank" id="q16" autocomplete="off"> person can remain calm during crises.</div>
+    <div class="question">17. The new team member is friendly and <input type="text" class="blank" id="q17" autocomplete="off">.</div>
+    <div class="question">18. She is very <input type="text" class="blank" id="q18" autocomplete="off">, always paying close attention to details.</div>
+    <div class="question">19. A <input type="text" class="blank" id="q19" autocomplete="off"> approach helps maintain good relationships.</div>
+    <div class="question">20. Honest employees <input type="text" class="blank" id="q20" autocomplete="off"> in their work.</div>
+</div>
+
+<div class="button-container">
+    <button onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+</div>
+
+<div class="result" id="result"></div>
+
+<script>
+    const answers = {
+        q1: "calm",
+        q2: "individual performance",
+        q3: "transferable skills",
+        q4: "voluntary work",
+        q5: "good with people",
+        q6: "persuasive",
+        q7: "good with computers",
+        q8: "a range of",
+        q9: "hire",
+        q10: "reliable source of information",
+        q11: "fit into a team",
+        q12: "passionate about",
+        q13: "to think outside the box",
+        q14: "internship",
+        q15: "especially",
+        q16: "stress-resistant",
+        q17: "cooperative",
+        q18: "diligent",
+        q19: "diplomatic",
+        q20: "have integrity"
+    };
+
+    function checkAnswers() {
+        let correctCount = 0;
+        for (let i = 1; i <= 20; i++) {
+            const userAnswer = document.getElementById("q" + i).value.trim().toLowerCase();
+            const correctAnswer = answers["q" + i].toLowerCase();
+            const inputField = document.getElementById("q" + i);
+
+            if (userAnswer === correctAnswer) {
+                inputField.classList.add("correct");
+                inputField.classList.remove("incorrect");
+                correctCount++;
+            } else {
+                inputField.classList.add("incorrect");
+                inputField.classList.remove("correct");
+            }
+        }
+
+        // Wyświetlenie liczby poprawnych odpowiedzi
+        const result = document.getElementById("result");
+        result.textContent = `Masz ${correctCount} poprawnych odpowiedzi z 20.`;
+    }
+</script>
+
+</body>
+</html>
