@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Linux - Praktyczna Wiedza Systemowa</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .module {
+            background-color: #f8f9fa;
+            margin: 20px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3498db;
+        }
+        
+        .module h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        .module h2 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .question {
+            background-color: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .question:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .question h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .question-number {
+            background-color: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        
+        .options {
+            margin-left: 40px;
+        }
+        
+        .option {
+            margin: 10px 0;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #dee2e6;
+        }
+        
+        .option:hover {
+            background-color: #e9f7fe;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background-color: #d1ecf1;
+            border-color: #3498db;
+            font-weight: bold;
+        }
+        
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            padding: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .results {
+            padding: 30px;
+            text-align: center;
+            background-color: #f8f9fa;
+            display: none;
+        }
+        
+        .results h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            font-style: italic;
+            color: #6c757d;
+        }
+        
+        .tux {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .module {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Linux - Praktyczna Wiedza Systemowa</h1>
+            <p class="subtitle">Sprawdź swoją wiedzę z zakresu systemów Linux na podstawie materiałów szkoleniowych</p>
+        </header>
+        
+        <div class="stats">
+            <div>60 pytań | 6 modułów | Poziom: średnio-zaawansowany</div>
+        </div>
+        
+        <div class="tux">🐧</div>
+        
+        <div class="module">
+            <h2><i>📚</i> Moduł 1: Wprowadzenie do systemu Linux</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">1</span> Która powłoka jest najczęściej używana w nowoczesnych dystrybucjach Linux?</h3>
+                <div class="options">
+                    <div class="option">a) sh (Bourne shell)</div>
+                    <div class="option">b) csh (C shell)</div>
+                    <div class="option">c) bash (Bourne Again shell)</div>
+                    <div class="option">d) ksh (Korn shell)</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">2</span> Jakie polecenie wyświetla zawartość bieżącego katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) dir</div>
+                    <div class="option">b) list</div>
+                    <div class="option">c) ls</div>
+                    <div class="option">d) show</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">3</span> Jakie polecenie służy do tworzenia nowego katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) newdir</div>
+                    <div class="option">b) mkdir</div>
+                    <div class="option">c) createdir</div>
+                    <div class="option">d) dircreate</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">4</span> Który katalog zawiera pliki konfiguracyjne systemu?</h3>
+                <div class="options">
+                    <div class="option">a) /bin</div>
+                    <div class="option">b) /etc</div>
+                    <div class="option">c) /home</div>
+                    <div class="option">d) /usr</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">5</span> Jakie polecenie służy do zmiany bieżącego katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) chdir</div>
+                    <div class="option">b) cd</div>
+                    <div class="option">c) changedir</div>
+                    <div class="option">d) goto</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">6</span> Który znak specjalny oznacza katalog domowy użytkownika?</h3>
+                <div class="options">
+                    <div class="option">a) /</div>
+                    <div class="option">b) .</div>
+                    <div class="option">c) ~</div>
+                    <div class="option">d) *</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">7</span> Jakie polecenie wyświetla pełną ścieżkę bieżącego katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) path</div>
+                    <div class="option">b) cwd</div>
+                    <div class="option">c) pwd</div>
+                    <div class="option">d) whereami</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">8</span> Które polecenie służy do usuwania plików?</h3>
+                <div class="options">
+                    <div class="option">a) del</div>
+                    <div class="option">b) remove</div>
+                    <div class="option">c) rm</div>
+                    <div class="option">d) erase</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">9</span> Jak utworzyć pusty plik w terminalu?</h3>
+                <div class="options">
+                    <div class="option">a) create</div>
+                    <div class="option">b) newfile</div>
+                    <div class="option">c) touch</div>
+                    <div class="option">d) mkfile</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">10</span> Jakie polecenie służy do wyszukiwania plików?</h3>
+                <div class="options">
+                    <div class="option">a) search</div>
+                    <div class="option">b) locate</div>
+                    <div class="option">c) find</div>
+                    <div class="option">d) whereis</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2><i>👤</i> Moduł 2: Konta użytkowników i prawa dostępu</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">11</span> Gdzie przechowywane są informacje o użytkownikach?</h3>
+                <div class="options">
+                    <div class="option">a) /etc/users</div>
+                    <div class="option">b) /etc/passwd</div>
+                    <div class="option">c) /home/users</div>
+                    <div class="option">d) /var/users</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">12</span> Jakie polecenie służy do zmiany hasła użytkownika?</h3>
+                <div class="options">
+                    <div class="option">a) passchange</div>
+                    <div class="option">b) chpass</div>
+                    <div class="option">c) password</div>
+                    <div class="option">d) passwd</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">13</span> Które polecenie zmienia właściciela pliku?</h3>
+                <div class="options">
+                    <div class="option">a) chmod</div>
+                    <div class="option">b) chgrp</div>
+                    <div class="option">c) chown</div>
+                    <div class="option">d) chuser</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">14</span> Jak zmienić uprawnienia pliku na rwxr-xr--?</h3>
+                <div class="options">
+                    <div class="option">a) chmod 754</div>
+                    <div class="option">b) chmod 755</div>
+                    <div class="option">c) chmod 644</div>
+                    <div class="option">d) chmod 754</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">15</span> Co oznacza uprawnienie 'x' dla katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) Możliwość wykonania plików w katalogu</div>
+                    <div class="option">b) Możliwość zmiany do katalogu (cd)</div>
+                    <div class="option">c) Możliwość listowania zawartości</div>
+                    <div class="option">d) Możliwość usuwania plików</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">16</span> Jakie polecenie służy do dodawania nowego użytkownika?</h3>
+                <div class="options">
+                    <div class="option">a) adduser</div>
+                    <div class="option">b) useradd</div>
+                    <div class="option">c) newuser</div>
+                    <div class="option">d) a i b są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">17</span> Które polecenie zmienia grupę pliku?</h3>
+                <div class="options">
+                    <div class="option">a) chmod</div>
+                    <div class="option">b) chgrp</div>
+                    <div class="option">c) chown</div>
+                    <div class="option">d) setgroup</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">18</span> Jakie polecenie wyświetla informacje o grupach użytkownika?</h3>
+                <div class="options">
+                    <div class="option">a) groups</div>
+                    <div class="option">b) id</div>
+                    <div class="option">c) whoami</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">19</span> Co oznacza uprawnienie 'w' dla katalogu?</h3>
+                <div class="options">
+                    <div class="option">a) Możliwość zapisu do plików w katalogu</div>
+                    <div class="option">b) Możliwość tworzenia i usuwania plików w katalogu</div>
+                    <div class="option">c) Możliwość zmiany nazwy katalogu</div>
+                    <div class="option">d) Możliwość zmiany uprawnień katalogu</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">20</span> Jak zmienić uprawnienia pliku na rw-r--r--?</h3>
+                <div class="options">
+                    <div class="option">a) chmod 644</div>
+                    <div class="option">b) chmod 755</div>
+                    <div class="option">c) chmod 744</div>
+                    <div class="option">d) chmod 600</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2><i>⚙️</i> Moduł 3: Zarządzanie procesami</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">21</span> Jakie polecenie wyświetla uruchomione procesy?</h3>
+                <div class="options">
+                    <div class="option">a) list</div>
+                    <div class="option">b) processes</div>
+                    <div class="option">c) ps</div>
+                    <div class="option">d) top</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">22</span> Jak wysłać sygnał SIGKILL do procesu o PID 1234?</h3>
+                <div class="options">
+                    <div class="option">a) kill -9 1234</div>
+                    <div class="option">b) kill -15 1234</div>
+                    <div class="option">c) kill -SIGKILL 1234</div>
+                    <div class="option">d) a i c są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">23</span> Jak uruchomić proces w tle?</h3>
+                <div class="options">
+                    <div class="option">a) Dodając & na końcu polecenia</div>
+                    <div class="option">b) Używając bg</div>
+                    <div class="option">c) Używając nohup</div>
+                    <div class="option">d) Wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">24</span> Jak przenieść proces na pierwszy plan?</h3>
+                <div class="options">
+                    <div class="option">a) fg</div>
+                    <div class="option">b) foreground</div>
+                    <div class="option">c) bringfront</div>
+                    <div class="option">d) show</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">25</span> Jakie polecenie monitoruje procesy w czasie rzeczywistym?</h3>
+                <div class="options">
+                    <div class="option">a) ps</div>
+                    <div class="option">b) htop</div>
+                    <div class="option">c) top</div>
+                    <div class="option">d) b i c są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">26</span> Jak zatrzymać proces działający na pierwszym planie?</h3>
+                <div class="options">
+                    <div class="option">a) Ctrl+C</div>
+                    <div class="option">b) Ctrl+Z</div>
+                    <div class="option">c) Ctrl+D</div>
+                    <div class="option">d) Ctrl+S</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">27</span> Jak zakończyć proces działający na pierwszym planie?</h3>
+                <div class="options">
+                    <div class="option">a) Ctrl+C</div>
+                    <div class="option">b) Ctrl+Z</div>
+                    <div class="option">c) Ctrl+D</div>
+                    <div class="option">d) Ctrl+Q</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">28</span> Jakie polecenie pozwala uruchomić proces, który będzie działał po wylogowaniu?</h3>
+                <div class="options">
+                    <div class="option">a) bg</div>
+                    <div class="option">b) nohup</div>
+                    <div class="option">c) disown</div>
+                    <div class="option">d) b i c są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">29</span> Jakie polecenie wyświetla identyfikator bieżącego procesu (PID)?</h3>
+                <div class="options">
+                    <div class="option">a) pid</div>
+                    <div class="option">b) echo $$</div>
+                    <div class="option">c) currentpid</div>
+                    <div class="option">d) showpid</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">30</span> Jak zmienić priorytet istniejącego procesu?</h3>
+                <div class="options">
+                    <div class="option">a) nice</div>
+                    <div class="option">b) renice</div>
+                    <div class="option">c) priority</div>
+                    <div class="option">d) setpriority</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2><i>📁</i> Moduł 4: Skrypty w powłoce bash</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">31</span> Jaka jest pierwsza linia skryptu bash (shebang)?</h3>
+                <div class="options">
+                    <div class="option">a) #!/bin/sh</div>
+                    <div class="option">b) #!/bin/bash</div>
+                    <div class="option">c) #!bin/bash</div>
+                    <div class="option">d) a i b są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">32</span> Jak odczytać pierwszy argument przekazany do skryptu?</h3>
+                <div class="options">
+                    <div class="option">a) $0</div>
+                    <div class="option">b) $1</div>
+                    <div class="option">c) $*</div>
+                    <div class="option">d) $@</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">33</span> Jak sprawdzić, czy poprzednie polecenie zakończyło się sukcesem?</h3>
+                <div class="options">
+                    <div class="option">a) $?</div>
+                    <div class="option">b) $!</div>
+                    <div class="option">c) $$</div>
+                    <div class="option">d) $#</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">34</span> Jak zapisać wynik polecenia do zmiennej?</h3>
+                <div class="options">
+                    <div class="option">a) var = command</div>
+                    <div class="option">b) var=$(command)</div>
+                    <div class="option">c) var=`command`</div>
+                    <div class="option">d) b i c są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">35</span> Jaka pętla służy do iteracji po elementach listy?</h3>
+                <div class="options">
+                    <div class="option">a) for</div>
+                    <div class="option">b) while</div>
+                    <div class="option">c) until</div>
+                    <div class="option">d) select</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">36</span> Jak sprawdzić, czy plik istnieje?</h3>
+                <div class="options">
+                    <div class="option">a) [ -e plik ]</div>
+                    <div class="option">b) [ -f plik ]</div>
+                    <div class="option">c) [ -d plik ]</div>
+                    <div class="option">d) a i b są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">37</span> Jak wykonać operacje arytmetyczne w bashu?</h3>
+                <div class="options">
+                    <div class="option">a) $((expression))</div>
+                    <div class="option">b) expr expression</div>
+                    <div class="option">c) let expression</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">38</span> Jak dodać uprawnienia wykonania do skryptu?</h3>
+                <div class="options">
+                    <div class="option">a) chmod +x skrypt.sh</div>
+                    <div class="option">b) chmod 755 skrypt.sh</div>
+                    <div class="option">c) chmod u+x skrypt.sh</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">39</span> Jak odczytać dane wprowadzone przez użytkownika?</h3>
+                <div class="options">
+                    <div class="option">a) input</div>
+                    <div class="option">b) read</div>
+                    <div class="option">c) get</div>
+                    <div class="option">d) ask</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">40</span> Jak wyświetlić zawartość zmiennej w terminalu?</h3>
+                <div class="options">
+                    <div class="option">a) echo $var</div>
+                    <div class="option">b) print $var</div>
+                    <div class="option">c) show $var</div>
+                    <div class="option">d) display $var</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2><i>📝</i> Moduł 5: Filtry strumieniowe</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">41</span> Jak wyświetlić zawartość pliku z numerami linii?</h3>
+                <div class="options">
+                    <div class="option">a) cat -n</div>
+                    <div class="option">b) nl</div>
+                    <div class="option">c) less -N</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">42</span> Jak wyświetlić ostatnie 10 linii pliku?</h3>
+                <div class="options">
+                    <div class="option">a) head -10</div>
+                    <div class="option">b) tail -10</div>
+                    <div class="option">c) last -10</div>
+                    <div class="option">d) end -10</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">43</span> Jak posortować plik tekstowy alfabetycznie?</h3>
+                <div class="options">
+                    <div class="option">a) sort</div>
+                    <div class="option">b) order</div>
+                    <div class="option">c) arrange</div>
+                    <div class="option">d) alphabetize</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">44</span> Jak usunąć duplikaty z posortowanego pliku?</h3>
+                <div class="options">
+                    <div class="option">a) unique</div>
+                    <div class="option">b) uniq</div>
+                    <div class="option">c) distinct</div>
+                    <div class="option">d) dedup</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">45</span> Jak wyszukać wzorzec w pliku?</h3>
+                <div class="options">
+                    <div class="option">a) find</div>
+                    <div class="option">b) search</div>
+                    <div class="option">c) grep</div>
+                    <div class="option">d) locate</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">46</span> Jak zamienić wszystkie wystąpienia 'foo' na 'bar' w pliku?</h3>
+                <div class="options">
+                    <div class="option">a) replace 'foo' 'bar' plik</div>
+                    <div class="option">b) sed 's/foo/bar/g' plik</div>
+                    <div class="option">c) tr 'foo' 'bar' < plik</div>
+                    <div class="option">d) change 'foo' 'bar' plik</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">47</span> Jak wyświetlić plik strona po stronie?</h3>
+                <div class="options">
+                    <div class="option">a) more</div>
+                    <div class="option">b) less</div>
+                    <div class="option">c) page</div>
+                    <div class="option">d) a i b są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">48</span> Jak wyświetlić tylko pierwszą kolumnę pliku CSV?</h3>
+                <div class="options">
+                    <div class="option">a) cut -d',' -f1</div>
+                    <div class="option">b) awk -F',' '{print $1}'</div>
+                    <div class="option">c) sed 's/,.*//'</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">49</span> Jak zliczyć liczbę linii w pliku?</h3>
+                <div class="options">
+                    <div class="option">a) wc -l</div>
+                    <div class="option">b) count -l</div>
+                    <div class="option">c) lines</div>
+                    <div class="option">d) lc</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">50</span> Jak wyświetlić plik w odwrotnej kolejności linii?</h3>
+                <div class="options">
+                    <div class="option">a) reverse</div>
+                    <div class="option">b) rev</div>
+                    <div class="option">c) tac</div>
+                    <div class="option">d) flip</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="module">
+            <h2><i>🔧</i> Moduł 6: Edytory strumieniowe sed i awk</h2>
+            
+            <div class="question">
+                <h3><span class="question-number">51</span> Jak usunąć wszystkie linie zawierające 'error' za pomocą sed?</h3>
+                <div class="options">
+                    <div class="option">a) sed '/error/d'</div>
+                    <div class="option">b) sed '/error/rm'</div>
+                    <div class="option">c) sed 's/error//g'</div>
+                    <div class="option">d) sed 'd/error'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">52</span> Jak wydrukować pierwsze pole każdej linii za pomocą awk?</h3>
+                <div class="options">
+                    <div class="option">a) awk '{print $0}'</div>
+                    <div class="option">b) awk '{print $1}'</div>
+                    <div class="option">c) awk '{print first}'</div>
+                    <div class="option">d) awk '{print field1}'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">53</span> Jak wydrukować linie od 10 do 20 za pomocą sed?</h3>
+                <div class="options">
+                    <div class="option">a) sed '10,20p'</div>
+                    <div class="option">b) sed -n '10,20p'</div>
+                    <div class="option">c) sed '10-20'</div>
+                    <div class="option">d) sed '10 to 20'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">54</span> Jak wydrukować liczbę linii w pliku za pomocą awk?</h3>
+                <div class="options">
+                    <div class="option">a) awk 'END {print NR}'</div>
+                    <div class="option">b) awk 'END {print FNR}'</div>
+                    <div class="option">c) awk 'END {print $NR}'</div>
+                    <div class="option">d) awk 'END {print LINES}'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">55</span> Jak zamienić wszystkie małe litery na wielkie za pomocą sed?</h3>
+                <div class="options">
+                    <div class="option">a) sed 's/[a-z]/[A-Z]/g'</div>
+                    <div class="option">b) sed 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'</div>
+                    <div class="option">c) sed 'tr a-z A-Z'</div>
+                    <div class="option">d) sed 'upper'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">56</span> Jak wydrukować drugie pole dla linii gdzie pierwsze pole jest równe "ERROR"?</h3>
+                <div class="options">
+                    <div class="option">a) awk '$1 == "ERROR" {print $2}'</div>
+                    <div class="option">b) awk '/ERROR/ {print $2}'</div>
+                    <div class="option">c) awk '$1 ~ /ERROR/ {print $2}'</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">57</span> Jak usunąć puste linie za pomocą sed?</h3>
+                <div class="options">
+                    <div class="option">a) sed '/^$/d'</div>
+                    <div class="option">b) sed '/^[[:space:]]*$/d'</div>
+                    <div class="option">c) sed 's/^$//'</div>
+                    <div class="option">d) a i b są poprawne</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">58</span> Jak wydrukować sumę liczb w drugiej kolumnie za pomocą awk?</h3>
+                <div class="options">
+                    <div class="option">a) awk '{sum += $2} END {print sum}'</div>
+                    <div class="option">b) awk 'sum += $2; END {print sum}'</div>
+                    <div class="option">c) awk '{total = total + $2} END {print total}'</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">59</span> Jak dodać tekst na początku każdej linii za pomocą sed?</h3>
+                <div class="options">
+                    <div class="option">a) sed 's/^/tekst/'</div>
+                    <div class="option">b) sed 'i\text'</div>
+                    <div class="option">c) sed 'a\text'</div>
+                    <div class="option">d) sed 'prepend text'</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3><span class="question-number">60</span> Jak wydrukować unikalne wartości z kolumny za pomocą awk?</h3>
+                <div class="options">
+                    <div class="option">a) awk '{print $1}' | sort | uniq</div>
+                    <div class="option">b) awk '!seen[$1]++ {print $1}'</div>
+                    <div class="option">c) awk '{arr[$1]++} END {for (i in arr) print i}'</div>
+                    <div class="option">d) wszystkie powyższe</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="submitBtn">Sprawdź wyniki</button>
+        </div>
+        
+        <div class="results" id="results">
+            <h2>Twój wynik</h2>
+            <div class="score" id="score">0/60</div>
+            <p id="feedback"></p>
+            <button class="btn" id="restartBtn">Rozwiąż ponownie</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const options = document.querySelectorAll('.option');
+            const submitBtn = document.getElementById('submitBtn');
+            const results = document.getElementById('results');
+            const scoreElement = document.getElementById('score');
+            const feedbackElement = document.getElementById('feedback');
+            const restartBtn = document.getElementById('restartBtn');
+            
+            // Poprawne odpowiedzi (numer pytania: poprawna opcja)
+            const correctAnswers = {
+                1: 'c',
+                2: 'c',
+                3: 'b',
+                4: 'b',
+                5: 'b',
+                6: 'c',
+                7: 'c',
+                8: 'c',
+                9: 'c',
+                10: 'c',
+                11: 'b',
+                12: 'd',
+                13: 'c',
+                14: 'a',
+                15: 'b',
+                16: 'd',
+                17: 'b',
+                18: 'd',
+                19: 'b',
+                20: 'a',
+                21: 'c',
+                22: 'd',
+                23: 'a',
+                24: 'a',
+                25: 'd',
+                26: 'b',
+                27: 'a',
+                28: 'd',
+                29: 'b',
+                30: 'b',
+                31: 'd',
+                32: 'b',
+                33: 'a',
+                34: 'd',
+                35: 'a',
+                36: 'd',
+                37: 'd',
+                38: 'd',
+                39: 'b',
+                40: 'a',
+                41: 'd',
+                42: 'b',
+                43: 'a',
+                44: 'b',
+                45: 'c',
+                46: 'b',
+                47: 'd',
+                48: 'd',
+                49: 'a',
+                50: 'c',
+                51: 'a',
+                52: 'b',
+                53: 'b',
+                54: 'a',
+                55: 'b',
+                56: 'd',
+                57: 'd',
+                58: 'd',
+                59: 'a',
+                60: 'd'
+            };
+            
+            // Obsługa wyboru odpowiedzi
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Usuń zaznaczenie z innych opcji w tym samym pytaniu
+                    const question = this.closest('.question');
+                    const optionsInQuestion = question.querySelectorAll('.option');
+                    optionsInQuestion.forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Zaznacz wybraną opcję
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Obsługa przycisku sprawdzania wyników
+            submitBtn.addEventListener('click', function() {
+                let score = 0;
+                const questions = document.querySelectorAll('.question');
+                
+                questions.forEach(question => {
+                    const questionNumber = parseInt(question.querySelector('.question-number').textContent);
+                    const selectedOption = question.querySelector('.option.selected');
+                    
+                    if (selectedOption) {
+                        const selectedLetter = selectedOption.textContent.trim().charAt(0);
+                        if (selectedLetter === correctAnswers[questionNumber]) {
+                            score++;
+                            selectedOption.style.backgroundColor = '#d4edda';
+                        } else {
+                            selectedOption.style.backgroundColor = '#f8d7da';
+                        }
+                    }
+                });
+                
+                // Wyświetl wyniki
+                scoreElement.textContent = `${score}/60`;
+                
+                // Dodaj feedback w zależności od wyniku
+                if (score >= 50) {
+                    feedbackElement.textContent = "Świetny wynik! Jesteś ekspertem Linux!";
+                } else if (score >= 30) {
+                    feedbackElement.textContent = "Dobry wynik! Masz solidną wiedzę z zakresu Linux.";
+                } else {
+                    feedbackElement.textContent = "Potrzebujesz więcej praktyki z systemem Linux. Spróbuj ponownie!";
+                }
+                
+                results.style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+            
+            // Obsługa przycisku restartu
+            restartBtn.addEventListener('click', function() {
+                // Resetuj zaznaczenia
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected');
+                    option.style.backgroundColor = '';
+                });
+                
+                // Ukryj wyniki
+                results.style.display = 'none';
+                
+                // Przewiń do góry
+                window.scrollTo(0, 0);
+            });
+        });
+    </script>
+</body>
+</html>
