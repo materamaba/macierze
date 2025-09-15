@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Wzory rozkładów prawdopodobieństwa</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7f9;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .option {
+            padding: 15px;
+            background-color: #f0f4f8;
+            border: 2px solid #dbe4ee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cambria Math', serif;
+            font-size: 1.1em;
+        }
+        .option:hover {
+            background-color: #e1e9f2;
+            border-color: #a8c6e0;
+        }
+        .option.selected {
+            background-color: #d4e6f1;
+            border-color: #3498db;
+        }
+        .option.correct {
+            background-color: #d4efdf;
+            border-color: #27ae60;
+        }
+        .option.incorrect {
+            background-color: #f9d6d5;
+            border-color: #e74c3c;
+        }
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .feedback.correct {
+            background-color: #d4efdf;
+            border-left: 5px solid #27ae60;
+        }
+        .feedback.incorrect {
+            background-color: #f9d6d5;
+            border-left: 5px solid #e74c3c;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+            margin: 0 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz: Wzory rozkładów prawdopodobieństwa</h1>
+    
+    <div class="quiz-container">
+        <div class="question" id="question"></div>
+        
+        <div class="options" id="options">
+            <!-- Opcje będą dodane dynamicznie -->
+        </div>
+        
+        <div class="feedback" id="feedback">
+            <div id="feedback-text"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="check-button">Sprawdź odpowiedź</button>
+            <button id="next-button" class="hidden">Następne pytanie</button>
+        </div>
+
+        <div class="score" id="score">Wynik: 0/0</div>
+    </div>
+
+    <script>
+        // Dane do quizu - wzory
+        const distributions = {
+            'B': {
+                name: 'dwumianowy B(n, p)',
+                E: { 
+                    formula: 'n ⋅ p', 
+                    explanation: 'E(X) = n ⋅ p' 
+                },
+                D2: { 
+                    formula: 'n ⋅ p ⋅ q', 
+                    explanation: 'D²(X) = n ⋅ p ⋅ q, gdzie q = 1 - p' 
+                },
+                E2: { 
+                    formula: 'n ⋅ p ⋅ q + (n ⋅ p)²', 
+                    explanation: 'E(X²) = D²(X) + [E(X)]² = n⋅p⋅q + (n⋅p)²' 
+                }
+            },
+            'G': {
+                name: 'geometryczny G(p)',
+                E: { 
+                    formula: '1/p', 
+                    explanation: 'E(X) = 1/p' 
+                },
+                D2: { 
+                    formula: 'q/p²', 
+                    explanation: 'D²(X) = q/p², gdzie q = 1 - p' 
+                },
+                E2: { 
+                    formula: 'q/p² + (1/p)²', 
+                    explanation: 'E(X²) = D²(X) + [E(X)]² = q/p² + (1/p)²' 
+                }
+            }
+        };
+
+        const parameters = ['E', 'D2', 'E2'];
+        const parameterNames = {
+            'E': 'E(X)',
+            'D2': 'D²(X)',
+            'E2': 'E(X²)'
+        };
+
+        let currentDistribution = '';
+        let currentParameter = '';
+        let correctAnswer = '';
+        let score = { correct: 0, total: 0 };
+
+        // Elementy DOM
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const feedbackElement = document.getElementById('feedback');
+        const feedbackTextElement = document.getElementById('feedback-text');
+        const explanationElement = document.getElementById('explanation');
+        const nextButton = document.getElementById('next-button');
+        const checkButton = document.getElementById('check-button');
+        const scoreElement = document.getElementById('score');
+
+        // Funkcja do losowego wyboru pytania
+        function generateQuestion() {
+            // Losowy wybór rozkładu i parametru
+            currentDistribution = Object.keys(distributions)[Math.floor(Math.random() * Object.keys(distributions).length)];
+            currentParameter = parameters[Math.floor(Math.random() * parameters.length)];
+            
+            // Ustawienie pytania
+            questionElement.textContent = `Dla zmiennej losowej X ∼ ${distributions[currentDistribution].name} wzór na ${parameterNames[currentParameter]} to:`;
+            
+            // Pobranie poprawnej odpowiedzi
+            correctAnswer = distributions[currentDistribution][currentParameter].formula;
+            
+            // Generowanie opcji odpowiedzi
+            generateOptions();
+            
+            // Resetowanie interfejsu
+            feedbackElement.classList.remove('correct', 'incorrect');
+            feedbackElement.style.display = 'none';
+            checkButton.classList.remove('hidden');
+            nextButton.classList.add('hidden');
+            
+            // Zwiększenie licznika pytań
+            score.total++;
+            updateScore();
+        }
+
+        // Funkcja generująca opcje odpowiedzi
+        function generateOptions() {
+            optionsElement.innerHTML = '';
+            
+            // Zbieranie wszystkich możliwych wzorów
+            let allFormulas = [];
+            
+            // Dodanie poprawnej odpowiedzi
+            allFormulas.push(correctAnswer);
+            
+            // Dodanie innych wzorów z różnych rozkładów i parametrów
+            Object.keys(distributions).forEach(dist => {
+                parameters.forEach(param => {
+                    const formula = distributions[dist][param].formula;
+                    if (!allFormulas.includes(formula) && allFormulas.length < 4) {
+                        allFormulas.push(formula);
+                    }
+                });
+            });
+            
+            // Upewnienie się, że mamy 4 unikalne wzory
+            while (allFormulas.length < 4) {
+                const randomDist = Object.keys(distributions)[Math.floor(Math.random() * Object.keys(distributions).length)];
+                const randomParam = parameters[Math.floor(Math.random() * parameters.length)];
+                const formula = distributions[randomDist][randomParam].formula;
+                
+                if (!allFormulas.includes(formula)) {
+                    allFormulas.push(formula);
+                }
+            }
+            
+            // Mieszanie odpowiedzi
+            allFormulas = shuffleArray(allFormulas);
+            
+            // Tworzenie elementów DOM dla opcji
+            allFormulas.forEach(formula => {
+                const option = document.createElement('div');
+                option.className = 'option';
+                option.textContent = formula;
+                
+                option.addEventListener('click', function() {
+                    // Usunięcie zaznaczenia z innych opcji
+                    document.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Zaznaczenie tej opcji
+                    this.classList.add('selected');
+                    
+                    // Aktywacja przycisku sprawdzania
+                    checkButton.disabled = false;
+                });
+                
+                optionsElement.appendChild(option);
+            });
+        }
+
+        // Funkcja mieszająca tablicę
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Funkcja sprawdzająca odpowiedź
+        function checkAnswer() {
+            const selectedOption = document.querySelector('.option.selected');
+            
+            if (!selectedOption) {
+                alert('Proszę wybrać odpowiedź!');
+                return;
+            }
+            
+            const userAnswer = selectedOption.textContent;
+            const isCorrect = userAnswer === correctAnswer;
+            
+            // Zaktualizowanie wyniku
+            if (isCorrect) {
+                score.correct++;
+            }
+            updateScore();
+            
+            // Zaznaczenie poprawnej i niepoprawnej odpowiedzi
+            document.querySelectorAll('.option').forEach(option => {
+                if (option.textContent === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (option.classList.contains('selected')) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Wyświetlenie informacji zwrotnej
+            feedbackTextElement.textContent = isCorrect 
+                ? 'Poprawna odpowiedź! Dobrze!' 
+                : `Niepoprawna odpowiedź. Prawidłowy wzór to: ${correctAnswer}`;
+            
+            explanationElement.textContent = distributions[currentDistribution][currentParameter].explanation;
+            
+            feedbackElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedbackElement.style.display = 'block';
+            
+            // Zmiana przycisków
+            checkButton.classList.add('hidden');
+            nextButton.classList.remove('hidden');
+        }
+
+        // Funkcja aktualizująca wynik
+        function updateScore() {
+            scoreElement.textContent = `Wynik: ${score.correct}/${score.total}`;
+        }
+
+        // Nasłuchiwanie zdarzeń
+        checkButton.addEventListener('click', checkAnswer);
+        nextButton.addEventListener('click', generateQuestion);
+
+        // Inicjalizacja quizu
+        generateQuestion();
+    </script>
+</body>
+</html>
