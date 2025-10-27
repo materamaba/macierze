@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trener Architektury Komputerów</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        input, select, button {
+            font-size: 1rem;
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.random-btn {
+            background-color: #f39c12;
+        }
+        button.random-btn:hover {
+            background-color: #e67e22;
+        }
+        #results-encoding table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        #results-encoding th, #results-encoding td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        #results-encoding th {
+            background-color: #f9f9f9;
+        }
+        .result-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .flag-box {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .flag-true {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .flag-false {
+            background-color: #2ecc71;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Trener Obliczeń (Architektura Komputerów)</h1>
+    <p>Na podstawie Twoich notatek. Przećwicz kluczowe obliczenia przed kolokwium.</p>
+
+    <div class="section">
+        <h2>1. Konwersje systemów liczbowych</h2>
+        <label for="conv-number">Liczba:</label>
+        <input type="text" id="conv-number" placeholder="np. 233">
+        
+        <label for="conv-from-base">Z podstawy:</label>
+        <input type="number" id="conv-from-base" value="10" min="2" max="36">
+        
+        <label for="conv-to-base">Na podstawę:</label>
+        <input type="number" id="conv-to-base" value="2" min="2" max="36">
+        
+        <button onclick="convertBase()">Konwertuj</button>
+        <button onclick="randomizeConversion()" class="random-btn">Losuj</button>
+        <div id="results-conversion" class="result-box" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Kodowanie liczb całkowitych</h2>
+        <label for="enc-number">Liczba (DEC):</label>
+        <input type="number" id="enc-number" placeholder="np. -6" value="-6">
+        
+        <label for="enc-bits">Liczba bitów:</label>
+        <select id="enc-bits">
+            <option value="4">4 bity</option>
+            <option value="8" selected>8 bitów</option>
+        </select>
+        
+        <button onclick="encodeNumber()">Koduj</button>
+        <button onclick="randomizeEncoding()" class="random-btn">Losuj</button>
+        <div id="results-encoding" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Arytmetyka U2 i flagi (C, V)</h2>
+        <label for="u2-num1">Liczba 1 (DEC):</label>
+        <input type="number" id="u2-num1" placeholder="np. 5" value="5">
+        
+        <label for="u2-num2">Liczba 2 (DEC):</label>
+        <input type="number" id="u2-num2" placeholder="np. -3" value="-3">
+        
+        <label for="u2-bits">Liczba bitów:</label>
+        <select id="u2-bits">
+            <option value="4">4 bity</option>
+            <option value="8" selected>8 bitów</option>
+        </select>
+        
+        <button onclick="addU2()">Dodaj w U2</button>
+        <button onclick="randomizeU2()" class="random-btn">Losuj</button>
+        <div id="results-u2" class="result-box" style="display:none;"></div>
+    </div>
+
+    <script>
+        // === POMOCNICZE FUNKCJE ===
+
+        // Zwraca losową liczbę całkowitą z przedziału [min, max]
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Uzupełnia string binarny zerami od lewej strony
+        function pad(binStr, bits) {
+            return binStr.padStart(bits, '0');
+        }
+
+        // Konwertuje liczbę dziesiętną na string binarny U2
+        function decToU2(n, bits) {
+            if (n >= 0) {
+                return pad(n.toString(2), bits);
+            }
+            // Dla liczb ujemnych
+            let positiveVal = (1 << bits) + n; // (2^bits) + n
+            return positiveVal.toString(2);
+        }
+
+        // Konwertuje string binarny U2 na liczbę dziesiętną
+        function u2ToDec(binStr, bits) {
+            let val = parseInt(binStr, 2);
+            let isNegative = val & (1 << (bits - 1)); // Sprawdź bit znaku
+            if (isNegative) {
+                return val - (1 << bits); // val - 2^bits
+            }
+            return val;
+        }
+
+        // === SEKCJA 1: KONWERSJE ===
+        function convertBase() {
+            const numStr = document.getElementById('conv-number').value;
+            const fromBase = parseInt(document.getElementById('conv-from-base').value);
+            const toBase = parseInt(document.getElementById('conv-to-base').value);
+            const resultBox = document.getElementById('results-conversion');
+
+            try {
+                const decVal = parseInt(numStr, fromBase);
+                if (isNaN(decVal)) {
+                    throw new Error("Nieprawidłowa liczba wejściowa dla podanej podstawy.");
+                }
+                const result = decVal.toString(toBase).toUpperCase();
+                resultBox.innerHTML = `(${numStr})<sub>${fromBase}</sub> = <strong>(${result})<sub>${toBase}</sub></strong>`;
+                resultBox.style.display = 'block';
+            } catch (e) {
+                resultBox.innerHTML = `BŁĄD: ${e.message}`;
+                resultBox.style.display = 'block';
+            }
+        }
+        
+        function randomizeConversion() {
+            const bases = [2, 5, 7, 8, 10, 16];
+            let fromBase = bases[getRandomInt(0, bases.length - 1)];
+            let toBase;
+            do {
+                toBase = bases[getRandomInt(0, bases.length - 1)];
+            } while (fromBase === toBase);
+
+            const decNum = getRandomInt(10, 255);
+            const fromNum = decNum.toString(fromBase).toUpperCase();
+            
+            document.getElementById('conv-number').value = fromNum;
+            document.getElementById('conv-from-base').value = fromBase;
+            document.getElementById('conv-to-base').value = toBase;
+            
+            // Wyczyść poprzednie wyniki
+            document.getElementById('results-conversion').style.display = 'none';
+        }
+
+        // === SEKCJA 2: KODOWANIE ===
+        function encodeNumber() {
+            const n = parseInt(document.getElementById('enc-number').value);
+            const bits = parseInt(document.getElementById('enc-bits').value);
+            const resultBox = document.getElementById('results-encoding');
+
+            if (isNaN(n)) {
+                resultBox.innerHTML = "Wprowadź poprawną liczbę.";
+                resultBox.style.display = 'block';
+                return;
+            }
+
+            const bias = 1 << (bits - 1); // 2^(n-1)
+            const minU2 = -(1 << (bits - 1));
+            const maxU2 = (1 << (bits - 1)) - 1;
+
+            let ncb = "n/d (liczba ujemna)";
+            if (n >= 0 && n < (1 << bits)) {
+                ncb = pad(n.toString(2), bits);
+            } else if (n >= (1 << bits)) {
+                ncb = "Poza zakresem NCB";
+            }
+
+            let zm = "Poza zakresem ZM";
+            if (n >= minU2 && n <= maxU2) {
+                let mag = pad(Math.abs(n).toString(2), bits - 1);
+                let sign = (n < 0) ? '1' : '0';
+                zm = sign + mag;
+            }
+
+            let u2 = "Poza zakresem U2";
+            if (n >= minU2 && n <= maxU2) {
+                u2 = decToU2(n, bits);
+            }
+
+            let excess = "Poza zakresem Excess";
+            let excessVal = n + bias;
+            if (excessVal >= 0 && excessVal < (1 << bits)) {
+                excess = pad(excessVal.toString(2), bits);
+            }
+
+            let html = `
+                <p>Zakres dla ${bits} bitów (U2): [${minU2}, ${maxU2}]<br>
+                   Bias (nadmiar) dla kodu Excess: ${bias}</p>
+                <table>
+                    <tr><th>Kod</th><th>Wartość binarna</th><th>Jak obliczyć</th></tr>
+                    <tr>
+                        <td>NCB</td>
+                        <td><strong>${ncb}</strong></td>
+                        <td>Naturalna konwersja (tylko dla n ≥ 0)</td>
+                    </tr>
+                    <tr>
+                        <td>ZM</td>
+                        <td><strong>${zm}</strong></td>
+                        <td>Pierwszy bit to znak (0=+, 1=-), reszta to moduł</td>
+                    </tr>
+                    <tr>
+                        <td>U2</td>
+                        <td><strong>${u2}</strong></td>
+                        <td>Dla ujemnych: negacja bitów modułu + 1</td>
+                    </tr>
+                    <tr>
+                        <td>Excess-${bias}</td>
+                        <td><strong>${excess}</strong></td>
+                        <td>Zakodowana wartość = (liczba + bias)<sub>NCB</sub></td>
+                    </tr>
+                </table>
+            `;
+            resultBox.innerHTML = html;
+            resultBox.style.display = 'block';
+        }
+        
+        function randomizeEncoding() {
+            const bits = parseInt(document.getElementById('enc-bits').value);
+            const min = -(1 << (bits - 1));
+            const max = (1 << (bits - 1)) - 1;
+            const randomNum = getRandomInt(min, max);
+            
+            document.getElementById('enc-number').value = randomNum;
+            
+            // Wyczyść poprzednie wyniki
+            document.getElementById('results-encoding').style.display = 'none';
+        }
+
+        // === SEKCJA 3: ARYTMETYKA U2 ===
+        function addU2() {
+            const num1 = parseInt(document.getElementById('u2-num1').value);
+            const num2 = parseInt(document.getElementById('u2-num2').value);
+            const bits = parseInt(document.getElementById('u2-bits').value);
+            const resultBox = document.getElementById('results-u2');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultBox.innerHTML = "Wprowadź poprawne liczby.";
+                resultBox.style.display = 'block';
+                return;
+            }
+
+            const bin1 = decToU2(num1, bits);
+            const bin2 = decToU2(num2, bits);
+
+            // Symulacja dodawania binarnego z śledzeniem przeniesień
+            let sumBin = '';
+            let carry = 0;
+            let carryInMSB = 0; // C_n-1
+            let carryOutMSB = 0; // C_n (flaga C)
+
+            for (let i = bits - 1; i >= 0; i--) {
+                let b1 = parseInt(bin1[i]);
+                let b2 = parseInt(bin2[i]);
+                let s = b1 + b2 + carry;
+
+                if (i === 0) { // Jesteśmy na bicie znaku (MSB)
+                    carryInMSB = carry;
+                }
+
+                if (s === 0) {
+                    sumBin = '0' + sumBin;
+                    carry = 0;
+                } else if (s === 1) {
+                    sumBin = '1' + sumBin;
+                    carry = 0;
+                } else if (s === 2) {
+                    sumBin = '0' + sumBin;
+                    carry = 1;
+                } else if (s === 3) {
+                    sumBin = '1' + sumBin;
+                    carry = 1;
+                }
+            }
+            
+            carryOutMSB = carry; // To jest nasza flaga C (C_n)
+            
+            // Obliczanie flagi V (V = C_n ⊕ C_n-1)
+            const overflow = carryOutMSB !== carryInMSB; // XOR
+            const sumDec = u2ToDec(sumBin, bits);
+
+            // Wyjaśnienie flag
+            let flagC_html = `Flaga C (Przeniesienie): <span class="flag-box ${carryOutMSB ? 'flag-true' : 'flag-false'}">${carryOutMSB}</span> (Przeniesienie Z bitu znaku, C<sub>n</sub>)`;
+            let flagV_html = `Flaga V (Nadmiar): <span class="flag-box ${overflow ? 'flag-true' : 'flag-false'}">${overflow ? 1 : 0}</span> (C<sub>n</sub> ⊕ C<sub>n-1</sub> = ${carryOutMSB} ⊕ ${carryInMSB})`;
+
+            let overflowInfo = '';
+            if (overflow) {
+                overflowInfo = `<strong>WYSTĄPIŁ NADMIAR (OVERFLOW)!</strong><br>Oczekiwany wynik: ${num1 + num2}.<br>Otrzymany wynik: ${sumDec}.`;
+            } else {
+                overflowInfo = `<strong>Brak nadmiaru.</strong> Wynik jest poprawny.`;
+            }
+
+            let html = `
+  ${bin1}  ( ${num1} )
++ ${bin2}  ( ${num2} )
+-----------------${'-'.repeat(bits)}
+  <strong>${sumBin}</strong>  ( = <strong>${sumDec}</strong> )
+
+${flagC_html}
+${flagV_html}
+
+${overflowInfo}
+            `;
+            resultBox.innerHTML = html;
+            resultBox.style.display = 'block';
+        }
+        
+        function randomizeU2() {
+            const bits = parseInt(document.getElementById('u2-bits').value);
+            const min = -(1 << (bits - 1));
+            const max = (1 << (bits - 1)) - 1;
+            
+            const randomNum1 = getRandomInt(min, max);
+            const randomNum2 = getRandomInt(min, max);
+            
+            document.getElementById('u2-num1').value = randomNum1;
+            document.getElementById('u2-num2').value = randomNum2;
+            
+            // Wyczyść poprzednie wyniki
+            document.getElementById('results-u2').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
