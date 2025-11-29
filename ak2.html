@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trener IEEE 754 (Z Rozwiązaniami)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        h1 { color: #333; margin-bottom: 0.5rem; }
+        .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+        
+        .mode-switch { margin-bottom: 20px; }
+        
+        button {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+        
+        button.primary { background-color: #007bff; color: white; }
+        button.primary:hover { background-color: #0056b3; }
+        
+        button.secondary { background-color: #6c757d; color: white; margin: 0 5px; }
+        button.secondary:hover { background-color: #5a6268; }
+
+        button.warning { background-color: #ffc107; color: #212529; font-weight: bold;}
+        button.warning:hover { background-color: #e0a800; }
+
+        .question-box {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+
+        /* Sekcja wyników i rozwiązań */
+        #resultArea { margin-top: 20px; display: none; text-align: left;}
+        
+        .feedback-box {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .wrong { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .solution-steps {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+        }
+        .step { margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 10px; }
+        .step:last-child { border-bottom: none; }
+        .step-title { font-weight: bold; color: #495057; display: block; margin-bottom: 5px; font-family: sans-serif; }
+        
+        .highlight { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+        
+        /* Kolory bitów */
+        .bit-s { color: #d63384; font-weight: bold; }
+        .bit-e { color: #0d6efd; font-weight: bold; }
+        .bit-m { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Trener IEEE 754</h1>
+    <div class="subtitle">Krok po kroku: liczby z końcówką .125, .25, .5...</div>
+
+    <div class="mode-switch">
+        <button id="switchModeBtn" class="secondary" onclick="toggleMode()">Tryb: Dziesiętna ➡ Binarna</button>
+    </div>
+
+    <div class="question-box" id="questionText">Losowanie...</div>
+        
+    <input type="text" id="userAnswer" placeholder="Tutaj wpisz odpowiedź..." autocomplete="off">
+    <div id="inputHint" style="margin-bottom: 15px; color: #888; font-size: 0.9rem;"></div>
+        
+    <div>
+        <button class="primary" onclick="checkAnswer()">Sprawdź</button>
+        <button class="warning" onclick="showSolution()">Pokaż rozwiązanie</button>
+        <button class="secondary" onclick="generateQuestion()">Następne</button>
+    </div>
+
+    <div id="resultArea">
+        <div id="feedback" class="feedback-box"></div>
+        <div id="solutionSteps" class="solution-steps" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'decToBin';
+    let currentNumber = 0;
+    let currentBinaryStr = "";
+    
+    // Dane pomocnicze do rozwiązania
+    let solutionData = {};
+
+    function floatToIEEE754(num) {
+        const buffer = new ArrayBuffer(4);
+        const view = new DataView(buffer);
+        view.setFloat32(0, num, false);
+        let binary = "";
+        for (let i = 0; i < 4; i++) binary += view.getUint8(i).toString(2).padStart(8, '0');
+        return binary;
+    }
+
+    function generateQuestion() {
+        // Reset UI
+        document.getElementById("resultArea").style.display = "none";
+        document.getElementById("solutionSteps").style.display = "none";
+        document.getElementById("userAnswer").value = "";
+        document.getElementById("feedback").className = "feedback-box";
+        document.getElementById("feedback").innerText = "";
+
+        // Losowanie
+        let integerPart = Math.floor(Math.random() * 21) - 10; // -10 do 10
+        let fractionStep = Math.floor(Math.random() * 8); // 0 do 7
+        let fractionPart = fractionStep * 0.125;
+        
+        currentNumber = integerPart + (integerPart >= 0 ? fractionPart : -fractionPart);
+        if (currentNumber === 0) currentNumber = 3.625; // fallback
+
+        // Obliczenie poprawnego bitstringu
+        currentBinaryStr = floatToIEEE754(currentNumber);
+        
+        // Przygotowanie danych do "krok po kroku"
+        prepareSolutionData(currentNumber);
+
+        // Wyświetlenie pytania
+        if (currentMode === 'decToBin') {
+            document.getElementById("questionText").innerText = currentNumber;
+            document.getElementById("inputHint").innerText = "Wpisz ciąg 32 bitów (np. 1 1000... 010...)";
+        } else {
+            const prettyBin = currentBinaryStr.substring(0,1) + " " + currentBinaryStr.substring(1,9) + " " + currentBinaryStr.substring(9);
+            document.getElementById("questionText").innerText = prettyBin;
+            document.getElementById("inputHint").innerText = "Wpisz liczbę dziesiętną (np. -6.875)";
+        }
+    }
+
+    function prepareSolutionData(num) {
+        // Analiza liczby do wyświetlenia kroków
+        const absNum = Math.abs(num);
+        const intPart = Math.floor(absNum);
+        const fracPart = absNum - intPart;
+        
+        // 1. Binarny bez normalizacji
+        let intBin = intPart.toString(2);
+        
+        // Symulacja mnożenia ułamka (dla wyświetlenia)
+        let fracBin = "";
+        let tempFrac = fracPart;
+        let fracSteps = []; // Tablica stringów "0.625 * 2 = 1.25 -> 1"
+        
+        for(let i=0; i<6; i++) { // Max 6 kroków wystarczy dla .125
+            if(tempFrac === 0) break;
+            let next = tempFrac * 2;
+            let bit = Math.floor(next);
+            fracSteps.push(`${tempFrac.toFixed(3)} * 2 = ${next.toFixed(3)} ➡ Bit: <b>${bit}</b>`);
+            fracBin += bit;
+            tempFrac = next - bit;
+        }
+        if(fracBin === "") fracBin = "0";
+
+        // Złożenie surowe
+        let rawBin = intBin + "." + fracBin;
+
+        // 2. Normalizacja
+        // Szukamy pierwszej jedynki
+        let firstOneIndex = rawBin.indexOf('1');
+        let dotIndex = rawBin.indexOf('.');
+        let exponentRaw = 0;
+        
+        if (intPart > 0) {
+            // Przesuwamy w lewo
+            exponentRaw = dotIndex - firstOneIndex - 1; // np. 110.1 -> 1.101 (exp 2)
+        } else {
+            // Przesuwamy w prawo (ułamki < 1), np. 0.011 -> 1.1
+            exponentRaw = dotIndex - firstOneIndex; 
+        }
+
+        // 3. Obliczenie E i M
+        let biasExp = exponentRaw + 127;
+        let biasExpBin = biasExp.toString(2).padStart(8, '0');
+        
+        // Mantysa (bierzemy bity z rawBin, pomijając kropkę i pierwszą jedynkę)
+        let rawBinNoDot = rawBin.replace('.', '');
+        let mantissaBits = rawBinNoDot.substring(rawBinNoDot.indexOf('1') + 1);
+        while(mantissaBits.length < 23) mantissaBits += "0";
+        mantissaBits = mantissaBits.substring(0, 23);
+
+        solutionData = {
+            sign: num < 0 ? 1 : 0,
+            absNum: absNum,
+            intPart: intPart,
+            fracPart: fracPart,
+            intBin: intBin,
+            fracBin: fracBin,
+            fracSteps: fracSteps,
+            rawBin: rawBin,
+            exponentRaw: exponentRaw,
+            biasExp: biasExp,
+            biasExpBin: biasExpBin,
+            mantissaBits: mantissaBits
+        };
+    }
+
+    function checkAnswer() {
+        let userVal = document.getElementById("userAnswer").value.trim();
+        let isCorrect = false;
+
+        if (currentMode === 'decToBin') {
+            let cleanUserBin = userVal.replace(/\s+/g, '');
+            if (cleanUserBin === currentBinaryStr) isCorrect = true;
+        } else {
+            userVal = userVal.replace(',', '.');
+            if (Math.abs(parseFloat(userVal) - currentNumber) < 0.0001) isCorrect = true;
+        }
+
+        let feedback = document.getElementById("feedback");
+        document.getElementById("resultArea").style.display = "block";
+        
+        if (isCorrect) {
+            feedback.className = "feedback-box correct";
+            feedback.innerText = "Świetnie! Dobra odpowiedź.";
+        } else {
+            feedback.className = "feedback-box wrong";
+            feedback.innerText = "Niestety błąd. Spójrz na rozwiązanie poniżej.";
+            showSolution();
+        }
+    }
+
+    function showSolution() {
+        document.getElementById("resultArea").style.display = "block";
+        let stepsDiv = document.getElementById("solutionSteps");
+        stepsDiv.style.display = "block";
+        
+        let d = solutionData;
+        let html = "";
+
+        if (currentMode === 'decToBin') {
+            // Generowanie HTML dla konwersji DEC -> BIN
+            html += `<div class="step"><span class="step-title">Krok 1: Znak (S)</span>`;
+            html += `Liczba jest ${currentNumber < 0 ? 'ujemna (-)' : 'dodatnia (+)'}, więc S = <span class="bit-s">${d.sign}</span>.</div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 2: Zamiana na binarny (bez znaku)</span>`;
+            html += `Część całkowita: ${d.intPart} = <b>${d.intBin}</b><br>`;
+            html += `Część ułamkowa: ${d.fracPart.toFixed(3)}<br>`;
+            html += `<div style="margin-left: 15px; font-size: 0.85em; color: #555;">${d.fracSteps.join('<br>')}</div>`;
+            html += `Złożenie: <span class="highlight">${d.rawBin}</span></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 3: Normalizacja</span>`;
+            html += `Przesuwamy przecinek, aby została jedna jedynka z przodu:<br>`;
+            html += `${d.rawBin} ➡ 1.${d.mantissaBits.substring(0,5)}... • 2<sup>${d.exponentRaw}</sup><br>`;
+            html += `Potęga rzeczywista: <b>${d.exponentRaw}</b></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 4: Wykładnik (E) + Bias</span>`;
+            html += `E = ${d.exponentRaw} + 127 = <b>${d.biasExp}</b><br>`;
+            html += `Na binarny: ${d.biasExp} = <span class="bit-e">${d.biasExpBin}</span></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 5: Mantysa (M)</span>`;
+            html += `Bierzemy to co po przecinku z Kroku 3 i dopełniamy zerami:<br>`;
+            html += `1.<u style="text-decoration-color: green;">${d.mantissaBits.substring(0, Math.min(d.mantissaBits.length, 10))}...</u><br>`;
+            html += `M = <span class="bit-m">${d.mantissaBits}</span></div>`;
+            
+            html += `<div class="step" style="border:none"><b>Wynik:</b> <span class="bit-s">${d.sign}</span> <span class="bit-e">${d.biasExpBin}</span> <span class="bit-m">${d.mantissaBits}</span></div>`;
+
+        } else {
+            // Generowanie HTML dla konwersji BIN -> DEC
+            html += `<div class="step"><span class="step-title">Krok 1: Analiza bitów</span>`;
+            html += `S: <span class="bit-s">${d.sign}</span> (${currentNumber < 0 ? '-' : '+'})<br>`;
+            html += `E: <span class="bit-e">${d.biasExpBin}</span> (${d.biasExp})<br>`;
+            html += `M: <span class="bit-m">${d.mantissaBits}</span></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 2: Wyliczenie potęgi</span>`;
+            html += `Potęga = E - 127 = ${d.biasExp} - 127 = <b>${d.exponentRaw}</b></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 3: Odtworzenie liczby</span>`;
+            html += `1.M = 1.${d.mantissaBits}<br>`;
+            html += `Przesuwamy przecinek o ${d.exponentRaw} miejsc ${d.exponentRaw >= 0 ? 'w prawo' : 'w lewo'}:<br>`;
+            html += `Otrzymujemy: <b>${d.rawBin}</b></div>`;
+
+            html += `<div class="step"><span class="step-title">Krok 4: Zamiana na dziesiętny</span>`;
+            html += `Całkowita: ${d.intBin} = ${d.intPart}<br>`;
+            html += `Ułamkowa: .${d.fracBin} = ${d.fracPart}<br>`;
+            html += `Znak: ${d.sign == 1 ? 'Minus' : 'Plus'}<br>`;
+            html += `Wynik: <b>${currentNumber}</b></div>`;
+        }
+
+        stepsDiv.innerHTML = html;
+    }
+
+    function toggleMode() {
+        currentMode = currentMode === 'decToBin' ? 'binToDec' : 'decToBin';
+        document.getElementById("switchModeBtn").innerText = currentMode === 'decToBin' ? "Tryb: Dziesiętna ➡ Binarna" : "Tryb: Binarna ➡ Dziesiętna";
+        generateQuestion();
+    }
+
+    // Start
+    generateQuestion();
+    
+    // Enter key support
+    document.getElementById("userAnswer").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") checkAnswer();
+    });
+
+</script>
+
+</body>
+</html>
