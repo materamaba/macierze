@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trener Sumatorów CLA (g & p)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 { margin-bottom: 0.5rem; color: #333; }
+        .desc { color: #666; margin-bottom: 20px; font-size: 0.9rem; }
+        
+        /* Sekcja bitów */
+        .bits-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        .bit-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .bit-val {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            background: #fff;
+        }
+        .label { font-size: 0.8rem; color: #888; font-weight: bold; }
+        
+        /* Przyciski G i P */
+        .toggle-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Generate Styles */
+        .g-btn.active { background-color: #28a745; color: white; border-color: #28a745; }
+        .g-btn:hover:not(.active) { background-color: #e6f9ec; }
+
+        /* Propagate Styles */
+        .p-btn.active { background-color: #007bff; color: white; border-color: #007bff; }
+        .p-btn:hover:not(.active) { background-color: #e7f1ff; }
+
+        .controls { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        
+        button.primary {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button.check { background-color: #6610f2; }
+        button:hover { opacity: 0.9; }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .feedback.correct { background-color: #d4edda; color: #155724; }
+        .feedback.wrong { background-color: #f8d7da; color: #721c24; }
+
+        .formula-box {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: monospace;
+            text-align: center;
+            border: 1px dashed #ccc;
+        }
+
+        /* Sekcja Full Adder (na dole) */
+        .mini-tool {
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .fa-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) 20px repeat(2, 1fr);
+            gap: 10px;
+            align-items: center;
+            justify-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .fa-switch {
+            width: 50px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+        }
+        .fa-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 26px; height: 26px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .fa-switch.on { background: #28a745; }
+        .fa-switch.on::after { left: 22px; }
+        
+        .arrow { font-size: 1.5rem; color: #aaa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Trener CLA (Generate & Propagate)</h1>
+    <div class="desc">
+        Zaznacz dla każdej kolumny:<br>
+        <span style="color:#28a745; font-weight:bold">G (Generate)</span>: jeśli kolumna tworzy przeniesienie ($a \cdot b$)<br>
+        <span style="color:#007bff; font-weight:bold">P (Propagate)</span>: jeśli kolumna przepuszcza przeniesienie ($a + b$)
+    </div>
+
+    <div class="bits-container" id="bitsArea">
+        </div>
+
+    <div class="controls">
+        <button class="primary check" onclick="checkCLA()">Sprawdź</button>
+        <button class="primary" onclick="generateTask()">Nowy Przykład</button>
+    </div>
+
+    <div id="claFeedback" class="feedback"></div>
+    
+    <div class="formula-box">
+        Pamiętaj: $g_i = a_i \cdot b_i$ (AND) &nbsp;|&nbsp; $p_i = a_i + b_i$ (OR)
+    </div>
+</div>
+
+<div class="container mini-tool">
+    <h2>Symulator: 1-Bit Full Adder</h2>
+    <div class="desc">Kliknij przełączniki (A, B, Cin), żeby zobaczyć wynik.</div>
+    
+    <div class="fa-grid">
+        <div class="label">A</div>
+        <div class="label">B</div>
+        <div class="label">Cin</div>
+        <div></div>
+        <div class="label">Sum (S)</div>
+        <div class="label">Cout</div>
+
+        <div class="fa-switch" id="faA" onclick="toggleFA('faA')"></div>
+        <div class="fa-switch" id="faB" onclick="toggleFA('faB')"></div>
+        <div class="fa-switch" id="faCin" onclick="toggleFA('faCin')"></div>
+        
+        <div class="arrow">➡</div>
+        
+        <div class="bit-val" id="outS">0</div>
+        <div class="bit-val" id="outCout">0</div>
+    </div>
+    <div style="margin-top:10px; font-size:0.8rem; color:#888;">
+        $S = A \oplus B \oplus C_{in}$ <br>
+        $C_{out} = A \cdot B + C_{in}(A \oplus B)$
+    </div>
+</div>
+
+<script>
+    /* --- LOGIKA CLA --- */
+    let inputsA = [0,0,0,0];
+    let inputsB = [0,0,0,0];
+    // Stan użytkownika: index -> {g: bool, p: bool}
+    let userState = [
+        {g:false, p:false}, {g:false, p:false}, {g:false, p:false}, {g:false, p:false}
+    ];
+
+    function generateTask() {
+        const area = document.getElementById('bitsArea');
+        area.innerHTML = '';
+        document.getElementById('claFeedback').style.display = 'none';
+        
+        // Reset stanu
+        userState = [
+            {g:false, p:false}, {g:false, p:false}, {g:false, p:false}, {g:false, p:false}
+        ];
+
+        // Nagłówki kolumn (indeksy 3, 2, 1, 0)
+        for(let i=3; i>=0; i--) {
+            inputsA[i] = Math.round(Math.random());
+            inputsB[i] = Math.round(Math.random());
+
+            let col = document.createElement('div');
+            col.className = 'bit-column';
+            col.innerHTML = `
+                <div class="label">i=${i}</div>
+                <div class="bit-val" style="background:#f8f9fa">${inputsA[i]}</div>
+                <div class="bit-val" style="background:#f8f9fa">${inputsB[i]}</div>
+                <div style="height:10px"></div>
+                <div class="toggle-btn g-btn" onclick="toggleBtn(this, ${i}, 'g')">G</div>
+                <div class="toggle-btn p-btn" onclick="toggleBtn(this, ${i}, 'p')">P</div>
+            `;
+            area.appendChild(col);
+        }
+    }
+
+    function toggleBtn(el, index, type) {
+        // Zmień stan w JS
+        userState[index][type] = !userState[index][type];
+        
+        // Zmień wygląd
+        if(userState[index][type]) el.classList.add('active');
+        else el.classList.remove('active');
+    }
+
+    function checkCLA() {
+        let allCorrect = true;
+        let errors = [];
+
+        for(let i=3; i>=0; i--) {
+            let a = inputsA[i];
+            let b = inputsB[i];
+            
+            // Poprawne wartości
+            let correctG = (a === 1 && b === 1); // AND
+            let correctP = (a === 1 || b === 1); // OR (w niektórych podręcznikach XOR, ale OR jest bezpieczniejsze do "propagacji")
+
+            if(userState[i].g !== correctG) {
+                allCorrect = false;
+                errors.push(`Kolumna ${i}: Błąd w G (Powinno być ${correctG ? 'TAK, bo 1 i 1' : 'NIE'})`);
+            }
+            if(userState[i].p !== correctP) {
+                allCorrect = false;
+                errors.push(`Kolumna ${i}: Błąd w P (Powinno być ${correctP ? 'TAK, bo jest jedynka' : 'NIE'})`);
+            }
+        }
+
+        let fb = document.getElementById('claFeedback');
+        fb.style.display = 'block';
+        if(allCorrect) {
+            fb.className = 'feedback correct';
+            fb.innerHTML = '<strong>Perfekcyjnie!</strong> Rozumiesz mechanizm CLA.';
+        } else {
+            fb.className = 'feedback wrong';
+            fb.innerHTML = '<strong>Błędy:</strong><br>' + errors.join('<br>');
+        }
+    }
+
+    /* --- LOGIKA FULL ADDER --- */
+    let faState = { A: false, B: false, Cin: false };
+
+    function toggleFA(id) {
+        let el = document.getElementById(id);
+        let key = id.replace('fa', '');
+        faState[key] = !faState[key];
+        
+        if(faState[key]) el.classList.add('on');
+        else el.classList.remove('on');
+
+        calcFA();
+    }
+
+    function calcFA() {
+        let a = faState.A ? 1 : 0;
+        let b = faState.B ? 1 : 0;
+        let cin = faState.Cin ? 1 : 0;
+
+        // Suma: XOR trzech wejść (A ^ B ^ Cin)
+        // W JS ^ to XOR
+        let sum = a ^ b ^ cin;
+        
+        // Carry: (A & B) | (Cin & (A ^ B))
+        let cout = (a & b) | (cin & (a ^ b));
+
+        document.getElementById('outS').innerText = sum;
+        document.getElementById('outCout').innerText = cout;
+        
+        // Podświetlenie wyników
+        document.getElementById('outS').style.borderColor = sum ? '#28a745' : '#eee';
+        document.getElementById('outCout').style.borderColor = cout ? '#dc3545' : '#eee';
+    }
+
+    // Start
+    generateTask();
+</script>
+
+</body>
+</html>
