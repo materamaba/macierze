@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Generator Zadań Cache v2</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f0f2f5; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1a73e8; text-align: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        .problem { font-size: 1.15em; color: #202124; margin-bottom: 20px; padding: 20px; border-left: 6px solid #1a73e8; background: #f8f9fa; line-height: 1.5; }
+        .solution { display: none; margin-top: 20px; padding: 20px; border-top: 2px dashed #dadce0; background: #e6f4ea; border-radius: 8px; }
+        .controls { text-align: center; margin-bottom: 30px; }
+        button { background: #1a73e8; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-size: 16px; margin: 5px; transition: 0.2s; }
+        button:hover { background: #1557b0; }
+        .btn-solve { background: #1e8e3e; }
+        .btn-solve:hover { background: #187230; }
+        .step { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #1e8e3e; }
+        .formula { font-family: 'Consolas', monospace; font-weight: bold; color: #c5221f; }
+        .addr-box { display: flex; margin: 10px 0; border: 2px solid #333; text-align: center; max-width: 500px; }
+        .addr-part { border-right: 1px solid #333; padding: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Generator Zadań: Pamięć Cache</h1>
+    <div class="controls">
+        <button onclick="generateTask(1)">Zadanie 1: Oblicz rozmiary (z bitów)</button>
+        <button onclick="generateTask(2)">Zadanie 2: Oblicz tagi (z rozmiaru kB)</button>
+        <button class="btn-solve" onclick="toggleSolution()">Pokaż/Ukryj rozwiązanie</button>
+    </div>
+
+    <div id="problem-area" class="problem">Wybierz typ zadania powyżej.</div>
+    <div id="solution-area" class="solution"></div>
+</div>
+
+<script>
+    function toggleSolution() {
+        const sol = document.getElementById('solution-area');
+        sol.style.display = (sol.style.display === 'none' || sol.style.display === '') ? 'block' : 'none';
+    }
+
+    function generateTask(type) {
+        const solArea = document.getElementById('solution-area');
+        const probArea = document.getElementById('problem-area');
+        solArea.style.display = 'none';
+
+        if (type === 1) {
+            // Zadanie typu "Jakie będą rozmiary Md i Mt?" (na podst. rysunku 3f1721.png)
+            const assocArr = [2, 4, 8, 16];
+            const assoc = assocArr[Math.floor(Math.random() * assocArr.length)];
+            const indexB = 2 + Math.floor(Math.random() * 4); // 2-5 bitów
+            const offsetB = 3 + Math.floor(Math.random() * 4); // 3-6 bitów
+            const tagB = 32 - indexB - offsetB;
+
+            probArea.innerHTML = `
+                <strong>Zadanie:</strong> Jaki będzie rozmiar (w bajtach) i organizacja ${assoc}-drożnej asocjacyjnej pamięci Cache, 
+                jeśli 32-bitowe adresy są dekodowane w następujący sposób:<br><br>
+                <div class="addr-box">
+                    <div class="addr-part" style="flex:${tagB}">Tag: ${tagB} bitów</div>
+                    <div class="addr-part" style="flex:${indexB}">Index: ${indexB} bitów</div>
+                    <div class="addr-part" style="flex:${offsetB}">Offset: ${offsetB} bitów</div>
+                </div>
+            `;
+
+            const totalLines = assoc * Math.pow(2, indexB);
+            const lineSize = Math.pow(2, offsetB);
+            const md = totalLines * lineSize;
+            const tagBytes = Math.ceil(tagB / 8);
+            const mt = totalLines * tagBytes;
+
+            solArea.innerHTML = `
+                <h3>Rozwiązanie:</h3>
+                <div class="step"><strong>1. Pamięć danych (M<sub>D</sub>):</strong><br>
+                Liczba zbiorów (sets) = 2<sup>${indexB}</sup> = ${Math.pow(2, indexB)}<br>
+                Liczba linii = Drogi &times; Zbiory = ${assoc} &times; ${Math.pow(2, indexB)} = ${totalLines}<br>
+                Rozmiar linii = 2<sup>${offsetB}</sup> = ${lineSize}B<br>
+                <span class="formula">M<sub>D</sub> = ${totalLines} &times; ${lineSize}B = ${md}B (${md/1024}KB)</span></div>
+                
+                <div class="step"><strong>2. Pamięć tagów (M<sub>T</sub>):</strong><br>
+                Rozmiar taga = ${tagB} bitów &rarr; ${tagBytes}B<br>
+                <span class="formula">M<sub>T</sub> = ${totalLines} linii &times; ${tagBytes}B = ${mt}B</span></div>
+            `;
+
+        } else {
+            // Zadanie typu "4-drożna, 1kB dane, 64B linia"
+            const assocArr = [2, 4, 8, 16];
+            const assoc = assocArr[Math.floor(Math.random() * assocArr.length)];
+            const cacheSizeKBPowers = [0, 1, 2, 3, 4]; // 1, 2, 4, 8, 16 KB
+            const cacheKB = Math.pow(2, cacheSizeKBPowers[Math.floor(Math.random() * cacheSizeKBPowers.length)]);
+            const lineSizeArr = [16, 32, 64, 128];
+            const lineSize = lineSizeArr[Math.floor(Math.random() * lineSizeArr.length)];
+
+            probArea.innerHTML = `
+                <strong>Zadanie:</strong> ${assoc}-drożna asocjacyjna pamięć cache posiada rozmiar ${cacheKB}kB na dane. 
+                Jedna linia tej pamięci zawiera ${lineSize} bajty danych. Jaki będzie całkowity rozmiar pamięci dla tagów adresu, 
+                jeśli wszystkie adresy są 32-bitowe?
+            `;
+
+            const offsetB = Math.log2(lineSize);
+            const totalLines = (cacheKB * 1024) / lineSize;
+            const sets = totalLines / assoc;
+            const indexB = Math.log2(sets);
+            const tagB = 32 - indexB - offsetB;
+            const tagBytes = Math.ceil(tagB / 8);
+            const mt = totalLines * tagBytes;
+
+            solArea.innerHTML = `
+                <h3>Rozwiązanie:</h3>
+                <div class="step"><strong>1. Offset:</strong> 2<sup>?</sup> = ${lineSize}B &rarr; <span class="formula">Offset = ${offsetB} bitów</span></div>
+                <div class="step"><strong>2. Index:</strong><br>
+                Wszystkie linie = (${cacheKB} &times; 1024) / ${lineSize} = ${totalLines}<br>
+                Zbiory (sets) = ${totalLines} / ${assoc} = ${sets} &rarr; 2<sup>${indexB}</sup> = ${sets}<br>
+                <span class="formula">Index = ${indexB} bitów</span></div>
+                <div class="step"><strong>3. Tag:</strong> 32 - ${indexB} - ${offsetB} = <span class="formula">${tagB} bitów (${tagBytes}B)</span></div>
+                <div class="step"><strong>4. M<sub>T</sub>:</strong> ${totalLines} linii &times; ${tagBytes}B = <span class="formula">${mt}B</span></div>
+            `;
+        }
+    }
+</script>
+</body>
+</html>
