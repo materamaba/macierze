@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator zadań - Eliminacja Gaussa i rozkład LU</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 10px;
+        }
+        td, th {
+            border: 1px solid #000;
+            padding: 4px 8px;
+            min-width: 60px;
+        }
+        .bg-gray { background-color: #c0c0c0; }
+        .bg-light-blue { background-color: #b3d9ff; }
+        .bg-pink { background-color: #ffccff; }
+        .bg-light-green { background-color: #ccffcc; }
+        .bg-yellow { background-color: #ffeb3b; }
+        .no-border { border: none; }
+        .label {
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 5px;
+            font-family: Arial, sans-serif;
+        }
+        .flex-row {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .multipliers {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-family: 'Courier New', Courier, monospace;
+            min-width: 100px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Generator - Eliminacja Gaussa bez wyboru el. głównego</h2>
+    <button onclick="generateProblem()">Generuj nowe zadanie</button>
+
+    <div class="container" id="output">
+        <p>Kliknij przycisk powyżej, aby wygenerować zadanie.</p>
+    </div>
+
+<script>
+    // Narzędzia do formatowania liczb
+    function fmt(num) {
+        return num.toFixed(4);
+    }
+
+    // Losowanie liczb całkowitych z przedziału
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Losowanie liczby różnej od zera (dla przekątnej U)
+    function randNzInt(min, max) {
+        let val = 0;
+        while (val === 0) {
+            val = randInt(min, max);
+        }
+        return val;
+    }
+
+    // Mnożenie macierzy
+    function multiply(A, B) {
+        let result = new Array(3).fill(0).map(() => new Array(3).fill(0));
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                for (let k = 0; k < 3; k++) {
+                    result[i][j] += A[i][k] * B[k][j];
+                }
+            }
+        }
+        return result;
+    }
+
+    // Mnożenie macierzy przez wektor
+    function multiplyVec(A, x) {
+        let result = [0, 0, 0];
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                result[i] += A[i][j] * x[j];
+            }
+        }
+        return result;
+    }
+
+    // Suma wiersza macierzy i elementu wektora (kolumna S z obrazka)
+    function rowSum(A, b, row) {
+        return A[row][0] + A[row][1] + A[row][2] + b[row];
+    }
+
+    function generateProblem() {
+        // KROK 1: Inżynieria odwrotna zadania
+        
+        // Generujemy macierz L (trójkątna dolna, 1 na przekątnej)
+        let L = [
+            [1, 0, 0],
+            [randInt(-3, 3), 1, 0],
+            [randInt(-3, 3), randInt(-3, 3), 1]
+        ];
+
+        // Generujemy macierz U (trójkątna górna, niezerowa przekątna)
+        let U = [
+            [randNzInt(-4, 4), randInt(-3, 3), randInt(-3, 3)],
+            [0, randNzInt(-4, 4), randInt(-3, 3)],
+            [0, 0, randNzInt(-4, 4)]
+        ];
+
+        // Generujemy wektor rozwiązań x
+        let x = [randInt(-5, 5), randInt(-5, 5), randInt(-5, 5)];
+
+        // Obliczamy A = L * U oraz b = A * x
+        let A = multiply(L, U);
+        let b = multiplyVec(A, x);
+
+        // KROK 2: Symulacja procesu eliminacji dla celów prezentacji
+
+        // Mnożniki (wynikają bezpośrednio z L)
+        let l21 = L[1][0];
+        let l31 = L[2][0];
+        let l32 = L[2][1];
+
+        // Stan po 1 kroku eliminacji
+        let A_step1 = [
+            [...A[0]],
+            [A[1][0] - l21*A[0][0], A[1][1] - l21*A[0][1], A[1][2] - l21*A[0][2]],
+            [A[2][0] - l31*A[0][0], A[2][1] - l31*A[0][1], A[2][2] - l31*A[0][2]]
+        ];
+        let b_step1 = [
+            b[0],
+            b[1] - l21*b[0],
+            b[2] - l31*b[0]
+        ];
+
+        // Wyznacznik A (iloczyn przekątnej U, bo det(L)=1)
+        let detA = U[0][0] * U[1][1] * U[2][2];
+
+        // KROK 3: Budowanie HTML
+
+        let html = ``;
+
+        // Sekcja: Początkowa macierz
+        html += `<div class="label">Początkowa macierz [A | b]</div>`;
+        html += `<div class="flex-row">
+                    <div class="multipliers"></div>
+                    <table>
+                        <tr class="bg-light-blue"><th>A</th><th></th><th></th><th class="bg-gray">b</th><th>S (Suma)</th></tr>
+                        <tr><td>${fmt(A[0][0])}</td><td>${fmt(A[0][1])}</td><td>${fmt(A[0][2])}</td><td class="bg-gray">${fmt(b[0])}</td><td>${fmt(rowSum(A,b,0))}</td></tr>
+                        <tr><td>${fmt(A[1][0])}</td><td>${fmt(A[1][1])}</td><td>${fmt(A[1][2])}</td><td class="bg-gray">${fmt(b[1])}</td><td>${fmt(rowSum(A,b,1))}</td></tr>
+                        <tr><td>${fmt(A[2][0])}</td><td>${fmt(A[2][1])}</td><td>${fmt(A[2][2])}</td><td class="bg-gray">${fmt(b[2])}</td><td>${fmt(rowSum(A,b,2))}</td></tr>
+                    </table>
+                 </div>`;
+
+        // Sekcja: Krok 1
+        html += `<br><div class="label">Krok 1 (Zerowanie pod A11)</div>`;
+        html += `<div class="flex-row">
+                    <div class="multipliers">
+                        <div>L21 = ${fmt(l21)}</div>
+                        <div>L31 = ${fmt(l31)}</div>
+                    </div>
+                    <table>
+                        <tr><td>${fmt(A_step1[0][0])}</td><td>${fmt(A_step1[0][1])}</td><td>${fmt(A_step1[0][2])}</td><td class="bg-gray">${fmt(b_step1[0])}</td><td>${fmt(rowSum(A_step1,b_step1,0))}</td></tr>
+                        <tr><td>${fmt(A_step1[1][0])}</td><td>${fmt(A_step1[1][1])}</td><td>${fmt(A_step1[1][2])}</td><td class="bg-gray">${fmt(b_step1[1])}</td><td>${fmt(rowSum(A_step1,b_step1,1))}</td></tr>
+                        <tr><td>${fmt(A_step1[2][0])}</td><td>${fmt(A_step1[2][1])}</td><td>${fmt(A_step1[2][2])}</td><td class="bg-gray">${fmt(b_step1[2])}</td><td>${fmt(rowSum(A_step1,b_step1,2))}</td></tr>
+                    </table>
+                 </div>`;
+
+        // Sekcja: Krok 2 (Macierz U)
+        html += `<br><div class="label">Krok 2 (Zerowanie pod A22) -> Otrzymujemy Macierz U</div>`;
+        html += `<div class="flex-row">
+                    <div class="multipliers">
+                        <div>L32 = ${fmt(l32)}</div>
+                    </div>
+                    <table>
+                        <tr><td>${fmt(U[0][0])}</td><td>${fmt(U[0][1])}</td><td>${fmt(U[0][2])}</td><td class="bg-gray">${fmt(b_step1[0])}</td><td>${fmt(rowSum(U,b_step1,0))}</td></tr>
+                        <tr><td>${fmt(U[1][0])}</td><td>${fmt(U[1][1])}</td><td>${fmt(U[1][2])}</td><td class="bg-gray">${fmt(b_step1[1])}</td><td>${fmt(rowSum(U,b_step1,1))}</td></tr>
+                        <tr><td>${fmt(U[2][0])}</td><td>${fmt(U[2][1])}</td><td>${fmt(U[2][2])}</td><td class="bg-gray">${fmt(b[2] - l31*b[0] - l32*(b[1] - l21*b[0]))}</td><td>-</td></tr>
+                    </table>
+                 </div>`;
+
+        // Sekcja: Podsumowanie L, U, x
+        html += `<hr>`;
+        html += `<div class="flex-row" style="align-items: flex-end;">
+                    <div>
+                        <div class="label">Macierz L</div>
+                        <table>
+                            <tr class="bg-light-green"><th></th><th>L</th><th></th></tr>
+                            <tr><td>${fmt(L[0][0])}</td><td>${fmt(L[0][1])}</td><td>${fmt(L[0][2])}</td></tr>
+                            <tr><td>${fmt(L[1][0])}</td><td>${fmt(L[1][1])}</td><td>${fmt(L[1][2])}</td></tr>
+                            <tr><td>${fmt(L[2][0])}</td><td>${fmt(L[2][1])}</td><td>${fmt(L[2][2])}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div>
+                        <div class="label">Macierz U</div>
+                        <table>
+                            <tr class="bg-pink"><th></th><th>U</th><th></th></tr>
+                            <tr><td>${fmt(U[0][0])}</td><td>${fmt(U[0][1])}</td><td>${fmt(U[0][2])}</td></tr>
+                            <tr><td>${fmt(U[1][0])}</td><td>${fmt(U[1][1])}</td><td>${fmt(U[1][2])}</td></tr>
+                            <tr><td>${fmt(U[2][0])}</td><td>${fmt(U[2][1])}</td><td>${fmt(U[2][2])}</td></tr>
+                        </table>
+                    </div>
+
+                    <div style="margin-left: 20px;">
+                        <table style="border:none;">
+                            <tr><td class="no-border">x1:</td><td style="border: 1px solid black;">${fmt(x[0])}</td></tr>
+                            <tr><td class="no-border">x2:</td><td style="border: 1px solid black;">${fmt(x[1])}</td></tr>
+                            <tr><td class="no-border">x3:</td><td style="border: 1px solid black;">${fmt(x[2])}</td></tr>
+                            <tr><td class="no-border">det A:</td><td class="bg-yellow" style="border: 1px solid black;">${fmt(detA)}</td></tr>
+                        </table>
+                    </div>
+
+                    <div>
+                        <div class="label" style="text-align:center;">Rozwiązanie (x)</div>
+                        <table>
+                            <tr class="bg-yellow"><th>x1</th><th>x2</th><th>x3</th></tr>
+                            <tr class="bg-yellow"><td>${fmt(x[0])}</td><td>${fmt(x[1])}</td><td>${fmt(x[2])}</td></tr>
+                        </table>
+                    </div>
+                 </div>`;
+
+
+        document.getElementById('output').innerHTML = html;
+    }
+
+    // Wygeneruj pierwsze zadanie przy załadowaniu strony
+    window.onload = generateProblem;
+</script>
+
+</body>
+</html>
