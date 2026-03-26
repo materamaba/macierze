@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Zadań: Błąd Względny</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .problem-statement {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: background 0.3s;
+        }
+        .btn-generate { background-color: #3498db; }
+        .btn-generate:hover { background-color: #2980b9; }
+        .btn-solution { background-color: #2ecc71; }
+        .btn-solution:hover { background-color: #27ae60; }
+        .solution-box {
+            display: none;
+            background: #e8f6f3;
+            padding: 20px;
+            border-left: 5px solid #1abc9c;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Generator Zadań: Błędy Zaokrągleń</h1>
+
+    <div class="card">
+        <div class="buttons">
+            <button class="btn-generate" onclick="generateProblem()">Generuj nowe zadanie</button>
+            <button class="btn-solution" onclick="toggleSolution()">Pokaż / Ukryj rozwiązanie</button>
+        </div>
+
+        <div id="problem-container" class="problem-statement">
+            Kliknij "Generuj nowe zadanie", aby rozpocząć.
+        </div>
+
+        <div id="solution-container" class="solution-box">
+            </div>
+    </div>
+
+    <script>
+        // Definicje typów wyrażeń
+        const expressions = [
+            { id: 0, text: "a \\sqrt{b}", formula: "\\delta_{a\\sqrt{b}} \\approx \\delta_a + \\frac{1}{2}\\delta_b", calcError: (da, db) => da + 0.5 * db },
+            { id: 1, text: "\\frac{a^2}{b}", formula: "\\delta_{\\frac{a^2}{b}} \\approx 2\\delta_a + \\delta_b", calcError: (da, db) => 2 * da + db },
+            { id: 2, text: "a \\cdot b^2", formula: "\\delta_{a \\cdot b^2} \\approx \\delta_a + 2\\delta_b", calcError: (da, db) => da + 2 * db },
+            { id: 3, text: "\\frac{\\sqrt{a}}{b}", formula: "\\delta_{\\frac{\\sqrt{a}}{b}} \\approx \\frac{1}{2}\\delta_a + \\delta_b", calcError: (da, db) => 0.5 * da + db }
+        ];
+
+        // Funkcja losująca liczbę z podaną liczbą miejsc po przecinku
+        function getRandomValue(min, max, decimals) {
+            const val = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(val);
+        }
+
+        let currentSolutionHTML = "";
+
+        function generateProblem() {
+            // Ukryj rozwiązanie przy nowym zadaniu
+            document.getElementById("solution-container").style.display = "none";
+
+            // Losowanie typu wyrażenia
+            const exp = expressions[Math.floor(Math.random() * expressions.length)];
+
+            // Losowanie parametrów a i b
+            // 'a' będzie miało 1 miejsce po przecinku (błąd bezwzględny 0.05)
+            const a_val = getRandomValue(1.0, 5.0, 1);
+            const a_str = a_val.toFixed(1);
+            const delta_a_abs = 0.05;
+
+            // 'b' będzie miało 2 miejsca po przecinku (błąd bezwzględny 0.005)
+            const b_val = getRandomValue(0.01, 0.99, 2);
+            const b_str = b_val.toFixed(2);
+            const delta_b_abs = 0.005;
+
+            // Obliczenia błędów względnych
+            const delta_a_rel = delta_a_abs / a_val;
+            const delta_b_rel = delta_b_abs / b_val;
+            
+            // Obliczenie błędu całkowitego
+            const total_error = exp.calcError(delta_a_rel, delta_b_rel);
+            const total_error_percent = (total_error * 100).toFixed(2);
+
+            // Generowanie tekstu zadania
+            const problemHTML = `Liczby \\( \\tilde{a} = ${a_str} \\) i \\( \\tilde{b} = ${b_str} \\) są przybliżeniami otrzymanymi poprzez poprawne zaokrąglenie wartości dokładnych. Oszacuj błąd względny wyrażenia: \\( ${exp.text} \\).`;
+            
+            document.getElementById("problem-container").innerHTML = problemHTML;
+
+            // Generowanie tekstu rozwiązania
+            currentSolutionHTML = `
+                <h3>Rozwiązanie krok po kroku:</h3>
+                <p><b>Krok 1: Wyznaczenie błędów bezwzględnych</b><br>
+                Z racji poprawnego zaokrąglenia, błąd bezwzględny to połowa wagi ostatniego miejsca znaczącego:<br>
+                \\( |\\Delta a| \\le ${delta_a_abs} \\)<br>
+                \\( |\\Delta b| \\le ${delta_b_abs} \\)</p>
+
+                <p><b>Krok 2: Wyznaczenie błędów względnych składników</b><br>
+                \\( \\delta_a \\le \\frac{${delta_a_abs}}{${a_str}} \\approx ${delta_a_rel.toFixed(4)} \\) (${(delta_a_rel*100).toFixed(2)}%)<br>
+                \\( \\delta_b \\le \\frac{${delta_b_abs}}{${b_str}} \\approx ${delta_b_rel.toFixed(4)} \\) (${(delta_b_rel*100).toFixed(2)}%)</p>
+
+                <p><b>Krok 3: Przenoszenie błędu względnego dla wyrażenia</b><br>
+                Zgodnie z regułami propagacji błędu:<br>
+                \\( ${exp.formula} \\)</p>
+
+                <p><b>Krok 4: Obliczenia</b><br>
+                Po podstawieniu wartości:<br>
+                \\( \\delta \\approx ${total_error.toFixed(4)} \\)<br>
+                Co daje wynik w procentach: <b>${total_error_percent}%</b>.</p>
+            `;
+            
+            document.getElementById("solution-container").innerHTML = currentSolutionHTML;
+
+            // Wymuszenie ponownego renderowania wzorów matematycznych przez MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function toggleSolution() {
+            const solBox = document.getElementById("solution-container");
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                if(currentSolutionHTML === "") {
+                    alert("Najpierw wygeneruj zadanie!");
+                    return;
+                }
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        // Generuj pierwsze zadanie przy załadowaniu strony
+        window.onload = function() {
+            setTimeout(generateProblem, 500); // Małe opóźnienie dla pewności załadowania MathJax
+        };
+    </script>
+</body>
+</html>
