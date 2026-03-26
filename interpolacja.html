@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Zadań: Interpolacja Lagrange'a</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        h1 { color: #2c3e50; text-align: center; }
+        .card {
+            background: #fff; padding: 25px;
+            border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse; margin: 15px 0; font-size: 1.2em;
+        }
+        th, td {
+            border: 1px solid #ccc; padding: 10px 20px; text-align: center;
+        }
+        th { background-color: #ecf0f1; }
+        .buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        button {
+            padding: 10px 20px; font-size: 1em; cursor: pointer;
+            border: none; border-radius: 5px; color: white; transition: background 0.3s;
+        }
+        .btn-generate { background-color: #9b59b6; }
+        .btn-generate:hover { background-color: #8e44ad; }
+        .btn-solution { background-color: #e67e22; }
+        .btn-solution:hover { background-color: #d35400; }
+        .solution-box {
+            display: none; background: #fdf2e9; padding: 20px;
+            border-left: 5px solid #e67e22; border-radius: 0 8px 8px 0; margin-top: 20px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Generator Zadań: Interpolacja Wielomianowa</h1>
+
+    <div class="card">
+        <div class="buttons">
+            <button class="btn-generate" onclick="generateProblem()">Generuj nowe zadanie</button>
+            <button class="btn-solution" onclick="toggleSolution()">Pokaż / Ukryj rozwiązanie</button>
+        </div>
+
+        <div class="problem-statement">
+            <b>Zadanie:</b> Wyznacz wielomian interpolacyjny dla poniższych danych, korzystając z metody Lagrange'a:
+            <div id="problem-table"></div>
+        </div>
+
+        <div id="solution-container" class="solution-box"></div>
+    </div>
+
+    <script>
+        // Funkcja do formatowania wielomianu (żeby nie pisało np. "+ -3x" albo "1x^2")
+        function formatPolynomial(a, b, c) {
+            let res = "";
+            if (a === 1) res += "x^2";
+            else if (a === -1) res += "-x^2";
+            else res += a + "x^2";
+
+            if (b > 0) res += (b === 1 ? " + x" : " + " + b + "x");
+            else if (b < 0) res += (b === -1 ? " - x" : " - " + Math.abs(b) + "x");
+
+            if (c > 0) res += " + " + c;
+            else if (c < 0) res += " - " + Math.abs(c);
+            
+            return res === "" ? "0" : res;
+        }
+
+        // Zabezpieczenie przed ujemnymi liczbami w nawiasach (np. "x - -2" -> "x + 2")
+        function formatTerm(x) {
+            if (x === 0) return "x";
+            if (x < 0) return "(x + " + Math.abs(x) + ")";
+            return "(x - " + x + ")";
+        }
+
+        let currentSolutionHTML = "";
+
+        function generateProblem() {
+            document.getElementById("solution-container").style.display = "none";
+
+            // Losowanie 3 unikalnych punktów x z przedziału [-3, 4]
+            let xs = [];
+            while(xs.length < 3) {
+                let r = Math.floor(Math.random() * 8) - 3;
+                if(xs.indexOf(r) === -1) xs.push(r);
+            }
+            xs.sort((a, b) => a - b); // Sortowanie rosnąco dla porządku
+            let x0 = xs[0], x1 = xs[1], x2 = xs[2];
+
+            // Generowanie współczynników ukrytego wielomianu W(x) = ax^2 + bx + c
+            let a = Math.floor(Math.random() * 5) - 2; // od -2 do 2
+            if (a === 0) a = 1; // Wymuszamy funkcję kwadratową
+            let b = Math.floor(Math.random() * 9) - 4; // od -4 do 4
+            let c = Math.floor(Math.random() * 11) - 5; // od -5 do 5
+
+            // Obliczanie wartości y
+            let y0 = a*x0*x0 + b*x0 + c;
+            let y1 = a*x1*x1 + b*x1 + c;
+            let y2 = a*x2*x2 + b*x2 + c;
+
+            // Tworzenie tabeli
+            let tableHTML = `
+                <table>
+                    <tr><th>x</th><td>${x0}</td><td>${x1}</td><td>${x2}</td></tr>
+                    <tr><th>y</th><td>${y0}</td><td>${y1}</td><td>${y2}</td></tr>
+                </table>
+            `;
+            document.getElementById("problem-table").innerHTML = tableHTML;
+
+            // Obliczenia do rozwiązania
+            let mianownik0 = (x0 - x1) * (x0 - x2);
+            let mianownik1 = (x1 - x0) * (x1 - x2);
+            let mianownik2 = (x2 - x0) * (x2 - x1);
+
+            let term0 = `\\frac{${formatTerm(x1)}${formatTerm(x2)}}{${mianownik0}}`;
+            let term1 = `\\frac{${formatTerm(x0)}${formatTerm(x2)}}{${mianownik1}}`;
+            let term2 = `\\frac{${formatTerm(x0)}${formatTerm(x1)}}{${mianownik2}}`;
+
+            let l0_calc = y0 === 0 ? "0" : `${y0} \\cdot ${term0}`;
+            let l1_calc = y1 === 0 ? "0" : `${y1} \\cdot ${term1}`;
+            let l2_calc = y2 === 0 ? "0" : `${y2} \\cdot ${term2}`;
+
+            let finalPoly = formatPolynomial(a, b, c);
+
+            // Budowanie HTML z rozwiązaniem
+            currentSolutionHTML = `
+                <h3>Rozwiązanie (Metoda Lagrange'a)</h3>
+                <p>Wzór ogólny dla 3 punktów (wielomian 2. stopnia):<br>
+                \\[ W(x) = y_0 L_0(x) + y_1 L_1(x) + y_2 L_2(x) \\]</p>
+
+                <p><b>Krok 1: Wyznaczamy mianowniki wielomianów bazowych:</b><br>
+                Dla \\( L_0(x) \\): \\( (x_0 - x_1)(x_0 - x_2) = (${x0} - ${x1})(${x0} - ${x2}) = ${mianownik0} \\)<br>
+                Dla \\( L_1(x) \\): \\( (x_1 - x_0)(x_1 - x_2) = (${x1} - ${x0})(${x1} - ${x2}) = ${mianownik1} \\)<br>
+                Dla \\( L_2(x) \\): \\( (x_2 - x_0)(x_2 - x_1) = (${x2} - ${x0})(${x2} - ${x1}) = ${mianownik2} \\)</p>
+
+                <p><b>Krok 2: Podstawiamy do głównego wzoru:</b><br>
+                \\[ W(x) = ${l0_calc} + ${l1_calc} + ${l2_calc} \\]</p>
+
+                <p><b>Krok 3: Upraszczanie i redukcja (wymnażanie nawiasów):</b><br>
+                Po skróceniu ułamków z wartościami \\( y \\) i wymnożeniu nawiasów otrzymujemy ostateczną postać wielomianu:</p>
+                
+                \\[ W(x) = ${finalPoly} \\]
+            `;
+            
+            document.getElementById("solution-container").innerHTML = currentSolutionHTML;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function toggleSolution() {
+            const solBox = document.getElementById("solution-container");
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                if(currentSolutionHTML === "") return;
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        window.onload = function() {
+            setTimeout(generateProblem, 300);
+        };
+    </script>
+</body>
+</html>
