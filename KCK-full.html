@@ -158,35 +158,33 @@
     const allQuestions = [
         {
             id: 1,
-            type: "single",
-            question: "Jaka jest stolica Polski?",
-            options: ["Kraków", "Warszawa", "Poznań", "Gdańsk"],
-            correctAnswer: "Warszawa"
+            type: "open",
+            question: "Okno \"Wybierz\" zachowuje się jak na animacji. Jak nazywa się takie zachowanie okna? [rozwijająca się lista w dół z napisem 'Ala ma kota']",
+            correctAnswer: "ComboBox" // W zależności od wykładów można też uznać "lista rozwijana" lub "Drop-down list"
         },
         {
             id: 2,
-            type: "multiple",
-            question: "Które z wymienionych to języki programowania? (Zaznacz wszystkie poprawne)",
-            options: ["Python", "HTML", "JavaScript", "Kalkulator"],
-            correctAnswer: ["Python", "JavaScript"]
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Znowu MDI
         },
         {
             id: 3,
             type: "open",
-            question: "Ile wynosi 2 + 2 * 2?",
-            correctAnswer: "6"
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Znowu SDI
         },
-        {
+      {
             id: 4,
             type: "open",
             question: "Użyteczność wg Nielsena to suma pięciu cech oprogramowania. Wymień je podając po jednym przykładzie pozytywnym z dowolnej aplikacji",
-            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja"
+            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja" // Uwaga: To pytanie opisowe. Skrypt sprawdzi, czy użytkownik wpisał dokładnie to, co tutaj, więc ocenianie otwartych pytań bywa trudne w prostym skrypcie.
         },
         {
             id: 5,
             type: "open",
             question: "Sposób tworzenia GUI aplikacji, który daje wrażenie trójwymiarowości, poprzez wprowadzenie półprzezroczystych warstw nazywamy...",
-            correctAnswer: "Glassmorfizm"
+            correctAnswer: "Glassmorfizm" // Możesz też dodać "Glassmorphism", zależy od tego, jakiej formy wymagano na teście
         },
         {
             id: 6,
@@ -262,31 +260,31 @@
             options: ["QButton", "QPushButton", "QClickButton", "QActionButton"],
             correctAnswer: "QPushButton"
         },
-        {
+      {
             id: 14,
             type: "single",
             question: "Nawigacja w aplikacji powinna być ukryta, aby uprościć interfejs.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Choć hamburger menu ukrywa nawigację, generalnie ukrywanie jej kosztem użyteczności to zła praktyka
         },
         {
             id: 15,
             type: "open",
             question: "W pewnej aplikacji oknem głównym jest okno \"Okno\" i otwiera ono okno dialogowe \"Dialog\". Okno dialogowe \"Dialog\" nie blokuje dostępu do okna \"Okno\" chociaż jest jego dzieckiem - każde z nich można łapać i przeciągać. Jak nazywa się takie okno dialogowe?",
-            correctAnswer: "niemodalne"
+            correctAnswer: "niemodalne" // non-modal
         },
         {
             id: 16,
             type: "single",
             question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // One-page to koszmar dla bardzo rozbudowanych systemów informacyjnych
         },
         {
             id: 17,
             type: "open",
             question: "Sposób tworzenia stron WWW zmieniających Layout dla urządzeń o różnych wyświetlaczach (np. mobilnych) nazywamy ogólnie",
-            correctAnswer: "Responsive Web Design"
+            correctAnswer: "Responsive Web Design" // Opcjonalnie wpisz "RWD"
         },
         {
             id: 18,
@@ -303,19 +301,24 @@
                 "Gest na ekranie wielodotykowym",
                 "Wciśnięcie klawisza",
                 "Wybranie elementu listy"
-            ]
+            ] // Rozłączenie socketa i zakończenie wątku to zdarzenia w tle
         },
         {
             id: 19,
             type: "open",
             question: "Odpowiedz w 2-3 zdaniach czym różni się użyteczność (usability) od UX. Podaj przykład znanej Ci aplikacji (desktop, WEB, mobile), która ma bad usability oraz good UX. Uzasadnij, dlaczego. Jeżeli nie znasz takowej, to spróbuj wymyślić taki przykład.",
-            correctAnswer: "Użyteczność to funkcjonalność i łatwość obsługi, a UX to całościowe wrażenie i emocje."
+            correctAnswer: "Użyteczność to funkcjonalność i łatwość obsługi, a UX to całościowe wrażenie i emocje." // Uzupełnij to własnym przykładem, to typowe zadanie na pisanie eseju
         },
         {
             id: 20,
             type: "single",
             question: "Poziomy suwak do wyboru wartości jest definiowany w PyQt klasą",
-            options: ["QHorizontalBar", "QSlider", "QTrackBar", "QScrollBar"],
+            options: [
+                "QHorizontalBar",
+                "QSlider",
+                "QTrackBar",
+                "QScrollBar"
+            ],
             correctAnswer: "QSlider"
         },
         {
@@ -335,51 +338,64 @@
             type: "single",
             question: "Tworząc aplikację mobilną musimy w pierwszej kolejności uwzględnić mechanizm nawigacji a dopiero później funkcjonalność (content)",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Zasada "Content is King" - treść jest najważniejsza, to pod nią budujemy nawigację
         },
         {
             id: 23,
             type: "multiple",
             question: "W procesie projektowania metodą podwójnego diamentu obowiązują 4 etapy",
-            options: ["describe", "declare", "define", "divide", "deliver", "develop", "discover"],
-            correctAnswer: ["discover", "define", "develop", "deliver"]
+            options: [
+                "describe",
+                "declare",
+                "define",
+                "divide",
+                "deliver",
+                "develop",
+                "discover"
+            ],
+            correctAnswer: [
+                "discover",
+                "define",
+                "develop",
+                "deliver"
+            ]
         },
-        {
+      {
             id: 24,
             type: "open",
             question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
-            correctAnswer: "SDI"
+            correctAnswer: "SDI" // Single Document Interface.
         },
         {
             id: 25,
             type: "open",
-            question: "W pewnej aplikacji oknem głównym jest okno \"Okno\" i otwiera ono okno dialogowe \"Dialog\". Okno dialogowe \"Dialog\" nie blokuje dostępu do okna \"Okno\" chociaż jest jego dzieckiem... Jak nazywa się takie okno dialogowe?",
-            correctAnswer: "niemodalne"
+            question: "W pewnej aplikacji oknem głównym jest okno \"Okno\" i otwiera ono okno dialogowe \"Dialog\". Okno dialogowe \"Dialog\" nie blokuje dostępu do okna \"Okno\" chociaż jest jego dzieckiem - każde z nich można łapać i przeciągać. Jak nazywa się takie okno dialogowe?",
+            correctAnswer: "niemodalne" // Powtórka z poprzedniej partii
         },
         {
             id: 26,
             type: "single",
-            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach. (Powtórka)",
+            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka z poprzedniej partii
         },
         {
             id: 27,
             type: "open",
             question: "Technika projektowania GUI w której wygląd, kolorystyka, typografia i zastosowane elementy nawigacyjne dopasowują się do wieku użytkownika to ...",
-            correctAnswer: "Age-responsive design"
+            correctAnswer: "Age-responsive design" // Można też użyć polskiego: "projektowanie responsywne ze względu na wiek"
         },
         {
             id: 28,
             type: "open",
             question: "Technikę CSS pozwalającą na odczytanie rozmiaru oraz typu wyświetlacza nazywamy ...",
-            correctAnswer: "Media Queries"
+            correctAnswer: "Media Queries" // Można wpisać też "zapytania o media"
         },
         {
             id: 29,
             type: "open",
-            question: "Odpowiedz w 2-3 zdaniach czym różni się użyteczność (usability) od UX. Podaj przykład znanej Ci aplikacji... (Powtórka)",
-            correctAnswer: "Użyteczność to łatwość obsługi, a UX to ogół wrażeń użytkownika."
+            question: "Odpowiedz w 2-3 zdaniach czym różni się użyteczność (usability) od UX. Podaj przykład znanej Ci aplikacji (desktop, WEB, mobile), która ma good usability oraz bad UX. Jeżeli nie znasz takowej, to spróbuj wymyślić taki przykład.",
+            correctAnswer: "Użyteczność to łatwość obsługi, a UX to ogół wrażeń użytkownika." // Kolejna powtórka - pytanie otwarte
         },
         {
             id: 30,
@@ -392,30 +408,38 @@
                 "zakończenie pobierania pliku",
                 "Wybór elementu menu"
             ],
-            correctAnswer: ["Przesunięcie Slidera", "Wybór elementu menu"]
+            correctAnswer: [
+                "Przesunięcie Slidera",
+                "Wybór elementu menu"
+            ] // Wyjątek, odświeżenie i pobieranie to zdarzenia działające w tle lub inicjowane przez system/wątki
         },
         {
             id: 31,
             type: "single",
             question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Aplikacje natywne zazwyczaj są szybsze niż aplikacje webowe odpalane w przeglądarce mobilnej
         },
         {
             id: 32,
             type: "single",
             question: "Okienko dialogowe w PyQT do wyboru plików lub katalogów definiujemy klasą",
-            options: ["QFileDialog", "QOpenFile", "QOpenFile", "QFilePicker"],
+            options: [
+                "QFileDialog",
+                "QOpenFile",
+                "QFileChooser",
+                "QFilePicker"
+            ],
             correctAnswer: "QFileDialog"
         },
         {
             id: 33,
             type: "single",
-            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych. (Powtórka)",
+            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Powtórka z poprzedniej partii
         },
-        {
+      {
             id: 34,
             type: "single",
             question: "Zgodnie z zasadami dostępności (np. WCAG), interfejs powinien być możliwy do obsługi różnymi metodami wejścia (np. klawiaturą).",
@@ -425,7 +449,7 @@
         {
             id: 35,
             type: "multiple",
-            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena (Powtórka)",
+            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena",
             options: [
                 "Zadbaj o pomoc i dokumentację aplikacji",
                 "Zachowaj zgodność pomiędzy projektem technicznym a jego implementacją",
@@ -440,33 +464,38 @@
                 "Zapobiegaj błędom działania aplikacji.",
                 "Daj użytkownikowi pełną kontrolę korzystania z interfejsu",
                 "Pokazuj status systemu"
-            ]
+            ] // To pytanie wystąpiło już wcześniej, ale opcje mogły być w innej kolejności
         },
         {
             id: 36,
             type: "single",
-            question: "Dobry komunikat w przypadku zaistnienia błędu powinien (Powtórka)",
+            question: "Dobry komunikat w przypadku zaistnienia błędu powinien",
             options: [
                 "Być krótki i techniczny",
                 "Przeprosić za zaistniałą sytuację.",
                 "Być zrozumiały i sugerować rozwiązanie",
                 "Sugerować kontakt z technikiem / adminem"
             ],
-            correctAnswer: "Być zrozumiały i sugerować rozwiązanie"
+            correctAnswer: "Być zrozumiały i sugerować rozwiązanie" // Również powtórka
         },
         {
             id: 37,
             type: "single",
             question: "Ikony w interfejsie powinny być trudne do interpretacji, aby wymagały nauki systemu.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Zdecydowanie fałsz, ikony powinny być intuicyjne i opierać się na znanych wzorcach
         },
         {
             id: 38,
             type: "single",
-            question: "Lista rozwijana z możliwością wstawienia nowego elementu w PyQT jest zdefiniowana w klasie",
-            options: ["QListBox", "QDropList", "QChoiceBox", "QComboBox"],
-            correctAnswer: "QComboBox"
+            question: "Lista rozwijana z możliwością wstawienia nowego elementu w PyQT jest zdefiniowana w klasie (zaznacz jeden element)",
+            options: [
+                "QListBox",
+                "QDropList",
+                "QChoiceBox",
+                "QComboBox"
+            ],
+            correctAnswer: "QComboBox" // Aby można było dodawać elementy, zwykle ustawia się metodę setEditable(True)
         },
         {
             id: 39,
@@ -486,19 +515,19 @@
             id: 41,
             type: "open",
             question: "W pewnej aplikacji okno oznaczone jako \"Okno 2 1\" porusza się tylko w obszarze okna \"Okno 1\", nie może wyjechać poza jego obrys. Okno to nie blokuje okna \"Okno 1\". Jak nazywa się ten typ okna?",
-            correctAnswer: "MDI"
+            correctAnswer: "MDI" // Możesz tu ewentualnie zmienić na "okno potomne MDI" (MDI child), w zależności od tego, jak dokładnie brzmiała definicja na wykładach.
         },
         {
             id: 42,
             type: "open",
-            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien. Jak nazywa się ten typ interfejsu użytkownika? (Wszystko w oknie podrzędnym, wspólny toolbar i menu)",
-            correctAnswer: "MDI"
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Skrót od Multiple Document Interface
         },
-        {
+      {
             id: 43,
             type: "open",
-            question: "Technikę CSS pozwalającą na odczytanie rozmiaru oraz typu wyświetlacza nazywamy... (Powtórka)",
-            correctAnswer: "Media Queries"
+            question: "Technikę CSS pozwalającą na odczytanie rozmiaru oraz typu wyświetlacza nazywamy ...",
+            correctAnswer: "Media Queries" // Powtórka
         },
         {
             id: 44,
@@ -510,48 +539,53 @@
         {
             id: 45,
             type: "open",
-            question: "Czym jest metoda Design Thinking? Po jednym zdaniu opisz: cel i wynik, zespół, fazy projektu.",
-            correctAnswer: "Celem jest tworzenie innowacyjnych rozwiązań, zespół jest interdyscyplinarny, a fazy to: empatia, definiowanie, ideacja, prototypowanie i testowanie."
+            question: "Czym jest metoda Design Thinking? Po jednym zdaniu opisz:\n- jaki jest cel jej zastosowania i jaki produkt jest jej wynikiem\n- jak buduje się zespół i jak on pracuje\n- jakie najczęściej występują fazy projektu",
+            correctAnswer: "Celem jest tworzenie innowacyjnych rozwiązań, zespół jest interdyscyplinarny, a fazy to: empatia, definiowanie, ideacja, prototypowanie i testowanie." // Pytanie wysoce opisowe
         },
         {
             id: 46,
             type: "single",
             question: "Użytkownik odruchowo szuka menu w prawej części strony WWW",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Użytkownicy z naszej strefy kulturowej najczęściej szukają nawigacji na górze lub po lewej stronie (wzorce F i Z).
         },
         {
             id: 47,
             type: "single",
-            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna (Powtórka)",
+            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 48,
             type: "single",
-            question: "Przyciski ikony cofania i ponawiania (undo/redo) często występują w aplikacjach okienkowych. Jaką heurystykę Nielsena zapewniają?",
+            question: "Takie przyciski [ikony cofania i ponawiania] często występują w aplikacjach okienkowych. Jaką heurystykę Nielsena zapewniają?",
             options: [
                 "Poprawiają zgodność systemu z rzeczywistością",
                 "Są przykładem umiaru i estetyki",
                 "Zapewniają widoczność statusu",
                 "Dają użytkownikowi kontrolę"
             ],
-            correctAnswer: "Dają użytkownikowi kontrolę"
+            correctAnswer: "Dają użytkownikowi kontrolę" // Heurystyka nr 3: Kontrola i swoboda użytkownika (tzw. "wyjście awaryjne").
         },
         {
             id: 49,
             type: "single",
-            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach. (Powtórka 3)",
+            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 50,
             type: "single",
-            question: "Obraz w okienku w PyQt wstawiamy używając klasy",
-            options: ["QPicture", "QPixmap", "QIconView", "QImageBox"],
-            correctAnswer: "QPixmap"
+            question: "Obraz w okienku w PyQt wstawiamy używając klasy (zaznacz jeden element)",
+            options: [
+                "QPicture",
+                "QPixmap",
+                "QIconView",
+                "QImageBox"
+            ],
+            correctAnswer: "QPixmap" // Choć często "wyświetla" się go potem za pomocą QLabel, sama klasa obrazu to najczęściej QPixmap.
         },
         {
             id: 51,
@@ -564,30 +598,39 @@
                 "Przesunięcie slidera",
                 "Naciśnięcie klawisza"
             ],
-            correctAnswer: ["Wciśnięcie przycisku", "Przesunięcie slidera"]
+            correctAnswer: [
+                "Wciśnięcie przycisku",
+                "Przesunięcie slidera"
+            ] // Pozostałe opcje to zdarzenia niskopoziomowe/fizyczne.
         },
         {
             id: 52,
             type: "single",
-            question: "Pomimo faktu, że nowoczesne urządzenia mobilne mają bardzo dobre wyświetlacze, projektując aplikację mobilną należy ograniczyć liczbę kolorów i efektów graficznych (Powtórka)",
+            question: "Pomimo faktu, że nowoczesne urządzenia mobilne mają bardzo dobre wyświetlacze, projektując aplikację mobilną należy ograniczyć liczbę kolorów i efektów graficznych",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
-        {
+      {
             id: 53,
             type: "single",
-            question: "Jaką heurystykę Nielsena przedstawia okienko z paskiem postępu archiwizacji (np. WinRAR)?",
-            options: ["Minimalizm", "Spójność interfejsu", "Widoczność statusu systemu", "Zapobieganie błędom"],
-            correctAnswer: "Widoczność statusu systemu"
+            question: "Jaką heurystykę Nielsena przedstawia poniższy obrazek? [Pasek postępu/archiwizacji]",
+            options: [
+                "Minimalizm",
+                "Spójność interfejsu",
+                "Widoczność statusu systemu",
+                "Zapobieganie błędom"
+            ],
+            correctAnswer: "Widoczność statusu systemu" 
         },
         {
             id: 54,
             type: "multiple",
-            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena (Powtórka 4)",
+            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena",
             options: [
                 "Zapewnij atrakcyjną i bogatą szatę graficzną.",
                 "Pokazuj status systemu",
                 "Zachowaj zgodność pomiędzy projektem technicznym a jego implementacją",
+                "Zachęć użytkownika do zapamiętania treści podanych w trakcie dialogu",
                 "Zadbaj o pomoc i dokumentację aplikacji",
                 "Zapobiegaj błędom działania aplikacji.",
                 "Daj użytkownikowi pełną kontrolę korzystania z interfejsu"
@@ -597,48 +640,53 @@
                 "Zadbaj o pomoc i dokumentację aplikacji",
                 "Zapobiegaj błędom działania aplikacji.",
                 "Daj użytkownikowi pełną kontrolę korzystania z interfejsu"
-            ]
+            ] // Ponowna powtórka, inna kolejność
         },
         {
             id: 55,
             type: "single",
-            question: "Pole tekstowe edycyjne (jedna linia) w PyQT jest zdefiniowane w klasie",
-            options: ["QTextArea", "QLineEdit", "JTextField", "QEditBox"],
+            question: "Pole tekstowe edycyjne (jedna linia) w PyQT jest zdefiniowane w klasie (zaznacz jeden element)",
+            options: [
+                "QTextArea",
+                "QLineEdit",
+                "JTextField",
+                "QEditBox"
+            ],
             correctAnswer: "QLineEdit"
         },
         {
             id: 56,
             type: "single",
-            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych. (Powtórka 4)",
+            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Powtórka
         },
         {
             id: 57,
             type: "open",
-            question: "Sposób tworzenia stron WWW zmieniających Layout dla urządzeń o różnych wyświetlaczach nazywamy... (Powtórka)",
-            correctAnswer: "Responsive Web Design"
+            question: "Sposób tworzenia stron WWW zmieniających Layout dla urządzeń o różnych wyświetlaczach (np. mobilnych) nazywamy ogólnie",
+            correctAnswer: "Responsive Web Design" // Powtórka
         },
         {
             id: 58,
             type: "single",
-            question: "Umiar w stosowaniu grafiki i animacji sprzyja lepszemu odbiorowi treści przez użytkownika. (Powtórka)",
+            question: "Umiar w stosowaniu grafiki i animacji sprzyja lepszemu odbiorowi treści przez użytkownika.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 59,
             type: "single",
-            question: "Tekst powinien mieć odpowiedni kontrast względem tła dla zapewnienia czytelności. (Powtórka)",
+            question: "Tekst powinien mieć odpowiedni kontrast względem tła dla zapewnienia czytelności.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 60,
             type: "single",
-            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna (Powtórka 3)",
+            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 61,
@@ -650,7 +698,7 @@
         {
             id: 62,
             type: "multiple",
-            question: "Przykładami zdarzeń semantycznych są: (Odwrócona kolejność)",
+            question: "Przykładami zdarzeń semantycznych są:",
             options: [
                 "kliknięcie lewym przyciskiem myszy",
                 "Naciśnięcie klawisza",
@@ -658,76 +706,92 @@
                 "Przesunięcie slidera",
                 "Wciśnięcie przycisku"
             ],
-            correctAnswer: ["Przesunięcie slidera", "Wciśnięcie przycisku"]
+            correctAnswer: [
+                "Przesunięcie slidera",
+                "Wciśnięcie przycisku"
+            ] // Powtórka z odwróconą kolejnością opcji
         },
-        {
+      {
             id: 63,
             type: "single",
-            question: "Zgodnie z zasadami dostępności (np. WCAG), interfejs powinien być możliwy do obsługi różnymi metodami wejścia. (Powtórka)",
+            question: "Zgodnie z zasadami dostępności (np. WCAG), interfejs powinien być możliwy do obsługi różnymi metodami wejścia (np. klawiaturą).",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Powtórka
         },
         {
             id: 64,
             type: "single",
             question: "Zbyt duża liczba kolorów na stronie zwiększa jej czytelność.",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Fałsz"
+            correctAnswer: "Fałsz" // Nadmiar kolorów wprowadza chaos i obniża czytelność
         },
         {
             id: 65,
             type: "multiple",
-            question: "W procesie projektowania metodą podwójnego diamentu obowiązują 4 etapy (Powtórka)",
-            options: ["discover", "develop", "divide", "deliver", "declare", "define"],
-            correctAnswer: ["discover", "define", "develop", "deliver"]
+            question: "W procesie projektowania metodą podwójnego diamentu obowiązują 4 etapy",
+            options: [
+                "discover",
+                "develop",
+                "divide",
+                "deliver",
+                "declare",
+                "define",
+                "describe"
+            ],
+            correctAnswer: [
+                "discover",
+                "define",
+                "develop",
+                "deliver"
+            ] // Powtórka
         },
         {
             id: 66,
             type: "open",
-            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [kopie okien notatnika].",
-            correctAnswer: "SDI"
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [zdjęcie kilku okien Notatnika z własnym menu].",
+            correctAnswer: "SDI" // Powtórka
         },
         {
             id: 67,
             type: "open",
-            question: "Technika projektowania GUI w której wygląd, kolorystyka dopasowują się do wieku użytkownika to... (Powtórka)",
-            correctAnswer: "Age-responsive design"
+            question: "Technika projektowania GUI w której wygląd, kolorystyka, typografia i zastosowane elementy nawigacyjne dopasowują się do wieku użytkownika to ...",
+            correctAnswer: "Age-responsive design" // Powtórka
         },
         {
             id: 68,
             type: "open",
-            question: "Użyteczność wg Nielsena to suma pięciu cech oprogramowania... (Powtórka)",
-            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja"
+            question: "Użyteczność wg Nielsena to suma pięciu cech oprogramowania. Wymień je podając po jednym przykładzie pozytywnym z dowolnej aplikacji",
+            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja" // Powtórka
         },
         {
             id: 69,
             type: "single",
             question: "Tworząc layout wielkość fotografii dopasowujemy do jego formatu",
             options: ["Prawda", "Fałsz"],
-            correctAnswer: "Prawda"
+            correctAnswer: "Prawda" // Zgodnie z zasadami RWD i gridu, element dostosowuje się do pojemnika/formatu layoutu.
         },
         {
             id: 70,
             type: "single",
-            question: "Dlaczego informacja zwrotna jest ważna? [konsola sfc /scannow system repair pending]",
+            question: "Dlaczego informacja zwrotna jest ważna? [zdjęcie konsoli z prośbą o restart]",
             options: [
                 "Użytkownik wie, że system nie zawiesił się, lecz działa",
                 "Odciąża pamięć użytkownia",
                 "Jest to mechanizm ochrony przed błędami",
                 "Poprawia doznania użytkownika (UX)"
             ],
-            correctAnswer: "Użytkownik wie, że system nie zawiesił się, lecz działa"
+            correctAnswer: "Użytkownik wie, że system nie zawiesił się, lecz działa" // Powtórka
         },
         {
             id: 71,
             type: "open",
-            question: "W pewnej aplikacji okno 'Okno 1' jest rodzicem 'Okno 2 1'. 'Okno 2 1' można bez problemu wysuwać poza obszar 'Okno 1'. Jak nazywa się ten typ okna?",
-            correctAnswer: "niemodalne"
+            question: "W pewnej aplikacji okno oznaczone jako 'Okno 1' jest rodzicem okna 'Okno 2 1'. 'Okno 2 1' można bez problemu wysuwać poza obszar okna 'Okno 1'. Jak nazywa się ten typ okna 'Okno 2 1'?",
+            correctAnswer: "niemodalne" // Lub SDI / SDI child. Słowo 'niemodalne' jest najbezpieczniejsze, jeśli pozwala na klikanie pod spodem, w przeciwieństwie do zablokowanego MDI.
         },
         {
             id: 72,
             type: "multiple",
-            question: "Przykładami zdarzeń semantycznych są (zaznaczone na teście):",
+            question: "Przykładami zdarzeń semantycznych są:\nWybierz wszystkie poprawne:",
             options: [
                 "zmiana rozmiaru okna",
                 "naciśnięcie + puszczenie klawisza",
@@ -735,30 +799,33 @@
                 "przeciągnięcie myszą",
                 "sortowanie zawartości listy"
             ],
-            correctAnswer: ["edycja komórki tabeli", "sortowanie zawartości listy"]
+            correctAnswer: [
+                "edycja komórki tabeli",
+                "sortowanie zawartości listy"
+            ] 
         },
-        {
+      {
             id: 73,
             type: "open",
-            question: "W pewnej aplikacji otwarcie nowego okna powoduje powielenie menu i kopię okna pierwotnego (3 okna Notatnika). Skrót:",
-            correctAnswer: "SDI"
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Powtórka
         },
         {
             id: 74,
             type: "open",
-            question: "W pewnej aplikacji każde okno jest podrzędne, a menu i toolbar jest wspólny dla całej aplikacji (4 okna wewnątrz). Skrót:",
-            correctAnswer: "MDI"
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Powtórka
         },
         {
             id: 75,
             type: "open",
-            question: "Okno dialogowe blokuje dostęp do okna głównego i nie pozwala na nim operować, dopóki go nie zamkniemy. Jak nazywa się takie okno?",
-            correctAnswer: "modalne"
+            question: "W pewnej aplikacji oknem głównym \"Demo\" i otwiera ono okno dialogowe \"Wybór z listy\". Okno dialogowe blokuje dostępu do okna \"Demo\" i nie pozwala na nim operować, dopóki go nie zamkniemy. Jak nazywa się takie okno dialogowe?",
+            correctAnswer: "modalne" // Poprzednio mieliśmy okno niemodalne, tu jest klasyczne modalne.
         },
         {
             id: 76,
             type: "multiple",
-            question: "Przykładami zdarzeń semantycznych są (wariant 3):",
+            question: "Przykładami zdarzeń semantycznych są:\nWybierz wszystkie poprawne:",
             options: [
                 "naciśnięcie + puszczenie klawisza",
                 "sortowanie zawartości listy",
@@ -766,12 +833,15 @@
                 "zmiana rozmiaru okna",
                 "przeciągnięcie myszą"
             ],
-            correctAnswer: ["sortowanie zawartości listy", "edycja komórki tabeli"]
+            correctAnswer: [
+                "sortowanie zawartości listy",
+                "edycja komórki tabeli"
+            ] // Powtórka z odwróconą kolejnością
         },
         {
             id: 77,
             type: "multiple",
-            question: "Przykładami zdarzeń pierwszoplanowych są: (wariant 2)",
+            question: "Przykładami zdarzeń pierwszoplanowych są:\nWybierz wszystkie poprawne:",
             options: [
                 "Gest na ekranie wielodotykowym",
                 "Wybranie elementu listy",
@@ -779,12 +849,16 @@
                 "Rozłączenie socketa",
                 "Zakończenie wątku"
             ],
-            correctAnswer: ["Gest na ekranie wielodotykowym", "Wybranie elementu listy", "Wciśnięcie klawisza"]
+            correctAnswer: [
+                "Gest na ekranie wielodotykowym",
+                "Wybranie elementu listy",
+                "Wciśnięcie klawisza"
+            ] // Powtórka
         },
         {
             id: 78,
             type: "multiple",
-            question: "Przykładami zdarzeń pierwszoplanowych są: (wariant 3)",
+            question: "Przykładami zdarzeń pierwszoplanowych są:\nWybierz wszystkie poprawne:",
             options: [
                 "odświeżenie widoku kontrolki lub kontenera",
                 "zakończenie pobierania pliku",
@@ -792,25 +866,10 @@
                 "Wybór elementu menu",
                 "wyjątek"
             ],
-            correctAnswer: ["Przesunięcie Slidera", "Wybór elementu menu"]
-        },
-        {
-            id: 79,
-            type: "open",
-            question: "Okno 'Wybierz' zachowuje się jak na animacji (rozwija się lista w dół z elementami). Jaka to kontrolka?",
-            correctAnswer: "ComboBox"
-        },
-        {
-            id: 80,
-            type: "open",
-            question: "W pewnej aplikacji każdy widok jest oknem podrzędnym, menu i toolbar są wspólne. Typ interfejsu:",
-            correctAnswer: "MDI"
-        },
-        {
-            id: 81,
-            type: "open",
-            question: "W pewnej aplikacji każdy widok ma własne powielone menu i jest kopią okna pierwotnego. Typ interfejsu:",
-            correctAnswer: "SDI"
+            correctAnswer: [
+                "Przesunięcie Slidera",
+                "Wybór elementu menu"
+            ] // Powtórka z innymi dystraktorami
         }
     ];
 
