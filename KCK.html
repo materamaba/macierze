@@ -5,27 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Interaktywny</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1, h2 { text-align: center; color: #2c3e50; }
-        .question-card { border: 1px solid #e0e0e0; background: #fafafa; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        .question-title { font-weight: bold; margin-bottom: 15px; font-size: 1.1em; }
-        .question-image { max-width: 100%; height: auto; margin-bottom: 15px; border-radius: 5px; }
-        .option { margin-bottom: 10px; display: flex; align-items: center; }
-        .option input { margin-right: 10px; }
-        .open-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 1em; }
-        .btn { display: block; width: 100%; background: #3498db; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
-        .btn:hover { background: #2980b9; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #121212; 
+            color: #e0e0e0; 
+            line-height: 1.6; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+            background: #1e1e1e; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+        }
+        h1, h2 { 
+            text-align: center; 
+            color: #ffffff; 
+        }
+        .question-card { 
+            border: 1px solid #333333; 
+            background: #252525; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 8px; 
+        }
+        .question-title { 
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            font-size: 1.1em; 
+            color: #ffffff;
+        }
+        .question-image { 
+            max-width: 100%; 
+            height: auto; 
+            margin-bottom: 15px; 
+            border-radius: 5px; 
+            border: 1px solid #444;
+        }
+        .option { 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .option:hover {
+            background: #2d2d2d;
+        }
+        .option input { 
+            margin-right: 12px; 
+            transform: scale(1.2);
+            accent-color: #3498db; /* Kolor dla radio i checkboxów */
+        }
+        .open-input { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #2d2d2d;
+            border: 1px solid #444444; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 1em; 
+            color: #ffffff;
+            transition: border-color 0.3s;
+        }
+        .open-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .btn { 
+            display: block; 
+            width: 100%; 
+            background: #2980b9; 
+            color: white; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 1.2em; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+            margin-top: 20px; 
+            font-weight: bold;
+        }
+        .btn:hover { 
+            background: #3498db; 
+        }
         
-        /* Wyniki */
-        .result-card { border: 2px solid; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
-        .correct { border-color: #2ecc71; background-color: #e8f8f5; }
-        .incorrect { border-color: #e74c3c; background-color: #fdedec; }
-        .result-details { margin-top: 10px; font-size: 0.95em; }
-        .correct-answer-text { color: #27ae60; font-weight: bold; }
-        .user-answer-text { color: #c0392b; font-weight: bold; }
+        /* Wyniki w wersji Dark Mode */
+        .result-card { 
+            border: 2px solid; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-radius: 8px; 
+            background-color: #1e1e1e;
+        }
+        .correct { 
+            border-color: #2ecc71; 
+            background-color: #142d1f; /* Ciemnozielone tło */
+        }
+        .incorrect { 
+            border-color: #e74c3c; 
+            background-color: #321c1a; /* Ciemnoczerwone tło */
+        }
+        .result-details { 
+            margin-top: 15px; 
+            font-size: 0.95em; 
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+        }
+        .correct-answer-text { 
+            color: #2ecc71; 
+            font-weight: bold; 
+        }
+        .user-answer-text { 
+            color: #e74c3c; 
+            font-weight: bold; 
+        }
         
-        #results-container { display: none; }
+        #results-container { 
+            display: none; 
+        }
+        #score-display {
+            text-align: center;
+            color: #f1c40f; /* Złoty kolor dla wyniku końcowego */
+            font-size: 1.4em;
+            margin-bottom: 25px;
+        }
     </style>
 </head>
 <body>
