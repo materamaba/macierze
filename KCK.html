@@ -48,25 +48,24 @@
 <script>
     // BAZA PYTAŃ - Tutaj będziemy dodawać przetworzone pytania ze zdjęć
     const allQuestions = [
+        
         {
             id: 1,
-            type: "single", // jednokrotnego wyboru
-            question: "Jaka jest stolica Polski?",
-            options: ["Kraków", "Warszawa", "Poznań", "Gdańsk"],
-            correctAnswer: "Warszawa"
+            type: "open",
+            question: "Okno \"Wybierz\" zachowuje się jak na animacji. Jak nazywa się takie zachowanie okna? [rozwijająca się lista w dół z napisem 'Ala ma kota']",
+            correctAnswer: "ComboBox" // W zależności od wykładów można też uznać "lista rozwijana" lub "Drop-down list"
         },
         {
             id: 2,
-            type: "multiple", // wielokrotnego wyboru
-            question: "Które z wymienionych to języki programowania? (Zaznacz wszystkie poprawne)",
-            options: ["Python", "HTML", "JavaScript", "Kalkulator"],
-            correctAnswer: ["Python", "JavaScript"] // Zwróć uwagę na tablicę przy wielokrotnym!
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Znowu MDI
         },
         {
             id: 3,
-            type: "open", // otwarte
-            question: "Ile wynosi 2 + 2 * 2?",
-            correctAnswer: "6"
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Znowu SDI
         },
       {
             id: 4,
@@ -764,24 +763,6 @@
                 "Przesunięcie Slidera",
                 "Wybór elementu menu"
             ] // Powtórka z innymi dystraktorami
-        },
-        {
-            id: 79,
-            type: "open",
-            question: "Okno \"Wybierz\" zachowuje się jak na animacji. Jak nazywa się takie zachowanie okna? [rozwijająca się lista w dół z napisem 'Ala ma kota']",
-            correctAnswer: "ComboBox" // W zależności od wykładów można też uznać "lista rozwijana" lub "Drop-down list"
-        },
-        {
-            id: 80,
-            type: "open",
-            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
-            correctAnswer: "MDI" // Znowu MDI
-        },
-        {
-            id: 81,
-            type: "open",
-            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
-            correctAnswer: "SDI" // Znowu SDI
         }
         // Kolejne pytania wkleimy tutaj
     ];
