@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interaktywny</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #2c3e50; }
+        .question-card { border: 1px solid #e0e0e0; background: #fafafa; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .question-title { font-weight: bold; margin-bottom: 15px; font-size: 1.1em; }
+        .question-image { max-width: 100%; height: auto; margin-bottom: 15px; border-radius: 5px; }
+        .option { margin-bottom: 10px; display: flex; align-items: center; }
+        .option input { margin-right: 10px; }
+        .open-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 1em; }
+        .btn { display: block; width: 100%; background: #3498db; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
+        .btn:hover { background: #2980b9; }
+        
+        /* Wyniki */
+        .result-card { border: 2px solid; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        .correct { border-color: #2ecc71; background-color: #e8f8f5; }
+        .incorrect { border-color: #e74c3c; background-color: #fdedec; }
+        .result-details { margin-top: 10px; font-size: 0.95em; }
+        .correct-answer-text { color: #27ae60; font-weight: bold; }
+        .user-answer-text { color: #c0392b; font-weight: bold; }
+        
+        #results-container { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Twój Quiz</h1>
+    
+    <div id="quiz-container">
+        </div>
+    <button id="submit-btn" class="btn" onclick="checkAnswers()">Sprawdź odpowiedzi</button>
+
+    <div id="results-container">
+        <h2>Wyniki Quizu</h2>
+        <h3 id="score-display"></h3>
+        <div id="results-details"></div>
+        <button class="btn" onclick="location.reload()">Spróbuj ponownie</button>
+    </div>
+</div>
+
+<script>
+    // BAZA PYTAŃ - Tutaj będziemy dodawać przetworzone pytania ze zdjęć
+    const allQuestions = [
+        {
+            id: 1,
+            type: "single", // jednokrotnego wyboru
+            question: "Jaka jest stolica Polski?",
+            options: ["Kraków", "Warszawa", "Poznań", "Gdańsk"],
+            correctAnswer: "Warszawa"
+        },
+        {
+            id: 2,
+            type: "multiple", // wielokrotnego wyboru
+            question: "Które z wymienionych to języki programowania? (Zaznacz wszystkie poprawne)",
+            options: ["Python", "HTML", "JavaScript", "Kalkulator"],
+            correctAnswer: ["Python", "JavaScript"] // Zwróć uwagę na tablicę przy wielokrotnym!
+        },
+        {
+            id: 3,
+            type: "open", // otwarte
+            question: "Ile wynosi 2 + 2 * 2?",
+            correctAnswer: "6"
+        },
+      {
+            id: 4,
+            type: "open",
+            question: "Użyteczność wg Nielsena to suma pięciu cech oprogramowania. Wymień je podając po jednym przykładzie pozytywnym z dowolnej aplikacji",
+            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja" // Uwaga: To pytanie opisowe. Skrypt sprawdzi, czy użytkownik wpisał dokładnie to, co tutaj, więc ocenianie otwartych pytań bywa trudne w prostym skrypcie.
+        },
+        {
+            id: 5,
+            type: "open",
+            question: "Sposób tworzenia GUI aplikacji, który daje wrażenie trójwymiarowości, poprzez wprowadzenie półprzezroczystych warstw nazywamy...",
+            correctAnswer: "Glassmorfizm" // Możesz też dodać "Glassmorphism", zależy od tego, jakiej formy wymagano na teście
+        },
+        {
+            id: 6,
+            type: "single",
+            question: "Pomimo faktu, że nowoczesne urządzenia mobilne mają bardzo dobre wyświetlacze, projektując aplikację mobilną należy ograniczyć liczbę kolorów i efektów graficznych",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 7,
+            type: "single",
+            question: "Umiar w stosowaniu grafiki i animacji sprzyja lepszemu odbiorowi treści przez użytkownika.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 8,
+            type: "multiple",
+            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena",
+            options: [
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu",
+                "Zachęć użytkownika do zapamiętania treści podanych w trakcie dialogu",
+                "Zachowaj zgodność pomiędzy projektem technicznym a jego implementacją",
+                "Pokazuj status systemu",
+                "Zapobiegaj błędom działania aplikacji.",
+                "Zapewnij atrakcyjną i bogatą szatę graficzną.",
+                "Zadbaj o pomoc i dokumentację aplikacji"
+            ],
+            correctAnswer: [
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu", 
+                "Pokazuj status systemu", 
+                "Zapobiegaj błędom działania aplikacji.", 
+                "Zadbaj o pomoc i dokumentację aplikacji"
+            ]
+        },
+        {
+            id: 9,
+            type: "single",
+            question: "Widzisz komunikat w konsoli o trwającym procesie i konieczności restartu. Dlaczego informacja zwrotna jest ważna?",
+            options: [
+                "Jest to mechanizm ochrony przed błędami",
+                "Poprawia doznania użytkownika (UX)",
+                "Użytkownik wie, że system nie zawiesił się, lecz działa",
+                "Odciąża pamięć użytkownia"
+            ],
+            correctAnswer: "Użytkownik wie, że system nie zawiesił się, lecz działa"
+        },
+        {
+            id: 10,
+            type: "single",
+            question: "Tekst powinien mieć odpowiedni kontrast względem tła dla zapewnienia czytelności.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 11,
+            type: "single",
+            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 12,
+            type: "single",
+            question: "Flat design charakteryzuje się stosowaniem cieni i gradientów w celu zwiększenia realizmu.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz"
+        },
+        {
+            id: 13,
+            type: "single",
+            question: "Przycisk w PyQT jest zdefiniowany w klasie (zaznacz jeden element)",
+            options: ["QButton", "QPushButton", "QClickButton", "QActionButton"],
+            correctAnswer: "QPushButton"
+        },
+      {
+            id: 14,
+            type: "single",
+            question: "Nawigacja w aplikacji powinna być ukryta, aby uprościć interfejs.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Choć hamburger menu ukrywa nawigację, generalnie ukrywanie jej kosztem użyteczności to zła praktyka
+        },
+        {
+            id: 15,
+            type: "open",
+            question: "W pewnej aplikacji oknem głównym jest okno \"Okno\" i otwiera ono okno dialogowe \"Dialog\". Okno dialogowe \"Dialog\" nie blokuje dostępu do okna \"Okno\" chociaż jest jego dzieckiem - każde z nich można łapać i przeciągać. Jak nazywa się takie okno dialogowe?",
+            correctAnswer: "niemodalne" // non-modal
+        },
+        {
+            id: 16,
+            type: "single",
+            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // One-page to koszmar dla bardzo rozbudowanych systemów informacyjnych
+        },
+        {
+            id: 17,
+            type: "open",
+            question: "Sposób tworzenia stron WWW zmieniających Layout dla urządzeń o różnych wyświetlaczach (np. mobilnych) nazywamy ogólnie",
+            correctAnswer: "Responsive Web Design" // Opcjonalnie wpisz "RWD"
+        },
+        {
+            id: 18,
+            type: "multiple",
+            question: "Przykładami zdarzeń pierwszoplanowych są:",
+            options: [
+                "Gest na ekranie wielodotykowym",
+                "Wciśnięcie klawisza",
+                "Rozłączenie socketa",
+                "Wybranie elementu listy",
+                "Zakończenie wątku"
+            ],
+            correctAnswer: [
+                "Gest na ekranie wielodotykowym",
+                "Wciśnięcie klawisza",
+                "Wybranie elementu listy"
+            ] // Rozłączenie socketa i zakończenie wątku to zdarzenia w tle
+        },
+        {
+            id: 19,
+            type: "open",
+            question: "Odpowiedz w 2-3 zdaniach czym różni się użyteczność (usability) od UX. Podaj przykład znanej Ci aplikacji (desktop, WEB, mobile), która ma bad usability oraz good UX. Uzasadnij, dlaczego. Jeżeli nie znasz takowej, to spróbuj wymyślić taki przykład.",
+            correctAnswer: "Użyteczność to funkcjonalność i łatwość obsługi, a UX to całościowe wrażenie i emocje." // Uzupełnij to własnym przykładem, to typowe zadanie na pisanie eseju
+        },
+        {
+            id: 20,
+            type: "single",
+            question: "Poziomy suwak do wyboru wartości jest definiowany w PyQt klasą",
+            options: [
+                "QHorizontalBar",
+                "QSlider",
+                "QTrackBar",
+                "QScrollBar"
+            ],
+            correctAnswer: "QSlider"
+        },
+        {
+            id: 21,
+            type: "single",
+            question: "Dobry komunikat w przypadku zaistnienia błędu powinien",
+            options: [
+                "Być krótki i techniczny",
+                "Być zrozumiały i sugerować rozwiązanie",
+                "Przeprosić za zaistniałą sytuację.",
+                "Sugerować kontakt z technikiem / adminem"
+            ],
+            correctAnswer: "Być zrozumiały i sugerować rozwiązanie"
+        },
+        {
+            id: 22,
+            type: "single",
+            question: "Tworząc aplikację mobilną musimy w pierwszej kolejności uwzględnić mechanizm nawigacji a dopiero później funkcjonalność (content)",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Zasada "Content is King" - treść jest najważniejsza, to pod nią budujemy nawigację
+        },
+        {
+            id: 23,
+            type: "multiple",
+            question: "W procesie projektowania metodą podwójnego diamentu obowiązują 4 etapy",
+            options: [
+                "describe",
+                "declare",
+                "define",
+                "divide",
+                "deliver",
+                "develop",
+                "discover"
+            ],
+            correctAnswer: [
+                "discover",
+                "define",
+                "develop",
+                "deliver"
+            ]
+        },
+      {
+            id: 24,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Single Document Interface.
+        },
+        {
+            id: 25,
+            type: "open",
+            question: "W pewnej aplikacji oknem głównym jest okno \"Okno\" i otwiera ono okno dialogowe \"Dialog\". Okno dialogowe \"Dialog\" nie blokuje dostępu do okna \"Okno\" chociaż jest jego dzieckiem - każde z nich można łapać i przeciągać. Jak nazywa się takie okno dialogowe?",
+            correctAnswer: "niemodalne" // Powtórka z poprzedniej partii
+        },
+        {
+            id: 26,
+            type: "single",
+            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka z poprzedniej partii
+        },
+        {
+            id: 27,
+            type: "open",
+            question: "Technika projektowania GUI w której wygląd, kolorystyka, typografia i zastosowane elementy nawigacyjne dopasowują się do wieku użytkownika to ...",
+            correctAnswer: "Age-responsive design" // Można też użyć polskiego: "projektowanie responsywne ze względu na wiek"
+        },
+        {
+            id: 28,
+            type: "open",
+            question: "Technikę CSS pozwalającą na odczytanie rozmiaru oraz typu wyświetlacza nazywamy ...",
+            correctAnswer: "Media Queries" // Można wpisać też "zapytania o media"
+        },
+        {
+            id: 29,
+            type: "open",
+            question: "Odpowiedz w 2-3 zdaniach czym różni się użyteczność (usability) od UX. Podaj przykład znanej Ci aplikacji (desktop, WEB, mobile), która ma good usability oraz bad UX. Jeżeli nie znasz takowej, to spróbuj wymyślić taki przykład.",
+            correctAnswer: "Użyteczność to łatwość obsługi, a UX to ogół wrażeń użytkownika." // Kolejna powtórka - pytanie otwarte
+        },
+        {
+            id: 30,
+            type: "multiple",
+            question: "Przykładami zdarzeń pierwszoplanowych są:",
+            options: [
+                "Przesunięcie Slidera",
+                "wyjątek",
+                "odświeżenie widoku kontrolki lub kontenera",
+                "zakończenie pobierania pliku",
+                "Wybór elementu menu"
+            ],
+            correctAnswer: [
+                "Przesunięcie Slidera",
+                "Wybór elementu menu"
+            ] // Wyjątek, odświeżenie i pobieranie to zdarzenia działające w tle lub inicjowane przez system/wątki
+        },
+        {
+            id: 31,
+            type: "single",
+            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Aplikacje natywne zazwyczaj są szybsze niż aplikacje webowe odpalane w przeglądarce mobilnej
+        },
+        {
+            id: 32,
+            type: "single",
+            question: "Okienko dialogowe w PyQT do wyboru plików lub katalogów definiujemy klasą",
+            options: [
+                "QFileDialog",
+                "QOpenFile",
+                "QFileChooser",
+                "QFilePicker"
+            ],
+            correctAnswer: "QFileDialog"
+        },
+        {
+            id: 33,
+            type: "single",
+            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Powtórka z poprzedniej partii
+        },
+      {
+            id: 34,
+            type: "single",
+            question: "Zgodnie z zasadami dostępności (np. WCAG), interfejs powinien być możliwy do obsługi różnymi metodami wejścia (np. klawiaturą).",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 35,
+            type: "multiple",
+            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena",
+            options: [
+                "Zadbaj o pomoc i dokumentację aplikacji",
+                "Zachowaj zgodność pomiędzy projektem technicznym a jego implementacją",
+                "Zachęć użytkownika do zapamiętania treści podanych w trakcie dialogu",
+                "Zapewnij atrakcyjną i bogatą szatę graficzną.",
+                "Zapobiegaj błędom działania aplikacji.",
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu",
+                "Pokazuj status systemu"
+            ],
+            correctAnswer: [
+                "Zadbaj o pomoc i dokumentację aplikacji",
+                "Zapobiegaj błędom działania aplikacji.",
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu",
+                "Pokazuj status systemu"
+            ] // To pytanie wystąpiło już wcześniej, ale opcje mogły być w innej kolejności
+        },
+        {
+            id: 36,
+            type: "single",
+            question: "Dobry komunikat w przypadku zaistnienia błędu powinien",
+            options: [
+                "Być krótki i techniczny",
+                "Przeprosić za zaistniałą sytuację.",
+                "Być zrozumiały i sugerować rozwiązanie",
+                "Sugerować kontakt z technikiem / adminem"
+            ],
+            correctAnswer: "Być zrozumiały i sugerować rozwiązanie" // Również powtórka
+        },
+        {
+            id: 37,
+            type: "single",
+            question: "Ikony w interfejsie powinny być trudne do interpretacji, aby wymagały nauki systemu.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Zdecydowanie fałsz, ikony powinny być intuicyjne i opierać się na znanych wzorcach
+        },
+        {
+            id: 38,
+            type: "single",
+            question: "Lista rozwijana z możliwością wstawienia nowego elementu w PyQT jest zdefiniowana w klasie (zaznacz jeden element)",
+            options: [
+                "QListBox",
+                "QDropList",
+                "QChoiceBox",
+                "QComboBox"
+            ],
+            correctAnswer: "QComboBox" // Aby można było dodawać elementy, zwykle ustawia się metodę setEditable(True)
+        },
+        {
+            id: 39,
+            type: "single",
+            question: "Responsive Web Design polega na dostosowaniu interfejsu do różnych rozmiarów ekranów.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 40,
+            type: "single",
+            question: "Z jednej aplikacji korzystam czekając na przystanku, inną wykorzystuję podczas jazdy rowerem. Oznacza to, że mają one różny kontekst użycia.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 41,
+            type: "open",
+            question: "W pewnej aplikacji okno oznaczone jako \"Okno 2 1\" porusza się tylko w obszarze okna \"Okno 1\", nie może wyjechać poza jego obrys. Okno to nie blokuje okna \"Okno 1\". Jak nazywa się ten typ okna?",
+            correctAnswer: "MDI" // Możesz tu ewentualnie zmienić na "okno potomne MDI" (MDI child), w zależności od tego, jak dokładnie brzmiała definicja na wykładach.
+        },
+        {
+            id: 42,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Skrót od Multiple Document Interface
+        },
+      {
+            id: 43,
+            type: "open",
+            question: "Technikę CSS pozwalającą na odczytanie rozmiaru oraz typu wyświetlacza nazywamy ...",
+            correctAnswer: "Media Queries" // Powtórka
+        },
+        {
+            id: 44,
+            type: "single",
+            question: "Nawigacja na stronach WWW to system zaprojektowany dla efektywnego przeglądania treści witryny WWW",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 45,
+            type: "open",
+            question: "Czym jest metoda Design Thinking? Po jednym zdaniu opisz:\n- jaki jest cel jej zastosowania i jaki produkt jest jej wynikiem\n- jak buduje się zespół i jak on pracuje\n- jakie najczęściej występują fazy projektu",
+            correctAnswer: "Celem jest tworzenie innowacyjnych rozwiązań, zespół jest interdyscyplinarny, a fazy to: empatia, definiowanie, ideacja, prototypowanie i testowanie." // Pytanie wysoce opisowe
+        },
+        {
+            id: 46,
+            type: "single",
+            question: "Użytkownik odruchowo szuka menu w prawej części strony WWW",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Użytkownicy z naszej strefy kulturowej najczęściej szukają nawigacji na górze lub po lewej stronie (wzorce F i Z).
+        },
+        {
+            id: 47,
+            type: "single",
+            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 48,
+            type: "single",
+            question: "Takie przyciski [ikony cofania i ponawiania] często występują w aplikacjach okienkowych. Jaką heurystykę Nielsena zapewniają?",
+            options: [
+                "Poprawiają zgodność systemu z rzeczywistością",
+                "Są przykładem umiaru i estetyki",
+                "Zapewniają widoczność statusu",
+                "Dają użytkownikowi kontrolę"
+            ],
+            correctAnswer: "Dają użytkownikowi kontrolę" // Heurystyka nr 3: Kontrola i swoboda użytkownika (tzw. "wyjście awaryjne").
+        },
+        {
+            id: 49,
+            type: "single",
+            question: "Hamburger menu jest powszechnie rozpoznawalnym symbolem nawigacji w aplikacjach.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 50,
+            type: "single",
+            question: "Obraz w okienku w PyQt wstawiamy używając klasy (zaznacz jeden element)",
+            options: [
+                "QPicture",
+                "QPixmap",
+                "QIconView",
+                "QImageBox"
+            ],
+            correctAnswer: "QPixmap" // Choć często "wyświetla" się go potem za pomocą QLabel, sama klasa obrazu to najczęściej QPixmap.
+        },
+        {
+            id: 51,
+            type: "multiple",
+            question: "Przykładami zdarzeń semantycznych są:",
+            options: [
+                "Zejście kursora z obiektu",
+                "Wciśnięcie przycisku",
+                "kliknięcie lewym przyciskiem myszy",
+                "Przesunięcie slidera",
+                "Naciśnięcie klawisza"
+            ],
+            correctAnswer: [
+                "Wciśnięcie przycisku",
+                "Przesunięcie slidera"
+            ] // Pozostałe opcje to zdarzenia niskopoziomowe/fizyczne.
+        },
+        {
+            id: 52,
+            type: "single",
+            question: "Pomimo faktu, że nowoczesne urządzenia mobilne mają bardzo dobre wyświetlacze, projektując aplikację mobilną należy ograniczyć liczbę kolorów i efektów graficznych",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+      {
+            id: 53,
+            type: "single",
+            question: "Jaką heurystykę Nielsena przedstawia poniższy obrazek? [Pasek postępu/archiwizacji]",
+            options: [
+                "Minimalizm",
+                "Spójność interfejsu",
+                "Widoczność statusu systemu",
+                "Zapobieganie błędom"
+            ],
+            correctAnswer: "Widoczność statusu systemu" 
+        },
+        {
+            id: 54,
+            type: "multiple",
+            question: "Wśród zdań zaznacz 4, dotyczące Heurystyk Nielsena",
+            options: [
+                "Zapewnij atrakcyjną i bogatą szatę graficzną.",
+                "Pokazuj status systemu",
+                "Zachowaj zgodność pomiędzy projektem technicznym a jego implementacją",
+                "Zachęć użytkownika do zapamiętania treści podanych w trakcie dialogu",
+                "Zadbaj o pomoc i dokumentację aplikacji",
+                "Zapobiegaj błędom działania aplikacji.",
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu"
+            ],
+            correctAnswer: [
+                "Pokazuj status systemu",
+                "Zadbaj o pomoc i dokumentację aplikacji",
+                "Zapobiegaj błędom działania aplikacji.",
+                "Daj użytkownikowi pełną kontrolę korzystania z interfejsu"
+            ] // Ponowna powtórka, inna kolejność
+        },
+        {
+            id: 55,
+            type: "single",
+            question: "Pole tekstowe edycyjne (jedna linia) w PyQT jest zdefiniowane w klasie (zaznacz jeden element)",
+            options: [
+                "QTextArea",
+                "QLineEdit",
+                "JTextField",
+                "QEditBox"
+            ],
+            correctAnswer: "QLineEdit"
+        },
+        {
+            id: 56,
+            type: "single",
+            question: "Strony typu one-page zawsze są najlepszym rozwiązaniem dla dużych systemów informacyjnych.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Powtórka
+        },
+        {
+            id: 57,
+            type: "open",
+            question: "Sposób tworzenia stron WWW zmieniających Layout dla urządzeń o różnych wyświetlaczach (np. mobilnych) nazywamy ogólnie",
+            correctAnswer: "Responsive Web Design" // Powtórka
+        },
+        {
+            id: 58,
+            type: "single",
+            question: "Umiar w stosowaniu grafiki i animacji sprzyja lepszemu odbiorowi treści przez użytkownika.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 59,
+            type: "single",
+            question: "Tekst powinien mieć odpowiedni kontrast względem tła dla zapewnienia czytelności.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 60,
+            type: "single",
+            question: "Aplikacja mobilna działa szybciej niż odpowiadająca jej strona responsywna",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 61,
+            type: "single",
+            question: "Logo aplikacji internetowej powinno znajdować się w lewym górnym rogu zgodnie z powszechnymi konwencjami UI.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda"
+        },
+        {
+            id: 62,
+            type: "multiple",
+            question: "Przykładami zdarzeń semantycznych są:",
+            options: [
+                "kliknięcie lewym przyciskiem myszy",
+                "Naciśnięcie klawisza",
+                "Zejście kursora z obiektu",
+                "Przesunięcie slidera",
+                "Wciśnięcie przycisku"
+            ],
+            correctAnswer: [
+                "Przesunięcie slidera",
+                "Wciśnięcie przycisku"
+            ] // Powtórka z odwróconą kolejnością opcji
+        },
+      {
+            id: 63,
+            type: "single",
+            question: "Zgodnie z zasadami dostępności (np. WCAG), interfejs powinien być możliwy do obsługi różnymi metodami wejścia (np. klawiaturą).",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Powtórka
+        },
+        {
+            id: 64,
+            type: "single",
+            question: "Zbyt duża liczba kolorów na stronie zwiększa jej czytelność.",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Fałsz" // Nadmiar kolorów wprowadza chaos i obniża czytelność
+        },
+        {
+            id: 65,
+            type: "multiple",
+            question: "W procesie projektowania metodą podwójnego diamentu obowiązują 4 etapy",
+            options: [
+                "discover",
+                "develop",
+                "divide",
+                "deliver",
+                "declare",
+                "define",
+                "describe"
+            ],
+            correctAnswer: [
+                "discover",
+                "define",
+                "develop",
+                "deliver"
+            ] // Powtórka
+        },
+        {
+            id: 66,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [zdjęcie kilku okien Notatnika z własnym menu].",
+            correctAnswer: "SDI" // Powtórka
+        },
+        {
+            id: 67,
+            type: "open",
+            question: "Technika projektowania GUI w której wygląd, kolorystyka, typografia i zastosowane elementy nawigacyjne dopasowują się do wieku użytkownika to ...",
+            correctAnswer: "Age-responsive design" // Powtórka
+        },
+        {
+            id: 68,
+            type: "open",
+            question: "Użyteczność wg Nielsena to suma pięciu cech oprogramowania. Wymień je podając po jednym przykładzie pozytywnym z dowolnej aplikacji",
+            correctAnswer: "Łatwość uczenia się, Efektywność, Zapamiętywalność, Zapobieganie błędom, Satysfakcja" // Powtórka
+        },
+        {
+            id: 69,
+            type: "single",
+            question: "Tworząc layout wielkość fotografii dopasowujemy do jego formatu",
+            options: ["Prawda", "Fałsz"],
+            correctAnswer: "Prawda" // Zgodnie z zasadami RWD i gridu, element dostosowuje się do pojemnika/formatu layoutu.
+        },
+        {
+            id: 70,
+            type: "single",
+            question: "Dlaczego informacja zwrotna jest ważna? [zdjęcie konsoli z prośbą o restart]",
+            options: [
+                "Użytkownik wie, że system nie zawiesił się, lecz działa",
+                "Odciąża pamięć użytkownia",
+                "Jest to mechanizm ochrony przed błędami",
+                "Poprawia doznania użytkownika (UX)"
+            ],
+            correctAnswer: "Użytkownik wie, że system nie zawiesił się, lecz działa" // Powtórka
+        },
+        {
+            id: 71,
+            type: "open",
+            question: "W pewnej aplikacji okno oznaczone jako 'Okno 1' jest rodzicem okna 'Okno 2 1'. 'Okno 2 1' można bez problemu wysuwać poza obszar okna 'Okno 1'. Jak nazywa się ten typ okna 'Okno 2 1'?",
+            correctAnswer: "niemodalne" // Lub SDI / SDI child. Słowo 'niemodalne' jest najbezpieczniejsze, jeśli pozwala na klikanie pod spodem, w przeciwieństwie do zablokowanego MDI.
+        },
+        {
+            id: 72,
+            type: "multiple",
+            question: "Przykładami zdarzeń semantycznych są:\nWybierz wszystkie poprawne:",
+            options: [
+                "zmiana rozmiaru okna",
+                "naciśnięcie + puszczenie klawisza",
+                "edycja komórki tabeli",
+                "przeciągnięcie myszą",
+                "sortowanie zawartości listy"
+            ],
+            correctAnswer: [
+                "edycja komórki tabeli",
+                "sortowanie zawartości listy"
+            ] 
+        },
+      {
+            id: 73,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Powtórka
+        },
+        {
+            id: 74,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Powtórka
+        },
+        {
+            id: 75,
+            type: "open",
+            question: "W pewnej aplikacji oknem głównym \"Demo\" i otwiera ono okno dialogowe \"Wybór z listy\". Okno dialogowe blokuje dostępu do okna \"Demo\" i nie pozwala na nim operować, dopóki go nie zamkniemy. Jak nazywa się takie okno dialogowe?",
+            correctAnswer: "modalne" // Poprzednio mieliśmy okno niemodalne, tu jest klasyczne modalne.
+        },
+        {
+            id: 76,
+            type: "multiple",
+            question: "Przykładami zdarzeń semantycznych są:\nWybierz wszystkie poprawne:",
+            options: [
+                "naciśnięcie + puszczenie klawisza",
+                "sortowanie zawartości listy",
+                "edycja komórki tabeli",
+                "zmiana rozmiaru okna",
+                "przeciągnięcie myszą"
+            ],
+            correctAnswer: [
+                "sortowanie zawartości listy",
+                "edycja komórki tabeli"
+            ] // Powtórka z odwróconą kolejnością
+        },
+        {
+            id: 77,
+            type: "multiple",
+            question: "Przykładami zdarzeń pierwszoplanowych są:\nWybierz wszystkie poprawne:",
+            options: [
+                "Gest na ekranie wielodotykowym",
+                "Wybranie elementu listy",
+                "Wciśnięcie klawisza",
+                "Rozłączenie socketa",
+                "Zakończenie wątku"
+            ],
+            correctAnswer: [
+                "Gest na ekranie wielodotykowym",
+                "Wybranie elementu listy",
+                "Wciśnięcie klawisza"
+            ] // Powtórka
+        },
+        {
+            id: 78,
+            type: "multiple",
+            question: "Przykładami zdarzeń pierwszoplanowych są:\nWybierz wszystkie poprawne:",
+            options: [
+                "odświeżenie widoku kontrolki lub kontenera",
+                "zakończenie pobierania pliku",
+                "Przesunięcie Slidera",
+                "Wybór elementu menu",
+                "wyjątek"
+            ],
+            correctAnswer: [
+                "Przesunięcie Slidera",
+                "Wybór elementu menu"
+            ] // Powtórka z innymi dystraktorami
+        },
+        {
+            id: 79,
+            type: "open",
+            question: "Okno \"Wybierz\" zachowuje się jak na animacji. Jak nazywa się takie zachowanie okna? [rozwijająca się lista w dół z napisem 'Ala ma kota']",
+            correctAnswer: "ComboBox" // W zależności od wykładów można też uznać "lista rozwijana" lub "Drop-down list"
+        },
+        {
+            id: 80,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [4 okna Child w jednym oknie szarym]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok jest oknem podrzędnym, a menu i ewentualny toolbar jest wspólny dla całej aplikacji)",
+            correctAnswer: "MDI" // Znowu MDI
+        },
+        {
+            id: 81,
+            type: "open",
+            question: "W pewnej aplikacji otwarcie nowego okna (nowego widoku) powoduje, że tworzy się taki układ okien [3 okna Notatnika]. Jak nazywa się ten typ interfejsu użytkownika? (Każdy widok ma powielone menu i jest właściwie kopią okna pierwotnego)",
+            correctAnswer: "SDI" // Znowu SDI
+        }
+        // Kolejne pytania wkleimy tutaj
+    ];
+
+    let currentQuizQuestions = [];
+
+    // Funkcja do losowania pytań
+    function shuffleArray(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Inicjalizacja quizu
+    function initQuiz() {
+        // Losuj maksymalnie 10 pytań
+        const shuffled = shuffleArray([...allQuestions]);
+        currentQuizQuestions = shuffled.slice(0, 10);
+
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+
+        currentQuizQuestions.forEach((q, index) => {
+            let html = `<div class="question-card" id="question-card-${index}">
+                            <div class="question-title">${index + 1}. ${q.question}</div>`;
+            
+            if (q.image) {
+                html += `<img src="${q.image}" class="question-image" alt="Obrazek do pytania">`;
+            }
+
+            if (q.type === 'single') {
+                q.options.forEach(opt => {
+                    html += `<label class="option">
+                                <input type="radio" name="q${index}" value="${opt}"> ${opt}
+                             </label>`;
+                });
+            } else if (q.type === 'multiple') {
+                q.options.forEach(opt => {
+                    html += `<label class="option">
+                                <input type="checkbox" name="q${index}" value="${opt}"> ${opt}
+                             </label>`;
+                });
+            } else if (q.type === 'open') {
+                html += `<input type="text" class="open-input" name="q${index}" placeholder="Wpisz odpowiedź...">`;
+            }
+
+            html += `</div>`;
+            container.innerHTML += html;
+        });
+    }
+
+    // Sprawdzanie odpowiedzi
+    function checkAnswers() {
+        let score = 0;
+        const resultsContainer = document.getElementById('results-details');
+        resultsContainer.innerHTML = '';
+
+        currentQuizQuestions.forEach((q, index) => {
+            let userAnswer = null;
+            let isCorrect = false;
+
+            // Pobieranie odpowiedzi użytkownika i sprawdzanie poprawności
+            if (q.type === 'single') {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                userAnswer = selected ? selected.value : "Brak odpowiedzi";
+                isCorrect = (userAnswer === q.correctAnswer);
+            } 
+            else if (q.type === 'multiple') {
+                const checkedNodes = document.querySelectorAll(`input[name="q${index}"]:checked`);
+                userAnswer = Array.from(checkedNodes).map(node => node.value);
+                
+                // Porównywanie tablic dla wielokrotnego wyboru
+                if (userAnswer.length === 0) {
+                    userAnswer = "Brak odpowiedzi";
+                } else {
+                    const isLengthSame = userAnswer.length === q.correctAnswer.length;
+                    const hasAllElements = q.correctAnswer.every(val => userAnswer.includes(val));
+                    isCorrect = isLengthSame && hasAllElements;
+                }
+            } 
+            else if (q.type === 'open') {
+                const inputVal = document.querySelector(`input[name="q${index}"]`).value.trim();
+                userAnswer = inputVal !== "" ? inputVal : "Brak odpowiedzi";
+                // Tolerancja dla małych/wielkich liter
+                isCorrect = (userAnswer.toLowerCase() === q.correctAnswer.toLowerCase()); 
+            }
+
+            if (isCorrect) score++;
+
+            // Generowanie podsumowania dla danego pytania
+            const statusClass = isCorrect ? 'correct' : 'incorrect';
+            const statusText = isCorrect ? 'Dobrze!' : 'Błąd!';
+            
+            let displayUserAnswer = Array.isArray(userAnswer) ? userAnswer.join(', ') : userAnswer;
+            let displayCorrectAnswer = Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer;
+
+            let resultHtml = `
+                <div class="result-card ${statusClass}">
+                    <strong>${index + 1}. ${q.question}</strong><br>
+                    <span style="display:inline-block; margin-top:5px;">Wynik: ${statusText}</span>
+                    <div class="result-details">
+                        Twoja odpowiedź: <span class="${isCorrect ? 'correct-answer-text' : 'user-answer-text'}">${displayUserAnswer}</span><br>
+                        ${!isCorrect ? `Poprawna odpowiedź: <span class="correct-answer-text">${displayCorrectAnswer}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            resultsContainer.innerHTML += resultHtml;
+        });
+
+        // Ukrycie quizu i pokazanie wyników
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('results-container').style.display = 'block';
+        document.getElementById('score-display').innerText = `Twój wynik: ${score} / ${currentQuizQuestions.length}`;
+        window.scrollTo(0, 0);
+    }
+
+    // Uruchom na starcie
+    window.onload = initQuiz;
+</script>
+
+</body>
+</html>
