@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Zadań z Rozwiązaniami - Systemy Wbudowane</title>
+    <style>
+        body { font-family: 'Consolas', 'Courier New', monospace; background-color: #2c3e50; color: #ecf0f1; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #34495e; padding: 30px; border-radius: 8px; box-shadow: 0 8px 15px rgba(0,0,0,0.3); }
+        h1 { text-align: center; color: #f1c40f; border-bottom: 2px solid #7f8c8d; padding-bottom: 10px; font-family: 'Segoe UI', sans-serif; }
+        .controls { display: flex; gap: 15px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap;}
+        button { padding: 12px 20px; background: #27ae60; color: #fff; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; transition: background 0.3s; font-weight: bold;}
+        button:hover { background: #2ecc71; }
+        .task-card { background: #ecf0f1; color: #2c3e50; padding: 20px; border-radius: 5px; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); white-space: pre-wrap; font-size: 1.1em; line-height: 1.5; position: relative; }
+        .points { float: right; font-weight: bold; color: #c0392b; border: 2px solid #c0392b; padding: 5px 10px; border-radius: 50%; font-family: 'Segoe UI', sans-serif;}
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; background: #fff; }
+        table, th, td { border: 1px solid #7f8c8d; }
+        th, td { padding: 8px; text-align: left; }
+        th { background-color: #bdc3c7; }
+        
+        /* Style sekcji rozwiązania */
+        .sol-btn { background: #3498db; margin-top: 15px; display: inline-block; padding: 8px 15px; font-size: 0.9em; }
+        .sol-btn:hover { background: #2980b9; }
+        .solution-box { background: #d5dbdb; border-left: 5px solid #2980b9; padding: 15px; margin-top: 15px; display: none; border-radius: 0 4px 4px 0; font-family: 'Consolas', monospace; color: #2c3e50; }
+        .code-block { background: #2c3e50; color: #f8f8f2; padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px; white-space: pre; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Generator Zadań z Rozwiązaniami</h1>
+    
+    <div class="controls">
+        <button onclick="handleSystemTask()">Generuj: Systemy Liczbowe</button>
+        <button onclick="handleStructTask()">Generuj: Mapowanie Struktury</button>
+        <button onclick="handleBitTask()">Generuj: Operacje Bitowe</button>
+        <button onclick="handleFullExam()" style="background:#e67e22;">Generuj Cały Arkusz</button>
+    </div>
+
+    <div id="output">
+        <div class="task-card" style="text-align: center; color: #7f8c8d;">
+            Wybierz typ zadania z menu powyżej, aby wygenerować treść.
+        </div>
+    </div>
+</div>
+
+<script>
+    const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const randHex = (bytes) => '0x' + Math.floor(Math.random() * Math.pow(16, bytes * 2)).toString(16).toUpperCase().padStart(bytes * 2, '0');
+    
+    function getUniqueRandomBits(count, maxBit) {
+        let bits = new Set();
+        while(bits.size < count) {
+            bits.add(randInt(0, maxBit));
+        }
+        return Array.from(bits).sort((a, b) => b - a);
+    }
+
+    function toggleSolution(id) {
+        const box = document.getElementById('sol-' + id);
+        const btn = document.getElementById('btn-sol-' + id);
+        if (box.style.display === 'none' || box.style.display === '') {
+            box.style.display = 'block';
+            btn.innerText = 'Ukryj rozwiązanie';
+        } else {
+            box.style.display = 'none';
+            btn.innerText = 'Pokaż rozwiązanie';
+        }
+    }
+
+    function createSystemTask(id) {
+        const num = randInt(50, 255);
+        const hexSol = num.toString(16).toUpperCase();
+        const binSol = num.toString(2);
+
+        const html = `Zadanie 1. <span class="points">5 pkt</span>
+Proszę zapisać liczbę ${num} dziesiętnie w systemie szesnastkowym i binarnym.
+
+Hex: .....................
+Bin: .....................
+` +
+        `<button class="sol-btn" id="btn-sol-${id}" onclick="toggleSolution('${id}')">Pokaż rozwiązanie</button>` +
+        `<div class="solution-box" id="sol-${id}">` +
+        `<strong>Odpowiedź:</strong><br>` +
+        `Hex: 0x${hexSol}<br>` +
+        `Bin: 0b${binSol}<br><br>` +
+        `<em>Wyjaśnienie:</em><br>` +
+        `${num} / 16 = ${Math.floor(num/16)} reszty ${num % 16} (${(num % 16).toString(16).toUpperCase()})<br>` +
+        `${Math.floor(num/16)} / 16 = 0 reszty ${Math.floor(num/16)} (${Math.floor(num/16).toString(16).toUpperCase()})` +
+        `</div>`;
+        return html;
+    }
+
+    function createStructTask(id) {
+        const bitSizes = [8, 16, 32];
+        const size = bitSizes[randInt(0, 2)];
+        const baseAddrDec = randInt(0x40000000, 0x40020000);
+        const baseHex = '0x' + baseAddrDec.toString(16).toUpperCase().padStart(8, '0');
+        
+        const registers = ['GPIO_CR1', 'GPIO_ODR', 'GPIO_CR2', 'GPIO_DDR', 'GPIO_IDR', 'GPIO_STATUS'];
+        let tableHTML = `<table><tr><th>Nazwa rejestru</th><th>Adres</th></tr>`;
+        
+        let currentOffset = 0;
+        let offsets = [];
+        registers.forEach((reg, index) => {
+            let addr = baseAddrDec + currentOffset;
+            offsets.push(currentOffset);
+            tableHTML += `<tr><td>${reg}</td><td>0x${addr.toString(16).toUpperCase().padStart(8, '0')}</td></tr>`;
+            currentOffset += randInt(1, 2) * (size === 8 ? 1 : (size === 16 ? 2 : 4));
+        });
+        tableHTML += `</table>`;
+
+        const valHex = randHex(size === 8 ? 1 : 2);
+        const typeInC = size === 8 ? 'unsigned char' : (size === 16 ? 'unsigned short' : 'unsigned int');
+
+        // Generowanie kodu C jako rozwiązania
+        let structCode = `typedef struct {
+`;
+        let lastOffset = 0;
+        registers.forEach((reg, index) => {
+            let diff = offsets[index] - lastOffset;
+            let bytesPerReg = size / 8;
+            if (diff > 0) {
+                let paddingElements = diff / bytesPerReg;
+                if (paddingElements > 0) {
+                    structCode += `    ${typeInC} RESERVED_${index}[${paddingElements}];
+`;
+                }
+            }
+            structCode += `    volatile ${typeInC} ${reg.split('_')[1]};
+`;
+            lastOffset = offsets[index] + bytesPerReg;
+        });
+        structCode += `} GPIO_TypeDef;
+
+`;
+        structCode += `// Deklaracja wskaźnika pod adres bazowy
+`;
+        structCode += `#define GPIO ((GPIO_TypeDef *)${baseHex})
+
+`;
+        structCode += `void main() {
+`;
+        structCode += `    // Zapis do rejestru ODR
+`;
+        structCode += `    GPIO->ODR = ${valHex};
+
+`;
+        structCode += `    // Odczyt z rejestru IDR
+`;
+        structCode += `    unsigned int data = GPIO->IDR;
+`;
+        structCode += `}`;
+
+        const html = `Zadanie 2. <span class="points">25 pkt</span>
+Proszę utworzyć nowy typ danych w języku C pozwalający na odwzorowanie ${size}-bitowych rejestrów o adresach podanych w tabeli w postaci struktury. Proszę zadeklarować wskaźnik do utworzonego typu danych będący adresem bazowym bloku rejestrów.
+${tableHTML}Przy użyciu wskaźnika proszę zapisać daną ${valHex} do rejestru GPIO_ODR oraz odczytać daną z rejestru GPIO_IDR do zmiennej data typu unsigned int. Wszystkie rejestry dostępne są w trybie do zapisu i odczytu.
+` +
+        `<button class="sol-btn" id="btn-sol-${id}" onclick="toggleSolution('${id}')">Pokaż rozwiązanie</button>` +
+        `<div class="solution-box" id="sol-${id}">` +
+        `<strong>Przykładowe rozwiązanie w C (uwzględniające odpowiednie przesunięcia/dopełnienia pamięci):</strong>` +
+        `<div class="code-block">${structCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>` +
+        `</div>`;
+        return html;
+    }
+
+    function createBitTask(id) {
+        const bitSizes = [8, 16, 32];
+        const size = bitSizes[randInt(0, 2)];
+        const timerNum = randInt(1, 14);
+        const crNum = randInt(0, 2);
+        const addr = randHex(4);
+        
+        const maxBit = size - 1;
+        const bits = getUniqueRandomBits(6, maxBit);
+        
+        const setBits = [bits[0], bits[1]];
+        const clearBits = [bits[2], bits[3]];
+        const negBits = [bits[4], bits[5]];
+
+        const typeInC = size === 8 ? 'uint8_t' : (size === 16 ? 'uint16_t' : 'uint32_t');
+
+        let bitCode = `// Definicja wskaźnika do rejestru
+`;
+        bitCode += `#define TIM_CR (*((volatile ${typeInC} *)${addr}))
+
+`;
+        bitCode += `// Ustawianie bitów (OR)
+`;
+        bitCode += `TIM_CR |= (1 << ${setBits[0]}) | (1 << ${setBits[1]});
+
+`;
+        bitCode += `// Zerowanie bitów (AND z negacją)
+`;
+        bitCode += `TIM_CR &= ~((1 << ${clearBits[0]}) | (1 << ${clearBits[1]}));
+
+`;
+        bitCode += `// Negowanie bitów (XOR)
+`;
+        bitCode += `TIM_CR ^= (1 << ${negBits[0]}) | (1 << ${negBits[1]});`;
+
+        const html = `Zadanie 3. <span class="points">25 pkt</span>
+W pamięci procesora znajduje się ${size}-bitowy rejestr TIM${timerNum}_CR${crNum} pod adresem ${addr} dostępny w trybie zapisu oraz odczytu. Proszę napisać program w języku C ustawiający bity ${setBits.join(', ')}, zerujący bity ${clearBits.join(', ')} oraz negujący bity ${negBits.join(', ')}. Proszę użyć wskaźnika odpowiedniego typu podczas operacji na rejestrze.
+` +
+        `<button class="sol-btn" id="btn-sol-${id}" onclick="toggleSolution('${id}')">Pokaż rozwiązanie</button>` +
+        `<div class="solution-box" id="sol-${id}">` +
+        `<strong>Przykładowy kod operacji bitowych w C:</strong>` +
+        `<div class="code-block">${bitCode}</div>` +
+        `</div>`;
+        return html;
+    }
+
+    function renderOutput(htmlContent) {
+        document.getElementById('output').innerHTML = `<div class="task-card">${htmlContent}</div>`;
+    }
+
+    function renderMultipleOutput(htmlArray) {
+        document.getElementById('output').innerHTML = htmlArray.map(html => `<div class="task-card">${html}</div>`).join('');
+    }
+
+    window.handleSystemTask = () => renderOutput(createSystemTask('sys'));
+    window.handleStructTask = () => renderOutput(createStructTask('str'));
+    window.handleBitTask = () => renderOutput(createBitTask('bit'));
+    
+    window.handleFullExam = () => {
+        renderMultipleOutput([
+            createSystemTask('exam-1'),
+            createStructTask('exam-2'),
+            createBitTask('exam-3')
+        ]);
+    };
+</script>
+
+</body>
+</html>
