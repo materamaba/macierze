@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egzamin - Systemy Wbudowane (Test Wielokrotnego Wyboru)</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            color: #333; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50; 
+            border-bottom: 2px solid #e67e22; 
+            padding-bottom: 10px; 
+        }
+        .instruction {
+            background-color: #ebf5fb;
+            border-left: 4px solid #3498db;
+            padding: 12px;
+            margin-bottom: 25px;
+            border-radius: 0 4px 4px 0;
+            font-style: italic;
+        }
+        .question-container { 
+            margin-bottom: 20px; 
+        }
+        .question { 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            margin-bottom: 15px; 
+            color: #2c3e50;
+        }
+        .options { 
+            list-style-type: none; 
+            padding: 0; 
+        }
+        .options li { 
+            margin-bottom: 12px; 
+            background: #f8f9fa; 
+            padding: 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease; 
+            display: flex;
+            align-items: center;
+        }
+        .options li:hover { 
+            background: #e9ecef; 
+            border-color: #ced4da;
+        }
+        .options input[type="checkbox"] { 
+            margin-right: 15px; 
+            transform: scale(1.3); 
+            cursor: pointer; 
+        }
+        .options label {
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            user-select: none;
+        }
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            background: #e67e22; 
+            color: #fff; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 1.1em; 
+            cursor: pointer; 
+            transition: background 0.2s; 
+            margin-top: 20px; 
+            font-weight: bold;
+        }
+        .btn:hover { 
+            background: #d35400; 
+        }
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .result { 
+            display: none; 
+            text-align: center; 
+            font-size: 1.5em; 
+            margin-top: 30px; 
+            font-weight: bold; 
+        }
+        .feedback { 
+            margin-top: 15px; 
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold; 
+            font-size: 1.05em;
+        }
+        /* Style odpowiedzi po sprawdzeniu */
+        .opt-correct {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+            color: #155724;
+        }
+        .opt-wrong {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+            color: #721c24;
+        }
+        .opt-missing {
+            border: 2px dashed #ffc107 !important;
+            background-color: #fff3cd !important;
+            color: #856404;
+        }
+        .status-badge {
+            margin-left: auto;
+            font-size: 0.85em;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Test Wielokrotnego Wyboru (Checkbox)</h1>
+    <div class="instruction">
+        <strong>Uwaga:</strong> Jest to prawdziwy test wielokrotnego wyboru. Prawidłowa może być jedna, dwie, wszystkie lub żadna z odpowiedzi. Aby otrzymać punkt za pytanie, musisz zaznaczyć wszystkie poprawne opcje i nie zaznaczyć żadnej błędnej.
+    </div>
+
+    <div id="quiz">
+        <div class="question-container" id="question-container">
+            <!-- Pytania będą generowane dynamicznie przez JS -->
+        </div>
+        <button class="btn" id="action-btn" onclick="handleAction()">Sprawdź odpowiedź</button>
+    </div>
+    
+    <div class="result" id="result-container">
+        <div style="color: #2c3e50; margin-bottom: 20px;">
+            Twój końcowy wynik: <span id="score" style="color: #e67e22; font-size: 1.3e;"></span> / <span id="total"></span> pkt
+        </div>
+        <button class="btn" onclick="location.reload()" style="background: #34495e;">Rozwiąż test ponownie</button>
+    </div>
+</div>
+
+<script>
+    // Baza pytań na podstawie załączonych arkuszy (wielokrotny wybór)
+    const questions = [
+        {
+            question: "Cechy architektury harwardzkiej (Arkusz B i C):",
+            options: [
+                "rozkazy i dane przechowywane są w tej samej pamięci",
+                "nie da się rozróżnić danych od rozkazów (instrukcji)",
+                "możliwość pracy równoległej – jednoczesny odczyt danych z pamięci programu oraz danych"
+            ],
+            correct: [2] // Tylko 3 jest prawdziwa
+        },
+        {
+            question: "Pamięć FIFO (First-In-First-Out) wykorzystywana jest do (Arkusz B i C):",
+            options: [
+                "Przekazywania adresu powrotu z funkcji",
+                "Przekazywania parametrów do funkcji",
+                "Buforowania danych nadawczych i odbiorczych w systemach transmisji danych"
+            ],
+            correct: [2] // Tylko 3 jest prawdziwa
+        },
+        {
+            question: "Rejestr statusowy CPSR (Current Program Status Register) procesora ARM (Arkusz C):",
+            options: [
+                "pozwala na restart procesora",
+                "zawiera flagi statusu wykonanych operacji N, Z, C, V",
+                "umożliwia wyłączenie sterowania portem wejście-wyjście przez urządzenie peryferyjne"
+            ],
+            correct: [1] // Tylko 2 jest prawdziwa
+        },
+        {
+            question: "Rejestry procesora (Arkusz C):",
+            options: [
+                "są często stosowane w systemach wbudowanych do konfiguracji urządzeń peryferyjnych",
+                "służą zwykle do przechowywania skomplikowanych struktur danych (np. dwuwymiarowe tablice)",
+                "rejestry urządzeń peryferyjnych są mapowane na przestrzeń pamięci"
+            ],
+            correct: [0, 2] // Wielokrotny wybór: 1 i 3 są poprawne!
+        },
+        {
+            question: "Standard I2C (Arkusz C):",
+            options: [
+                "umożliwia realizację transmisji równoległej",
+                "umożliwia realizację transmisji szeregowej",
+                "umożliwia realizację transmisji w jednym kierunku w danym czasie (half-duplex)"
+            ],
+            correct: [1, 2] // Wielokrotny wybór: 2 i 3 są poprawne!
+        },
+        {
+            question: "Interfejs SPI (Serial Peripheral Interface) (Arkusz C):",
+            options: [
+                "umożliwia realizację transmisji master – multi-slave",
+                "do transmisji potrzebuje przynajmniej pięć sygnałów (nie licząc sygnału masy)",
+                "umożliwia obsługę wyłącznie jednego urządzenia podrzędnego ze względu na brak możliwości przesyłania adresu urządzenia"
+            ],
+            correct: [0] // Tylko 1 jest prawdziwa
+        },
+        {
+            question: "Mikroprocesor to układ cyfrowy (Arkusz B):",
+            options: [
+                "wyposażony w pamięci programu i danych (to cecha mikrokontrolera)",
+                "obsługujący przerwania zewnętrzne i wewnętrzne",
+                "wyposażony w klawiaturę alfanumeryczną"
+            ],
+            correct: [1] // Tylko 2 jest prawdziwa
+        },
+        {
+            question: "Rejestr statusowy CPSR procesora ARM (Arkusz B):",
+            options: [
+                "pozwala na realizację sumowania liczb 32 bitowych",
+                "umożliwia globalne maskowanie przerwań FIQ",
+                "udostępnia rezultaty operacji jednostki arytmetyczno-logicznej"
+            ],
+            correct: [1, 2] // Wielokrotny wybór: 2 i 3 są poprawne!
+        },
+        {
+            question: "Interfejs zgodny ze standardem EIA RS-232 (Arkusz B):",
+            options: [
+                "umożliwia realizację transmisji szeregowej",
+                "umożliwia realizację transmisji równoległej",
+                "umożliwia realizację transmisji half-duplex w obu kierunkach na zmianę"
+            ],
+            correct: [0, 2] // Szeregowa, i może działać w trybie half-duplex (mimo że natywnie wspiera full)
+        },
+        {
+            question: "Rejestr procesora ARM o akronimie GPIO_MODER służy do (Arkusz z zad. 9):",
+            options: [
+                "ustawienia portu procesora jako wyjście",
+                "ustawienia portu procesora jako wejście",
+                "włączenia sterowania portem wejście-wyjście przez urządzenie peryferyjne (alternate function)",
+                "włączenia rezystora podciągającego piny portu wejścia-wyjścia"
+            ],
+            correct: [0, 1, 2] // Wielokrotny wybór: 1, 2 i 3 są poprawne!
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let isEvaluated = false; // Czy aktualne pytanie zostało sprawdzone
+
+    const questionContainer = document.getElementById('question-container');
+    const actionBtn = document.getElementById('action-btn');
+
+    function loadQuestion() {
+        isEvaluated = false;
+        const q = questions[currentQuestionIndex];
+        
+        let html = `<div class="question">Pytanie ${currentQuestionIndex + 1}: ${q.question}</div><ul class="options">`;
+        
+        q.options.forEach((opt, index) => {
+            html += `<li id="opt-block-${index}" onclick="toggleCheckbox(${index})">
+                <input type="checkbox" id="chk-${index}" name="option" value="${index}" onclick="event.stopPropagation(); handleCheckboxChange();">
+                <label id="lbl-${index}" for="chk-${index}">${opt}</label>
+            </li>`;
+        });
+        html += `</ul><div id="feedback" class="feedback" style="display:none;"></div>`;
+        
+        questionContainer.innerHTML = html;
+        actionBtn.innerText = "Sprawdź odpowiedź";
+        actionBtn.disabled = true; // Zablokowany dopóki nic nie zaznaczono
+    }
+
+    function toggleCheckbox(index) {
+        if (isEvaluated) return;
+        const chk = document.getElementById(`chk-${index}`);
+        chk.checked = !chk.checked;
+        handleCheckboxChange();
+    }
+
+    function handleCheckboxChange() {
+        if (isEvaluated) return;
+        const checkedCount = document.querySelectorAll('input[name="option"]:checked').length;
+        // W prawdziwym wielokrotnym wyborze dopuszczamy też sytuację, gdzie żadna odpowiedź nie jest poprawna, 
+        // ale aktywujemy przycisk, żeby użytkownik mógł zatwierdzić swój wybór (lub brak wyboru)
+        actionBtn.disabled = false;
+    }
+
+    function handleAction() {
+        if (!isEvaluated) {
+            checkAnswer();
+        } else {
+            nextQuestion();
+        }
+    }
+
+    function checkAnswer() {
+        isEvaluated = true;
+        const q = questions[currentQuestionIndex];
+        const feedback = document.getElementById('feedback');
+        
+        let userAnswers = [];
+        const checkboxes = document.querySelectorAll('input[name="option"]');
+        
+        checkboxes.forEach(chk => {
+            chk.disabled = true; // Blokujemy możliwość zmiany po sprawdzeniu
+            if (chk.checked) {
+                userAnswers.push(parseInt(chk.value));
+            }
+        });
+
+        // Sprawdzanie poprawności (tablice muszą mieć identyczne elementy)
+        const isCorrectMatch = q.correct.length === userAnswers.length && q.correct.every(v => userAnswers.includes(v));
+
+        // Wizualna informacja zwrotna dla każdej opcji
+        q.options.forEach((_, index) => {
+            const block = document.getElementById(`opt-block-${index}`);
+            const isChecked = userAnswers.includes(index);
+            const isShouldBeChecked = q.correct.includes(index);
+
+            if (isChecked && isShouldBeChecked) {
+                block.classList.add('opt-correct');
+                block.innerHTML += `<span class="status-badge" style="color: #27ae60;">✓ Dobrze zaznaczone</span>`;
+            } else if (isChecked && !isShouldBeChecked) {
+                block.classList.add('opt-wrong');
+                block.innerHTML += `<span class="status-badge" style="color: #c0392b;">✗ Błędnie zaznaczone</span>`;
+            } else if (!isChecked && isShouldBeChecked) {
+                block.classList.add('opt-missing');
+                block.innerHTML += `<span class="status-badge" style="color: #d35400;">! Powinno być zaznaczone</span>`;
+            }
+        });
+
+        if (isCorrectMatch) {
+            score++;
+            feedback.style.display = "block";
+            feedback.style.backgroundColor = "#d4edda";
+            feedback.style.color = "#155724";
+            feedback.innerText = "Doskonale! Zaznaczyłeś dokładnie wszystkie prawidłowe odpowiedzi.";
+        } else {
+            feedback.style.display = "block";
+            feedback.style.backgroundColor = "#f8d7da";
+            feedback.style.color = "#721c24";
+            feedback.innerText = "Błąd lub niepełna odpowiedź. Przeanalizuj zaznaczenia powyżej.";
+        }
+
+        if (currentQuestionIndex === questions.length - 1) {
+            actionBtn.innerText = "Zobacz wynik końcowy";
+        } else {
+            actionBtn.innerText = "Następne pytanie";
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('score').innerText = score;
+            document.getElementById('total').innerText = questions.length;
+        }
+    }
+
+    // Inicjalizacja pierwszej karty
+    loadQuestion();
+</script>
+
+</body>
+</html>
