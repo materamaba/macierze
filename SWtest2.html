@@ -714,6 +714,107 @@
             },
             correctAnswers: ["a", "c", "d"],
             explanation: "Łuska od potężnego zębatego drutu koryguje powrót lufy odejmując o dym ze zębów równe 4 bajty w dół układy sterylnie by luf z łaski pipeline'u u krzemu w powrót w dym sznurkiem wskazał poprawną niezrobioną z dołu pętlę rur od bazy układy! Potwierdzenie drutu w NVIC (B) robi się dymiącą łuską przez wpis rur a nie SUB z luf drutu u asemblera! NVIC dumnie w rury mapuje dziesiątki łusek od układów w dwie lufy i w sterylnie chamskie i ułomne potężne lufy pozwala wywłaszczać pętle z zębami u ułomnych drutów na rurze od sznura z krzemem wyższym drutem z luf w dół sterylnie z zębami od Jądra dając układ u dołu rur z łuski pętli rzucanej sterylnie drutem u góry."
+        },
+        {
+            question: "Cechy architektury harwardzkiej (Arkusz B i C):",
+            answers: {
+                a: "rozkazy i dane przechowywane są w tej samej pamięci",
+                b: "nie da się rozróżnić danych od rozkazów (instrukcji)",
+                c: "możliwość pracy równoległej – jednoczesny odczyt danych z pamięci programu oraz danych"
+            },
+            correctAnswers: ["c"],
+            explanation: "Architektura harwardzka posiada fizycznie oddzielne moduły i magistrale dla pamięci danych i instrukcji, co pozwala na ich równoległy (jednoczesny) odczyt."
+        },
+        {
+            question: "Pamięć FIFO (First-In-First-Out) wykorzystywana jest do (Arkusz B i C):",
+            answers: {
+                a: "Przekazywania adresu powrotu z funkcji",
+                b: "Przekazywania parametrów do funkcji",
+                c: "Buforowania danych nadawczych i odbiorczych w systemach transmisji danych"
+            },
+            correctAnswers: ["c"],
+            explanation: "Do przekazywania parametrów i adresów powrotu stosuje się stos (architektura LIFO). Pamięć typu FIFO (kolejka) jest powszechnie używana jako bufor kołowy dla interfejsów komunikacyjnych (np. UART)."
+        },
+        {
+            question: "Rejestr statusowy CPSR (Current Program Status Register) procesora ARM (Arkusz C):",
+            answers: {
+                a: "pozwala na restart procesora",
+                b: "zawiera flagi statusu wykonanych operacji N, Z, C, V",
+                c: "umożliwia wyłączenie sterowania portem wejście-wyjście przez urządzenie peryferyjne"
+            },
+            correctAnswers: ["b"],
+            explanation: "Rejestr CPSR w architekturze ARM służy do przechowywania m.in. sprzętowych flag wyników ALU: Negative, Zero, Carry, Overflow."
+        },
+        {
+            question: "Rejestry procesora (Arkusz C):",
+            answers: {
+                a: "są często stosowane w systemach wbudowanych do konfiguracji urządzeń peryferyjnych",
+                b: "służą zwykle do przechowywania skomplikowanych struktur danych (np. dwuwymiarowe tablice)",
+                c: "rejestry urządzeń peryferyjnych są mapowane na przestrzeń pamięci"
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Złożone struktury danych alokuje się w pamięci RAM. Rejestry peryferyjne są mapowane na standardową przestrzeń adresową i służą do ich sterowania."
+        },
+        {
+            question: "Standard I2C (Arkusz C):",
+            answers: {
+                a: "umożliwia realizację transmisji równoległej",
+                b: "umożliwia realizację transmisji szeregowej",
+                c: "umożliwia realizację transmisji w jednym kierunku w danym czasie (half-duplex)"
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "I2C to asymetryczna magistrala szeregowa korzystająca z jednej wspólnej linii danych (SDA), co wymusza pracę w trybie half-duplex (naprzemienne nadawanie i odbieranie)."
+        },
+        {
+            question: "Interfejs SPI (Serial Peripheral Interface) (Arkusz C):",
+            answers: {
+                a: "umożliwia realizację transmisji master – multi-slave",
+                b: "do transmisji potrzebuje przynajmniej pięć sygnałów (nie licząc sygnału masy)",
+                c: "umożliwia obsługę wyłącznie jednego urządzenia podrzędnego ze względu na brak możliwości przesyłania adresu urządzenia"
+            },
+            correctAnswers: ["a"],
+            explanation: "SPI wymaga standardowo 4 przewodów. Brak sprzętowego adresu równoważy linia CS/SS (Chip Select), pozwalająca na obsługę wielu układów Slave na jednej wspólnej magistrali."
+        },
+        {
+            question: "Mikroprocesor to układ cyfrowy (Arkusz B):",
+            answers: {
+                a: "wyposażony w pamięci programu i danych (to cecha mikrokontrolera)",
+                b: "obsługujący przerwania zewnętrzne i wewnętrzne",
+                c: "wyposażony w klawiaturę alfanumeryczną"
+            },
+            correctAnswers: ["b"],
+            explanation: "Procesor nie integruje pamięci i peryferiów (w przeciwieństwie do mikrokontrolera), ale posiada sprzętowy mechanizm zarządzania przerwaniami oraz wyjątkami wewnętrznymi."
+        },
+        {
+            question: "Rejestr statusowy CPSR procesora ARM (Arkusz B):",
+            answers: {
+                a: "pozwala na realizację sumowania liczb 32 bitowych",
+                b: "umożliwia globalne maskowanie przerwań FIQ",
+                c: "udostępnia rezultaty operacji jednostki arytmetyczno-logicznej"
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "Oprócz flag warunków ALU (rezultatów operacji arytmetycznych), rejestr ten zawiera flagi konfiguracyjne do sprzętowego blokowania (maskowania) standardowych przerwań (IRQ) oraz przerwań szybkich (FIQ)."
+        },
+        {
+            question: "Interfejs zgodny ze standardem EIA RS-232 (Arkusz B):",
+            answers: {
+                a: "umożliwia realizację transmisji szeregowej",
+                b: "umożliwia realizację transmisji równoległej",
+                c: "umożliwia realizację transmisji half-duplex w obu kierunkach na zmianę"
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Jest to sztandarowy protokół komunikacji szeregowej. Posiada oddzielne fizyczne linie dla nadajnika i odbiornika, więc standardowo pracuje w full-duplex, jednak programowo można wymusić na nim pracę half-duplex."
+        },
+        {
+            question: "Rejestr procesora ARM o akronimie GPIO_MODER służy do (Arkusz z zad. 9):",
+            answers: {
+                a: "ustawienia portu procesora jako wyjście",
+                b: "ustawienia portu procesora jako wejście",
+                c: "włączenia sterowania portem wejście-wyjście przez urządzenie peryferyjne (alternate function)",
+                d: "włączenia rezystora podciągającego piny portu wejścia-wyjścia"
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Rejestr MODER (Mode Register) konfiguruje podstawowy cel danego pinu (wejście, wyjście, wejście analogowe lub funkcja alternatywna dla innych peryferiów). Za pull-up/pull-down odpowiada oddzielny rejestr PUPDR."
         }
     ];
 
