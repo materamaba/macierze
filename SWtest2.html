@@ -34,688 +34,6 @@
 <script>
     const allQuestions = [
         {
-            question: "Jaka jest kluczowa różnica między samym procesorem (CPU) a mikrokontrolerem?",
-            answers: {
-                a: "Procesor (CPU) to jedynie jednostka centralna, która bez pamięci i peryferiów nie potrafi samodzielnie realizować użytecznych funkcji.",
-                b: "Mikrokontroler integruje w strukturze jednego układu scalonego procesor, pamięć RAM, pamięć programu (ROM) oraz peryferia.",
-                c: "Mikrokontroler nie posiada wewnątrz rdzenia CPU, gdyż jest wyłącznie układem sterowania wejścia-wyjścia.",
-                d: "Klasyczny procesor z komputera PC ma zintegrowany na stałe dysk twardy oraz pamięć operacyjną w jednym krzemowym chipie."
-            },
-            correctAnswers: ["a", "b"],
-            explanation: "Sam procesor to 'serce' systemu, ale jest bezużyteczny bez pamięci i układów IO. Mikrokontroler to z kolei kompletny, zminiaturyzowany komputer zamknięty w jednej obudowie, posiadający CPU, RAM, ROM i peryferia."
-        },
-        {
-            question: "Jakimi zasobami pamięci dysponuje mikrokontroler z rdzeniem Cortex-M4 stosowany na laboratoriach?",
-            answers: {
-                a: "320 megabajtów pamięci RAM i 1 gigabajt pamięci FLASH.",
-                b: "320 kilobajtów pamięci RAM i 1 megabajt pamięci FLASH.",
-                c: "Posiada wyłącznie pamięć RAM, natomiast program musi być stale ładowany z zewnętrznej karty pamięci.",
-                d: "Posiada zasoby pamięci o 5-6 rzędów wielkości mniejsze niż klasyczny, współczesny laptop."
-            },
-            correctAnswers: ["b", "d"],
-            explanation: "Mikrokontroler STM32L476 posiada 320 KB pamięci RAM oraz 1 MB pamięci FLASH. Są to zasoby ekstremalnie małe w porównaniu ze współczesnymi komputerami osobistymi."
-        },
-        {
-            question: "Jaka jest kluczowa różnica funkcjonalna pomiędzy samym procesorem (CPU) a mikrokontrolerem?",
-            answers: {
-                a: "Sam procesor (CPU) po podłączeniu zasilania jest w stanie wykonywać użyteczne zadania bez żadnych dodatkowych układów.",
-                b: "Mikrokontroler integruje w obrębie jednego układu scalonego jednostkę centralną (CPU), pamięć danych (RAM), pamięć programu (ROM) oraz układy peryferyjne.",
-                c: "Pamięć cache procesora eliminuje potrzebę stosowania zewnętrznej pamięci programu (ROM/Flash).",
-                d: "Współczesne procesory serwerowe/desktopowe jako samodzielne układy nadal są bezużyteczne i wymagają do działania zewnętrznej pamięci oraz peryferiów."
-            },
-            correctAnswers: ["b", "d"],
-            explanation: "Mikrokontroler integruje CPU, RAM, ROM i peryferia w jednej obudowie. Procesor desktopowy po podłączeniu zasilania jest bezużyteczny bez zewnętrznych pamięci i peryferiów."
-        },
-        {
-            question: "Czym charakteryzuje się pamięć RAM dynamiczna (DRAM) w porównaniu do pamięci statycznej (SRAM)?",
-            answers: {
-                a: "Pamięć DRAM jest znacznie szybsza i droższa od pamięci SRAM, dlatego jest powszechnie stosowana bezpośrednio w rdzeniu CPU.",
-                b: "Komórki pamięci DRAM zachowują się jak małe kondensatory – ładunek elektryczny utrzymuje się w nich bez odświeżania przez około 100 milisekund.",
-                c: "Aby zapobiec utracie danych, pamięć DRAM wymaga periodycznego odświeżania, a w czasie trwania tej procedury procesor nie może z niej korzystać.",
-                d: "Pamięć SRAM wymaga znacznie częstszego odświeżania niż DRAM, co drastycznie ogranicza ogólną wydajność systemu."
-            },
-            correctAnswers: ["b", "c"],
-            explanation: "Komórka DRAM działa jak kondensator i bez odświeżania traci dane. Proces odświeżania blokuje dostęp procesorowi do pamięci, dlatego stosuje się w rdzeniu droższą i szybszą pamięć SRAM jako cache."
-        },
-        {
-            question: "W jaki sposób organizowane jest wykonywanie programu oraz sterowanie urządzeniami w systemach mikroprocesorowych?",
-            answers: {
-                a: "Wrażliwe procedury mogą być po włączeniu zasilania kopiowane z wolniejszej pamięci ROM do szybkiej pamięci RAM i stamtąd uruchamiane.",
-                b: "Pamięć RAM jest pamięcią nieulotną, co gwarantuje, że zmienne nie zostaną utracone po odłączeniu zasilania.",
-                c: "Urządzenia peryferyjne są sterowane poprzez specjalny obszar pamięci (mapowany na adresy RAM/ROM) przy użyciu wskaźników w C.",
-                d: "Architektura nowoczesnych komputerów pozwala na uruchamianie wszystkich programów bezpośrednio z wolnego dysku twardego bez użycia RAM."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Urządzenia wejścia-wyjścia są mapowane w pamięci. Szybkie procedury często przepisuje się z ROM do RAM podczas startu, aby przyspieszyć ich wykonywanie."
-        },
-        {
-            question: "Po czym sprzętowo rozpoznaje się, ilu-bitowy jest dany procesor?",
-            answers: {
-                a: "Po szerokości magistrali danych, która doprowadza operandy z pamięci.",
-                b: "Po szerokości magistrali adresowej określającej maksymalny obszar pamięci.",
-                c: "Po architekturze i szerokości słowa danych jednostki arytmetyczno-logicznej (ALU).",
-                d: "Po pojemności wbudowanej pamięci podręcznej pierwszego poziomu."
-            },
-            correctAnswers: ["c"],
-            explanation: "Szerokość procesora określa się na podstawie szerokości słów, na jakich operuje jego jednostka ALU. Magistrala danych ze względów oszczędnościowych może być węższa (co obniża wydajność, ale nie zmienia architektury procesora)."
-        },
-        {
-            question: "Z jakiej pamięci fizycznej są zrealizowane rejestry procesora i dlaczego?",
-            answers: {
-                a: "Z szybkiej pamięci statycznej (SRAM), ponieważ muszą one działać co najmniej tak szybko jak jednostka ALU.",
-                b: "Z pamięci dynamicznej (DRAM) ze względu na konieczność uproszczenia struktury i redukcji kosztów.",
-                c: "Z pamięci statycznej (SRAM), która nie wymaga ciągłego odświeżania i zachowuje dane dopóki jest zasilanie.",
-                d: "Z pamięci nieulotnej Flash, aby wartości rejestrów były trwale zachowane po resecie zasilania."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Rejestry wykonane są ze SRAM, ponieważ dostarczają dane bez opóźnień do ALU (brak konieczności odświeżania, jak w przypadku wolniejszej DRAM)."
-        },
-        {
-            question: "Co oznacza w praktyce, że urządzenia peryferyjne są mapowane na przestrzeń pamięci (Memory-Mapped I/O)?",
-            answers: {
-                a: "Urządzenia te są fizycznie zamieniane na komórki pamięci RAM.",
-                b: "Adresy fizyczne rejestrów przydzielane są dynamicznie przez skrypt linkera przy każdym uruchomieniu programu.",
-                c: "Dostęp do rejestrów urządzeń peryferyjnych odbywa się w dokładnie taki sam sposób jak do pamięci – poprzez odczyt i zapis pod adresem fizycznym.",
-                d: "Aby sterować urządzeniem z poziomu języka C, programista musi znać adres fizyczny jego rejestrów i odwołać się do niego przy pomocy wskaźnika."
-            },
-            correctAnswers: ["c", "d"],
-            explanation: "Mapowanie na pamięć oznacza, że peryferia widoczne są jako zwykłe komórki pamięci o stałych adresach, zdefiniowanych w dokumentacji. Dostęp w języku C odbywa się przez wskaźniki."
-        },
-        {
-            question: "Co dzieje się w systemie ze zmienną lokalną zainicjalizowaną wartością początkową (np. int a = 5;), zadeklarowaną wewnątrz funkcji main?",
-            answers: {
-                a: "Zmienna ta jest alokowana bezpośrednio na stercie (heap).",
-                b: "Zmienna ta jest alokowana na stosie (stack), ponieważ została zadeklarowana wewnątrz funkcji.",
-                c: "Wartość początkowa zmiennej (liczba 5) musi zostać trwale zapisana w pamięci nieulotnej (ROM).",
-                d: "Specjalny fragment programu przed wejściem do main kopiuje wartość z pamięci ROM do RAM."
-            },
-            correctAnswers: ["b", "c", "d"],
-            explanation: "Zmienna lokalna trafia na stos w pamięci ulotnej RAM. Zatem wartość '5' jest przechowywana w pamięci ROM i podczas startu (tzw. startup code) zostaje skopiowana do pamięci RAM, zanim wywołana zostanie funkcja main."
-        },
-        {
-            question: "Dlaczego w systemach wbudowanych bez systemu operacyjnego nie wolno dopuścić do opuszczenia funkcji main i stosuje się pętlę nieskończoną?",
-            answers: {
-                a: "Opuszczenie funkcji main spowoduje powrót do kodu, który nie istnieje, co doprowadzi do wykonywania losowych danych w pamięci ROM.",
-                b: "Próba wykonywania losowych danych lub odwołanie się do obszaru bez pamięci wywoła wyjątek i zawieszenie procesora.",
-                c: "Pętla nieskończona jest wymagana przez kompilator GCC pod rygorem błędu kompilacji.",
-                d: "Po wyjściu z funkcji main procesor automatycznie przechodzi w tryb niskiego poboru energii."
-            },
-            correctAnswers: ["a", "b"],
-            explanation: "Bez systemu operacyjnego nie ma programu, do którego procesor mógłby 'wrócić' po main. Próba wykonania przypadkowych danych z ROM zakończy się błędem np. segmentation fault (zawieszeniem układu)."
-        },
-        {
-            question: "Dlaczego architektura RISC (Reduced Instruction Set Computer) jest powszechnie stosowana we współczesnych systemach wbudowanych?",
-            answers: {
-                a: "Posiada znacznie prostszy sprzętowy dekoder rozkazów w porównaniu do CISC, co przekłada się na wydajność.",
-                b: "Pozwala na znaczące zmniejszenie zużywanej energii elektrycznej, co stanowi kluczowy cel.",
-                c: "Wszystkie mikrokontrolery RISC muszą pracować z częstotliwościami rzędu gigaherców.",
-                d: "Obsługuje mniejszą liczbę rozkazów, co drastycznie upraszcza strukturę procesora."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "RISC ma zredukowaną listę prostych komend. Upraszcza to dekoder sprzętowy, przyspiesza pracę i radykalnie obniża zużycie prądu. Mikrokontrolery zwykle nie pracują w pasmie gigaherców (często są to dziesiątki/setki MHz)."
-        },
-        {
-            question: "Jeżeli mikrokontroler posiada magistralę adresową o szerokości dokładnie 20 bitów, które stwierdzenia są prawdziwe?",
-            answers: {
-                a: "Maksymalny obszar pamięci, jaki procesor jest w stanie zaadresować wynosi 1 megabajt (1 MB).",
-                b: "Maksymalny adres fizyczny w notacji szesnastkowej to 0xFFFFF.",
-                c: "Próba odwołania do adresu 0xFFFFF + 1 wymaga 21. bitu, przez co układ nie jest w stanie zaadresować większego obszaru.",
-                d: "Do obsługi w języku C wymagane jest stosowanie 8-bitowego wskaźnika unsigned char."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "2^20 bajtów to 1 MB. Maksymalna wartość 20-bitowa w hex to 0xFFFFF. Typ wskaźnikowy musi pomieścić 20 bitów, więc 8-bitowy unsigned char jest zdecydowanie za mały."
-        },
-        {
-            question: "Wskaż prawdziwe stwierdzenia dotyczące doboru szerokości magistrali danych w systemie z 32-bitową jednostką ALU:",
-            answers: {
-                a: "Magistrala danych może mieć 8 bitów (dla oszczędności), ale przesłanie 32 bitów potrwa 4 cykle.",
-                b: "Zwiększenie magistrali do 64 bitów przyniesie dwukrotne przyspieszenie obliczeń dla 32-bitowego ALU.",
-                c: "Optymalnym rozwiązaniem jest magistrala 32-bitowa, dopasowana do ALU.",
-                d: "Węższa magistrala danych (np. 8 bitów) to redukcja kosztów (mniej krzemu i ścieżek)."
-            },
-            correctAnswers: ["a", "c", "d"],
-            explanation: "Węższa magistrala oszczędza ścieżki, ale spowalnia przesył. Optymalna to 32 bity dla 32-bitowego ALU. Szersza (64-bitowa) magistrala nic nie da, bo ALU nie przetworzy więcej niż 32 bitów w jednym takcie."
-        },
-        {
-            question: "Z jakiego powodu słowo kluczowe volatile jest obowiązkowe podczas deklarowania wskaźników do rejestrów sprzętowych?",
-            answers: {
-                a: "Stanowi informację dla kompilatora, aby nie usuwał odczytów i zapisów powiązanych z tym adresem.",
-                b: "Zapobiega optymalizacji nadmiarowych (z matematycznego punktu widzenia) zapisów do rejestru.",
-                c: "Gwarantuje, że kompilator nie usunie zapisu włączającego peryferia, uznając go za zbędny w kodzie C.",
-                d: "Wymusza na procesorze sprzętowe przeniesienie rejestru do pamięci nieulotnej Flash."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Kompilator agresywnie wycina fragmenty kodu, które nie mają wpływu na wynik funkcji C. volatile to sygnał 'zapisz tam dane, nawet jeśli później z nich nie korzystasz programowo', bo powoduje to zmiany fizyczne w sprzęcie."
-        },
-        {
-            question: "Podczas wykładu omówiono sposoby deklarowania rejestrów w języku C. Które stwierdzenia są prawdziwe?",
-            answers: {
-                a: "Preferowaną metodą jest użycie dyrektywy #define z rzutowaniem adresu na wskaźnik.",
-                b: "Zadeklarowanie rejestru jako globalnej zmiennej wskaźnikowej marnuje 4 bajty pamięci RAM na stały adres.",
-                c: "Definiując #define należy unikać wstawiania średnika na końcu, co uniemożliwia kompilację.",
-                d: "Rzutowanie adresu (np. 0x1000) na wskaźnik mówi kompilatorowi o rozmiarze istniejącego sprzętowo rejestru."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "Zmienna globalna wskaźnikowa rezerwuje RAM, podczas gdy #define tylko podmienia wartość w kodzie. Średnik w #define jest częstym błędem skutkującym błędem kompilacji."
-        },
-        {
-            question: "Które ze stwierdzeń dotyczących doboru typów zmiennych i słów kluczowych przy deklarowaniu wskaźników do rejestrów sprzętowych są prawdziwe?",
-            answers: {
-                a: "Słowo kluczowe volatile zapobiega usuwaniu z kodu maszynowego pozornie 'nadmiarowych' zapisów.",
-                b: "Brak volatile może sprawić, że kompilator potraktuje operacje jako martwy kod i je wyeliminuje.",
-                c: "Do obsługi rejestrów zaleca się typ uint32_t, by mieć gwarancję 32 bitów na każdej architekturze.",
-                d: "Rejestry należy deklarować z operatorem signed, by kompilator interpretował MSB jako znak."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Typ int nie gwarantuje długości 32 bitów (zależy od kompilatora). Rejestry sprzętowe to surowe dane, deklarowanie ich jako liczb ze znakiem (signed) mogłoby prowadzić do niechcianych optymalizacji (np. przy przesunięciach bitowych)."
-        },
-        {
-            question: "Jakie są cechy i ograniczenia operacji bitowych realizowanych w trybie Read-Modify-Write (RMW)?",
-            answers: {
-                a: "Instrukcja *PTR |= (1 << 5); to operacja RMW: fizyczny odczyt, modyfikacja i zapis.",
-                b: "Operacje te zajmują więcej czasu (typowe 3 takty) niż bezpośrednie przypisanie.",
-                c: "Aby wyzerować bit, należy do operacji AND użyć maski zanegowanej, np. *PTR &= ~(1 << 17);",
-                d: "Aby za pomocą OR ustawić wybrany bit na 1, należy zastosować maskę zanegowaną."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Operacje &= i |= wykonują pełen cykl Odczyt-Modyfikacja-Zapis, z reguły zajmujący 3 takty. Aby ustawić bit używamy zwykłej maski z operatorem OR (|), a aby wyzerować, używamy odwróconej maski (~) z operatorem AND (&)."
-        },
-        {
-            question: "Chcemy sprawdzić (np. w if), czy pojedynczy bit 5 jest ustawiony. Które metody są prawdziwe lub błędne?",
-            answers: {
-                a: "Warunek if ((*PTR & (1 << 5)) == 1) poprawnie zweryfikuje stan.",
-                b: "Bezpieczną metodą jest: if ((*PTR & (1 << 5)) == (1 << 5)).",
-                c: "Warunek if ((*PTR & (1 << 5)) != 0) poprawnie wykryje, że bit 5 jest ustawiony.",
-                d: "Warunek if ((*PTR & (1 << 5)) == 0) służy do sprawdzenia, czy bit jest wyzerowany."
-            },
-            correctAnswers: ["b", "c", "d"],
-            explanation: "Wynik operacji & da w tym wypadku wartość 32 (a nie 1!), więc pierwsza opcja (przyrównanie do 1) to pułapka i błąd logiczny. Pozostałe sprawdzają to poprawnie."
-        },
-        {
-            question: "Jakie zasady i pułapki wiążą się z zapisem liczb w języku C przy sprzęcie?",
-            answers: {
-                a: "Zapis 010 wpisze dziesiętne 10 (bity 1 i 3).",
-                b: "Zapis 010 z wiodącym zerem traktowany jest jako system ósemkowy (wartość 8 dziesiętnie, ustawiony bit 3).",
-                c: "Zapis 0x10 to system szesnastkowy (wartość 16 dziesiętnie, ustawiony bit 4).",
-                d: "Przypisanie *PTR = 0; to najlepsza metoda na wyzerowanie tylko jednego pinu."
-            },
-            correctAnswers: ["b", "c"],
-            explanation: "Zero z przodu w C (np. 010) to notacja ósemkowa (octal), co jest bardzo częstą pułapką! Natomiast = 0 wyzeruje wszystkie 32 piny naraz, psując konfigurację całego portu."
-        },
-        {
-            question: "Gdzie mogą fizycznie znajdować się rejestry w systemie wbudowanym i jak programista może się do nich odwołać?",
-            answers: {
-                a: "Rejestry procesora (np. ALU) są dostępne wyłącznie z poziomu języka Assembler.",
-                b: "Rejestry peryferyjne znajdują się fizycznie w pamięci RAM.",
-                c: "Rejestry peryferiów są umieszczone w ich fizycznej strukturze, ale zmapowane na adresy pamięci (dostęp ze wskaźników w C).",
-                d: "Rejestry procesora są zawsze nieulotne."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Rejestry rdzenia i ALU to inna architektura (dostęp z asemblera). Rejestry urządzeń peryferyjnych to fizyczne bramki logiczne wewnątrz danego sprzętu, ale procesor pozwala pisać do nich po adresie tak, jakby były w pamięci RAM."
-        },
-        {
-            question: "Dlaczego przy przesuwaniu wartości w prawą stronę (>>) kluczowe jest stosowanie typów bez znaku (unsigned)?",
-            answers: {
-                a: "Dla liczby ze znakiem najstarszy bit to bit znaku i kompilator z lewej strony dopisze jedynki zamiast zer, jeśli MSB było jedynką.",
-                b: "Typy signed zajmują 2x więcej miejsca w RAM.",
-                c: "Przesunięcie liczby signed ujemnej w prawo zniekształci wartość, wprowadzając z lewej strony wiodące jedynki.",
-                d: "Kompilator zwróci błąd, gdyż zakazuje shiftowania na intach."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Typy ze znakiem ulegają tzw. przesunięciu arytmetycznemu (powieleniu bitu znaku), co kompletnie psuje maskowanie przy rejestrach. Dlatego konieczne jest wymuszenie typu unsigned, dającego bezpieczne przesunięcie logiczne (dopisanie zer)."
-        },
-        {
-            question: "W jakim stanie znajdują się porty GPIO bezpośrednio po włączeniu zasilania (lub resecie) i dlaczego?",
-            answers: {
-                a: "Są wyjściami, żeby zapalić diody diagnostyczne na płytce.",
-                b: "Są skonfigurowane jako wejścia, bo jest to stan bezpieczny elektrycznie.",
-                c: "Gdyby były wyjściami, a przycisk był zwarty do VCC, wymuszenie stanu przeciwnego spaliłoby procesor.",
-                d: "Są sprzętowo w stanie całkowicie odłączonym."
-            },
-            correctAnswers: ["b", "c"],
-            explanation: "Wysoka impedancja (wejście, ewentualnie wejście analogowe) to bezpieczny stan domyślny po uruchomieniu zasilania. Chroni tranzystory procesora przed ewentualnymi zwarciami fizycznymi na płytce."
-        },
-        {
-            question: "Jaką rolę pełni sygnał zegarowy (clock) w kontekście portów GPIO?",
-            answers: {
-                a: "Zegar jest domyślnie po resecie wyłączony dla peryferiów, by oszczędzać energię.",
-                b: "Bez włączenia zegara programista nie będzie w stanie zapisać ani odczytać rejestrów portu.",
-                c: "Sygnał wejściowy przechodzi przez przerzutnik typu D synchronizowany z wewnętrznym zegarem.",
-                d: "Wyłączenie zegara psuje fizycznie chłodzenie tranzystorów."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Układy cyfrowe zużywają energię przy przełączaniu. Po starcie wszystkie peryferia mają odcięty zegar, by mikrokontroler zużywał absolutne minimum energii. Bez aktywacji zegara nie skomunikujemy się ze sprzętem."
-        },
-        {
-            question: "Jakie korzyści niesie mapowanie rejestrów w C przez rzutowanie adresu bazowego na strukturę (struct)?",
-            answers: {
-                a: "Wystarczy wskaźnik bazowy, a adresy rejestrów są wyliczane automatycznie z offsetów przez kompilator.",
-                b: "Drastycznie zmniejsza ryzyko pomyłki adresowania poszczególnych setek rejestrów.",
-                c: "Sama definicja typu struktury nie alokuje dodatkowego miejsca w RAM.",
-                d: "Pozwala na użycie tej samej definicji do różnych identycznych portów (np. GPIOA i GPIOB)."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "Struktury w C dostarczają kompilatorowi potężny szablon rozkładu pamięci. Pozwala to na unikanie dziesiątek definicji dla każdego z portów. Jest to baza działania profesjonalnych bibliotek (np. CMSIS, HAL)."
-        },
-        {
-            question: "Co dzieje się z taktowaniem kontrolera GPIO po resecie i jakie są konsekwencje?",
-            answers: {
-                a: "Zegar jest wyłączony w celu minimalizacji zużycia energii elektrycznej.",
-                b: "Odczyt z rejestru IDR nie zadziała bez zegara, bo układ oparty o przerzutniki typu D nie zsynchronizuje sygnału asynchronicznego.",
-                c: "Po resecie zegar od razu działa na maksimum możliwości.",
-                d: "Mechanizm odcinania taktu to klucz do energooszczędnych mikrokontrolerów."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Bez włączonego zegara procesor jest odcięty od peryferium, a wbudowany sprzęt w porcie (np. przerzutniki czytające stany przycisków) nie przepuści informacji do pamięci, chroniąc przed stanami nieustalonymi."
-        },
-        {
-            question: "Dlaczego konfiguracja GPIO jako wejście po resecie jest bezpieczniejsza niż jako wyjście?",
-            answers: {
-                a: "Tryb wyjściowy może wywołać zwarcie układu (np. przy podłączonym wciśniętym przycisku na linii).",
-                b: "W trybie wejścia tranzystory wyjściowe są otwarte (odcięte), co zapobiega płynięciu prądu do pinu.",
-                c: "Tryb wyjścia całkowicie wyłącza zasilanie z rdzenia.",
-                d: "Tryb analogowego wejścia daje najwyższą izolację przed zwarciem."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Gdy wymusisz z pinu procesora 0 (GND), a użytkownik wciska z zewnątrz przełącznik do VCC, na tranzystorze robi się bezpośrednie zwarcie i układ w ułamku sekundy spłonie. Dlatego zawsze piny startują jako otwarte wejścia."
-        },
-        {
-            question: "Rejestr OTYPER konfiguruje wyjścia dla 16 pinów. Dlaczego jest 32-bitowy?",
-            answers: {
-                a: "Bo rdzeń jest 32-bitowy i operuje natywnie na paczkach 32 bitowych.",
-                b: "Zapewnia spójność układu w pamięci, by struktury z języka C ładnie składały się z 32-bitowych słów.",
-                c: "Upraszcza to i unifikuje budowę dekodera sprzętowego z poziomu tranzystorów.",
-                d: "Zostawia zarezerwowane miejsce (bity 16-31) na ewentualne przyszłe rozbudowy."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "W systemie ARM Cortex 32-bitowym wygodniej, szybciej i taniej jest tworzyć równe, 32-bitowe rejestry sprzętowe, ignorując najwyższe 16 bitów, niż produkować specjalistyczne mniejsze obwody z rozrzuconymi adresami."
-        },
-        {
-            question: "W jaki sposób działa wyjście portu w trybie otwartego drenu (Open Drain)?",
-            answers: {
-                a: "Zwarcie dolnego tranzystora wymusza mocne, stabilne 0 (stan niski).",
-                b: "Gdy dolny tranzystor zostanie wyłączony, pin 'wisi w powietrzu' (stan nieustalony, floating).",
-                c: "Aby móc wygenerować na wyjściu poprawne 1, wymagane jest doczepienie fizycznego rezystora podciągającego (Pull-Up).",
-                d: "Tryb ten pozwala wypuszczać 5V i 3.3V jednocześnie."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Tryb Open-Drain rezygnuje z możliwości wystawiania prądu. Potrafi on jedynie wpuszczać prąd do układu i zwierać układ do masy (GND). Do wymuszenia logicznej jedynki potrzebny jest pasywny rezystor do zasilania."
-        },
-        {
-            question: "Jaka jest rola rejestru LCKR (Locking Register)?",
-            answers: {
-                a: "Służy do zablokowania możliwości zmian w konfiguracji pinów aż do kolejnego restartu zasilania.",
-                b: "W aplikacjach krytycznych powstrzymuje przypadkowe błędy (bugi) programowe przed uszkodzeniem i przestawieniem pinów np. od silnika windy na wejście pływające.",
-                c: "Ma dość zawiłą i precyzyjnie wymagającą procedurę wpisywania określonych sekwencji aby się zablokował, przez co uaktywnienie go przypadkiem w kodzie jest praktycznie niemożliwe.",
-                d: "Hardware'owo odcina dopływ zasilania od CPU."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Mechanizm zapobiega sytuacjom, gdy skaczący losowo i wadliwy wskaźnik uderzy w adres konfiguracji pinu (np. zmieniąc wyjście przepustnicy silnika z 1 na floating). Mechanizm Lock gwarantuje niezmienność kluczowej konfiguracji do reboota."
-        },
-        {
-            question: "Dlaczego sygnał wejściowy musi przechodzić przez przerzutnik sprzętowy przed rejestrem IDR?",
-            answers: {
-                a: "Synchronizuje to asynchroniczny sygnał przycisku z synchronicznym zegarem szyny mikrokontrolera.",
-                b: "Przerzutnik służy jako sprzętowy filtr eliminujący stan pływający (floating).",
-                c: "Rdzeń procesora to maszyna synchroniczna i wymaga, by odczyty odbywały się zgodnie z taktem zegara wewnętrznego.",
-                d: "Służy to do sprzętowego odwrócenia polaryzacji sygnału."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Sygnały ze świata (przyciski) wchodzą całkowicie asynchronicznie, o każdej możliwej porze. Procesor odczytuje wartości skokowo w takt swojego oscylatora. Przerzutnik D 'zamraża' stan zewnętrzny we właściwym momencie, by sygnał wpadł poprawnie na szynę bitową."
-        },
-        {
-            question: "Co cechuje używanie wyjścia w trybie otwartego drenu (Open Drain) zamiast popularnego Push-Pull?",
-            answers: {
-                a: "Brakuje górnego tranzystora wyrzucającego prąd – bez rezystora (pull-up) nie wykrzeszesz z niego logicznej jedynki.",
-                b: "W trybie push-pull, gdy podłączysz dwa chipy i wystawią 1 oraz 0 - masz potężne zwarcie. W Open Drain takie sytuacje są łagodniejsze.",
-                c: "Gdy dwa Open-Drainowe urządzenia naraz wystawią 0, pin będzie wisiał w powietrzu i stracisz sygnał.",
-                d: "Używany najczęściej do tworzenia magistral wspólnych (np. I2C) gdzie setki urządzeń komunikują się z tym samym przewodem."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Wyjście OD jest idealne dla magistral multi-master, ponieważ gdy kilka urządzeń naraz próbuje nadawać komunikację i się zderzą - po prostu zewrą linię do zera, bez jakichkolwiek zwarć fizycznych prądu."
-        },
-        {
-            question: "Czym cechuje się rejestr BSRR (Bit Set Reset Register) do modyfikacji pinów wyjściowych?",
-            answers: {
-                a: "Zapisuje zmiany w zaledwie 1 takt zegara CPU (brak strat 3 taktów przez odczyt w standardowym |= ODR).",
-                b: "Jest całkowicie Write-Only, nie da się z niego wydobyć i odczytać poprawnego stanu diod.",
-                c: "Wpisanie w BSRR same zera ułatwia łatwe odcięcie wszystkich pinów natychmiast.",
-                d: "Rozbity jest na pół: Młodsze 16 bitów wymusza stan wysoki, a starsze 16 bitów brutalnie gasi piny do zera."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Rejestr ten został wprowadzony wyłącznie w jednym celu - ominięcia wolnej procedury operacji bitowych RMW (Read-Modify-Write) w C na standardowym ODR. Wpisanie do niego jedynki zmienia pozycję, a wpisywanie zera w jakikolwiek bit jest natywnie ignorowane przez krzem."
-        },
-        {
-            question: "Jak rejestr prędkości wyjść OSPEEDR wpływa na charakterystykę prądową sprzętu?",
-            answers: {
-                a: "Wysokie prędkości wymuszają gwałtowne przeładowywanie się małych pojemności przewodu zjadając więcej prądu.",
-                b: "Jeżeli machasz zwykłą czerwoną diodą powinieneś przełączyć ten rejestr w najwolniejszy tryb (zminimalizowanie przepięć i poboru).",
-                c: "Robi sztuczne opóźnienia i spowalnia moment zapalenia się diody.",
-                d: "Opóźnia stromość samego zbocza napięcia przechodzącego na wyjściu z 0 na 3.3V."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Zwiększając prędkość na wyjściu mikrokontroler uruchamia silniejsze obwody z tranzystorami pchającymi napięcie stromiej w górę. Kosztuje to więcej w miliamperach zasilania. OSPEEDR nie 'delayuje' układu, tyko wpływa elektrycznie na łagodność wspinania się do góry wykresu prądu."
-        },
-        {
-            question: "W czasie pisania definicji biblioteki z użyciem struktur pod konkretne porty (tzw. C struct mapping) o czym należy pamiętać?",
-            answers: {
-                a: "Producent sprzętu na krzemie celowo opuszcza adresy rejestrów (tzw. dziury). Należy łatać puste miejsca dając definicję struktur 'Reserved'.",
-                b: "Pola wewnątrz muszą absolutnie mieć dopisek volatile (bez tego złośliwy kompilator pożre wszystko).",
-                c: "W polach wpisujesz zawsze małą gwiazdkę od wskaźnika (np volatile int *), by kompilator wiedział do czego się w strukturze odwołuje.",
-                d: "Tą wirtualną wydmuszkę w pamięci podpinasz do krzemu wykonując zaledwie na początku kodu jedno rzutowanie bazowe od pierwszego adresu peryferium."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Opcja C jest mitem! Gwiazdka powiązana ze wskaźnikami znajduje się tylko przy rzutowaniu całości u jej podstaw. Same pola rejestrów to zwykłe zmienne, jedynie poprzedzone słowem volatile chroniącym je od wymazania przez optymalizator flagowy np. flagą O3 GCC."
-        },
-        {
-            question: "Czemu na wykładach powiedziano, by definicję sprzętu owinąć we wskaźnik ukryty pod #define a nie w klasyczną zmienną wskaźnikową globalną?",
-            answers: {
-                a: "Zadeklarowana klasyczna zmienna wskaźnikowa int *x=0x... traci w pamięci fizycznie 4 bajty w krzemowym RAM-ie na bezcelowe trzymanie cyferki w kółko.",
-                b: "Kompilator odrzuca castowanie bazowych adresów poza funkcjami makr.",
-                c: "Define automatycznie powiązuje dane pola przypisując im formę sprzętową wyłącznie do odczytu.",
-                d: "Proste #define to tylko makro polecenie string-copy i wkleja surowe cyfry adresu kompilatorowi nie rezerwując śmietników w cennym RAM-ie."
-            },
-            correctAnswers: ["a", "d"],
-            explanation: "Preprocesor podmieni pod spodem 'makro #define' do finalnego binarnego pliku nie żrąc zasobów drogiej pamięci roboczej RAM, co przy dziesiątkach wskaźników robi dużą ulgę systemowi."
-        },
-        {
-            question: "O co chodzi z dziurami po kilka pustych bajtów pomijanymi masowo przez inżynierów wewnątrz struktur rejestrowych ('Reserved')?",
-            answers: {
-                a: "Kryją one wewnętrzną magistralę połączoną silnikiem DMA do ułatwienia przelewania bufferów.",
-                b: "Gdybyś nie wyrównał ręcznie tablicą tej dziury, kompilator spuściłby wszystkie pożądane wartości piętro w górę mieszając każdy rejestr i wywalając komunikację do śmieci.",
-                c: "Projektantom krzemu najłatwiej jest opierać bramki logiczne sterujące adresowaniem na wielokrotności potęg dwojki (2, 4, 8) i stąd powstają braki i dziury.",
-                d: "Ten fragment układu kopiuje błędy i służy do odblokowywania funkcji debug."
-            },
-            correctAnswers: ["b", "c"],
-            explanation: "Cyfrowe bramki logiczne pracują naturalnie na binarnych adresach (2, 4, 8, 16...). Zmiana tego by pozbyć się dziur, potęgowałaby koszty tranzystorów dekodera tysiące razy w samej płytce drukowanej. Programista musi ręcznie zalepić puste dziury by utrzymać offset na miejscu."
-        },
-        {
-            question: "Czym kończy się robienie przerw na odmierzanie 10 milisekund kręcąc pustą pętlę dla for(i=0...)?",
-            answers: {
-                a: "Robi potężną de-synchronizację pipeline'u, i na dłuższą mete w C bez asemblera nikt nie wie ile to właściwie się wykonuje.",
-                b: "Kosi prąd - CPU robi mnóstwo zbytecznych bezsensownych iteracji zamiast spać lub kopać BitCoiny i opróżnia baterię komputera do absolutnego zera na pełnych zasobach.",
-                c: "Jeśli spudłujesz i zapomnisz dać tam volatile - zniknie bezpowrotnie. Kompilator wyleczy 10 milionów obrotów kasując taką pętlę w pół taktu jako zbędny matematycznie śmieć.",
-                d: "Zablokuje sprzętową budowę jednostki wykonawczej po czym następuje reset peryferyjny."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Aktywne czekanie w pętli for to patologia w informatyce wbudowanej. Nie wiesz ile taka pętla zabiera milisekund (chyba że czytasz manual asemblera) a pobór energii dławi płytkę drukowaną."
-        },
-        {
-            question: "Czym rożni się wysyłany sprzętowy event timera (zdarzenie) od przerwania (interrupt)?",
-            answers: {
-                a: "Zdarzenie to tylko mignięcie jednego bitu, po którym oprogramowanie samo musi dopytywać w kodzie czy pętla coś uchwyciła.",
-                b: "Przerwanie brutalie zmusza rdzeń krzemowy do rzucenia tego co w danym momencie liczy, i wyrzuca go na próg procedury specjalnego handlera.",
-                c: "Przerwania da się skonfigurować a zdarzenia event się odblokowuje sprzętowym linkiem w asemblerze C.",
-                d: "Flaga interrupt na magistrali nie wymaga czyszczenia bo układ operacyjny sam zwolni zasoby."
-            },
-            correctAnswers: ["a", "b"],
-            explanation: "Event po prostu podbija jeden bit w rejestrze w tle, pozwalając na ciche dopytanie. Przerwanie to dzwonek alarmowy wyrzucający procesor natychmiast z rutyny pętli roboczej."
-        },
-        {
-            question: "Po co w elektronice tak niszowa i krzywa wartość kwarcu tj. 32768 Hz do zegarów czasu (RTC)?",
-            answers: {
-                a: "To magiczna minimalizacja radiowych stacji zakłócających fal i uśpienia baterii.",
-                b: "Wartość ta to czysta sprzętowa potęga dwójki (2^15) i bramki T dają banalnie precyzyjny okres na wyjściu - co do ziarenka wypluwając równe 1 sekundowe tyknięcia piku na końcu łańcucha przekaźników D.",
-                c: "Niskie oscylatory lepiej zabezpieczają tranzystory CMOS przed zgubieniem się po odłączeniu kabla USB przy pracy.",
-                d: "Przez tą potęgę procesor pozwala na rozdzielenie jednostek przerwaniowych dla ludzi - jest idealna do zegarów."
-            },
-            correctAnswers: ["b", "d"],
-            explanation: "Dzieląc na bramkach T i przekaźnikach potęgę dwójki uzyskujesz za darmo i najmniejszym kosztem produkcyjnym co równe ziarenko perfekcyjnie odmierzoną częstotliwość 1 Hz - czyli 1 sekundę na tarczy elektroniki."
-        },
-        {
-            question: "Przerwanie czy Hardware Event z perspektywy Timerów - czym tak właściwie jedno przeważa drugie?",
-            answers: {
-                a: "Hardware event w przeciwieństwie do przerwania, to mały impuls krążący na płytce wybudzający automatycznie np blok DMA, a Interrupt to flaga raniąca pętle u góry wymagająca interwencji ludzkiego pisania do skasowania.",
-                b: "Interrupt za każdym piciem wymaga ręcznej re-inicjalizacji wszystkich trybików w rdzeniu pod spodem.",
-                c: "Zdarzenie cicho omija rdzeń oszczędzając CPU miliony bezsensownych wyzwalających taktów.",
-                d: "Zarówno zdarzenia jak i przerwania trzeba niestety odpytywać pooling'iem bo nikt w kodzie nie dowie się że timer piknął alarmem pod spodem."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Event to czysty przepływ logiczny w miedzi (krzemie). Włączył timer? Sygnał pobiegł kablem na płytce włączyć DMA zrzut do RAM-u nie dotykając przy tym absolutnie CPU!"
-        },
-        {
-            question: "Jaka czai się ukryta moc za rejestrami cienia (Shadow Registers) w sprzętowych licznikach (timerach)?",
-            answers: {
-                a: "To sprzęt zapasowy, chroniący nas przed zwarciami głównych timerów przejmujący stery po dymie z chipu.",
-                b: "Robią natychmiastowe zdjęcie kliszą bieżącego i w kółko przeskakującego w nieskończoność licznika by dać odczytać programiście czysty przymrożony bit zanim tamten przeskoczy o miliard wartości obok.",
-                c: "Taki skok z cienia trafia na stół w równe zero taktów w idealnym tempie.",
-                d: "To zdjęcie wywołuje proces opóźniony, potrzebujesz z reguły kilku małych taktów sprzętowego zwolnienia by miedz zdążyła wlać dane ze światła licznika pod cień."
-            },
-            correctAnswers: ["b", "d"],
-            explanation: "Odczyt głównego rejestru, który nie ustaje nawet na sekundę, posypałby ułamkami błędnych połówkowych zapisów cały system i zmienne w C. Przekopiowanie do drugiego cichego rejestru cieni daje sterylny odczyt za cenę ułamków nanosekund zwłoki."
-        },
-        {
-            question: "Moduł WWDG / Watchdog. Gdzie ma zęby i co on robi po zawieszeniu pętli?",
-            answers: {
-                a: "To 12 bitowy licznik odkopujący zera, chroniący układ - doliczy zera na stercie i po cichu dusi przycisk RESET na całym sprzęcie wyrzucając kod pod prysznic na main'a.",
-                b: "Należy go karmić (restartować go z powrotem w górę) wyłącznie w jednym wyznaczonym w środku oknie - za wcześnie to ugryzie, za późno - zresetuje układ.",
-                c: "Może rzucić ręcznik na samego procesora, tak że zewnętrzne urządzenia wejściowe połączone drucikiem nie zgubią po cichu stanu zapalonych diod dając niepozorną zasłonę na problem w firmware.",
-                d: "Zamiast podawać mu śmieci wymaga twardego 16 bitowego magicznego klucza 0xA5 0xA5 wciśniętego dwa razy żeby ruszył klapkę do sterowania z opóźnieniem."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "Watchdog musi być głaskany by nie ugryzł po spadku do paska (okno dog timer'a). Gdy soft zje się sam - hardware bez litości i łaski resetuje strefę procesora (bądź cały system zależnie od konfiguracji)."
-        },
-        {
-            question: "Rzut okiem na stary standard RS-232, a poziomy mikrokontrolera wewnętrznie.",
-            answers: {
-                a: "W brzuchu mikrokontrolera zero to płaskie 0V, a jedynka to prężące się od 3 do 5 wolt z zasilacza.",
-                b: "RS-232 dumnie głosi, że jedynka spoczywająca to MARK a SPACE używany do ruszania na pole to surowe logiczne bitowe zero.",
-                c: "Logicznej jedynce dopasowuje gigantyczne dodatnie uderzenia impulsowe jako zaszłości ze starych maszyn.",
-                d: "Odwrócona logika starej mafii: logiczne '1' tłuczone jest ujemnymi woltami do ziemi (nawet minus 25V) a zero uderza wielkimi prądami na skali od plus 3V po plus 25V."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Procesory operują na plusie by odróżnić zera. Dawne urządzenia na RS232 używały negatywnych napięć by odpędzić duchy starych ułomnych zakłóceń stąd ta ogromna, chora odwrotność prądów."
-        },
-        {
-            question: "Co dobrego chowa na obrzeżach sprzętu tak zwany moduł LPUART?",
-            answers: {
-                a: "Tnie zegar do granic ułamkowych dając małe kapiące ramki przy żarłocznym ograniczaniu zasilania na diodach.",
-                b: "Potrafi trzymać na nogach bramki w trybie STOP (głębokiego uśpienia głównego rdzenia CPU).",
-                c: "Zbiera powoli ziarnko informacji bitów by zbudować z paczki 8 znaków po uśpieniu na czuwaniu uderzyć obudzeniem CPU dając mu prosto pod pysk załadowaną kulę z wiadomością od Slave'a.",
-                d: "Likwiduje asynchronizację dając obronę ramki parzystej przed błędami by wyrównać odczyt."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "Low-Power UART jako z nielicznych peryferyjnych rąk mikrokontrolera dalej żyje po wpuszczeniu sprzętu w STOP. Ma malutki wbudowany rejestr zdolny pozbierać po cichu literę a potem głośno wyć przerwaniem obudzenia pętli."
-        },
-        {
-            question: "Podstawa do zapuszczenia pierwszego asynchronicznego UART'a (tzw formatka 8N1). Co trzeba na nim przeklikać w rejestrze C?",
-            answers: {
-                a: "Zgasić do zera bity oznaczane tajemniczo literami M0 i M1 - by uzyskać gołą i prostą długość równych oktanom 8 bitów na taśmie.",
-                b: "Piny przypisane z plastiku nóżki na boku portu C trzeba wyrwać brutalnie z rutyny wyjścia i wpiąć w specjalną funkcję pociągu (Alternate Function np nr 8).",
-                c: "Na osiem i zero (8 i N) nakładamy bit zamknięcia STOP dając mu stan flagi CR2 spłaszczony do dwóch pięknych zer.",
-                d: "Nadajnik kręci swoim kołem a odbiornik osobnym Baud Rate niezależnie ustawiając sztywne szybkości w osobnych plikach."
-            },
-            correctAnswers: ["a", "b", "c"],
-            explanation: "UART jest asynchroniczny stąd wymaga 11 taktów (1 start, 8 bitów surowej piguły informacyjnej, 1 opcjonalna paczka parzystości, 1 zatyczka na koniec trzymająca prąd by się nie posypał stan układu). W starych kołach zębatych obydwie strony baud muszą bić tym samym sercem (odpowiedź D psuje całość!)."
-        },
-        {
-            question: "Flagi we wbudowanym procesorze odpowiedzialne za trzymanie paczek informacji USART. Co tam się świeci?",
-            answers: {
-                a: "Flaga RXNE (Not Empty). Pudełko odbiorcy odebrało na tacce bajt, rzuca sygnał wybudzenia że coś ma na widelcu ale wciąż wisi w nienaruszonym rejestrze do pożarcia.",
-                b: "Flaga TXE informuje nas że paczka poleciała kablem stąd działa bardziej ociężale niż dumnie zgłaszany znak końca misji (TC).",
-                c: "Kiedy pudełko pełne ale ty odwróciłeś wzrok rzucając ignorowanie do zera odczyt, nowa paczka wskoczy w to samo miejsce wyrzucając na ekran w krzemie alarm Overrun Error (ORE).",
-                d: "Profesjonalnie odpala się od razu cztery różne ukryte w krzemie pętle diagnostyczne na każdy błąd ramki z osobna (Przepełnienie, Zły Kąt, Dym na kablu, Zła Parzystość) dając ładny monitoring ułomnych ramek."
-            },
-            correctAnswers: ["a", "c", "d"],
-            explanation: "Flaga na boku to twój termometr od ramki portu. Overrun (ORE) to pożar, kiedy rurka pluje na stos więcej niż potrafisz przegryźć pętlą przerwań, zalewając cenny materiał starą paczką nie pobraną w porę na tablicy. TXE to flaga pozwalająca wsadzić następny bajt pod koło bez czekania na dolecenie (TC)."
-        },
-        {
-            question: "Ring Buffer, Bufor kołowy typu FIFO bez potknięć na przerwaniach.",
-            answers: {
-                a: "Pies zjadł swój własny ogon - Kiedy head uderzy twarzą w potylice taśmowego wskaźnika Tail - uważa się za nienasycony pusty pojemnik mimo sterty adresów w środku tablicy C.",
-                b: "Sztuczka bitowym AND (&). Skreślasz z procesora katorżniczą pracę powolnego dzielnika Modulo i zawijasz z powrotem taśmociąg palcem za pół darmo wydajnościowo kręcąc wokół.",
-                c: "Rozmiar może być luźno rzucany nawet wielkością magicznego równego 100 znaków i sztuczka zawracania bystrym wskaźnikiem (&) działa z każdym bez różnicy.",
-                d: "Zapis to strefa brudnych wojen - wrzucenie tam danych z jednej pętli i przepychanie markera HEAD nie tworzy atomowego pożarcia. Jak wpadnie niespodziewanie ukryte przerwanie w środek zniszczy tablice kołowe rozciągając i niszcząc cenne informacje na strzępy bez litości."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Aby sztuczka bitowego sprytnego skoku (&) wygoniła wolne dzielenie do zera % trzeba tablicę kołową przykręcić kajdanami rozmiaru równymi ułomnej binarnej granicy z jedynkami (wielkość 1, 3, 7, 15, 31, 63 etc). (Head==Tail to pusto!)."
-        },
-        {
-            question: "Jaka jest natura sprzęgła synchronicznego odległości miedzianego i ułomnej sieci układów zwanej potocznie SPI?",
-            answers: {
-                a: "Niczego nie trzyma równo klatkami bez druta. Działa w pętlach ukrytego w maszynie asynchronicznego half-duplex drąc miedź jedną chudą rurką z lewa na prawo po kablu.",
-                b: "Żeby pogadać na krzemie i nie pociąć ramki - dajesz druta Zegarka (SCK), wjeżdżasz dwoma drutami śliskich torów wymiany (MOSI / MISO) - ale żeby zacząć gadać z gościem bijesz uderzeniem do ziemi na przewodzie Wyboru Kawałka Czipa (CS). Minimum to równe cztery żyły na drucie.",
-                c: "Ten Master z reguły dusi i zwala na twarz nóżkę Chip Select do twardego ułomnego dna 0V by po przebudzeniu gościa zrzucić na układ lawinę stromo zębatego druta zegarowego do wyplucia danych.",
-                d: "Masz zabawki CPHA (Faza uderzenia) oraz CPOL (polaryzacja piku prądowego) żeby zębami pasować układ pod idealną zgraną gębę pinu urządzenia obok."
-            },
-            correctAnswers: ["b", "c", "d"],
-            explanation: "SPI to superszybkie połączenie Mastera walącego twardym prętem (SCK - Zegar) paczki przez dwoje wąskich drutów i dławiącego drutem slave'y obok opuszczaniem gilotyny stanu Select do zera. (Odpowiedź A to opis asynchronicznego UART-a na zewie - BZDURA)."
-        },
-        {
-            question: "Jaki jest finalny zbiór ilości żył metalowych wymagany do SPI z oficjalnych wypowiedzi wykładów?",
-            answers: {
-                a: "SDA SCL i masa wystarczy po kablu obok jak przy I2C.",
-                b: "Często w amatorskich układach wyrzuca się jednego by zrzucić wagę stąd rzekomo obcinając (CS) wpadają mu na głowę tylko trzy małe kable.",
-                c: "Na bębnie egzaminacyjnym rzucasz twarde 4! Tylko taka odpowiedź ratuje punkty na ołtarzu wiedzy.",
-                d: "W SPI 5 na zawsze! Bez piątego z hardware nie podniesiesz niczego więcej po przerwaniach drutu."
-            },
-            correctAnswers: ["b", "c"],
-            explanation: "Według prowadzącego (a co za tym idzie na egzaminie z przedmiotu ASK) prawilna odpowiedź na liczbę linii używanych i trzymanych w ryzach czujek SPI wynosi oficjalnie i na amen 4 sztuki przewodu!"
-        },
-        {
-            question: "Co ciekawego czai się przy lutowaniu ułomnego czujnika do garnków na układ z TMP121 kręconego silnikiem na miedzianym drucie SPI?",
-            answers: {
-                a: "Wyciąga on 12 zębów plus dumnie trzymaną flagę znaku by dać na tablicę najdrobniejszą kroplę zmiany pogody w granicach ułamków uderzających o 0.0625 C.",
-                b: "Daje mocną rozdzielczość na równi podłapaną przez definicję ze słowem 'dokładność' przyrównaną do równego 1.5 C po spłaszczeniu w błocie.",
-                c: "Ten prosty styk ułamków kręci ramkę niesłychanie żwawo. Wyciska w złączach taktów 15 wielkich Megaherców ze swojego trzewia.",
-                d: "Pobranie pełnej ułożonej ramki sznuruje duszę starej pompie czujnika wywalając za okno stary odczyt i popycha palec na produkcję nowej miarki. Żeby wiedzieć na 'tu i teraz' - odczytaj drut drugi raz bo spóźnisz się z palcem i uderzy stara rysa ciepła."
-            },
-            correctAnswers: ["a", "c", "d"],
-            explanation: "Na wykładzie mocno wypluto podłogę podkreślając iż rozdzielczość (drobinki ułamków w matmie) i dokładność (realnie kłamiące rozbieżności stopnia czujnika przy wyciąganiu z pudełka przy produkcji do kalibracji) to dwa potężnie różne terminy rozbite o wielki głaz. Odczyt kradnie starą temperaturę więc trzeba prosić 2 razy przy pojedynczych odczytach z łaski."
-        },
-        {
-            question: "Dlaczego interfejs I2C po podłączeniu tysiąca wron nie zwarł linii brudem prądów po drutach uszkadzając krzem pod maską?",
-            answers: {
-                a: "Wszystkie układy pchają na wprost siłę bramy Push-Pull by siłą narzucić i wepchać krzemowe tranzystory u dołu i dociągnąć na sznurach do 1 logicznej natychmiast wyrzucając trupa obok z gniazda.",
-                b: "Użyto pojęcia uciętego i odrąbanego pół boku pchania tzw otwartego drenu - jedyne co układy na sznurach robią z drutem - to przyciągają moc do gleby trzymając ułomne binarne Zero.",
-                c: "Na całej drodze postawiono ułomne dwa małe słupki oporu (rezystory pociągające do góry 'pull-up' - wymuszające leniwe wysokie pole 1 dla bezczynności po drutach z łaski podpięcia by nie spadały na dno po wyłączeniu krzemowych bramek).",
-                d: "Kiedy wszyscy wciśną gaz zwierając tranzystory prąd spada na podłogę - to opór słupków drutu pociągającego dławi ból i uciekającego żarcia na miedź, chroniąc dół u tranzystorów dając sterylne życie płytek drukowanych bez dymu z zwarcia."
-            },
-            correctAnswers: ["b", "c", "d"],
-            explanation: "Standard sztywno wyrzucił brutalne napieranie na jedynkę by uniknąć wybuchu i zwarcia z pinami wywalonymi do jedynki. Stoi oparty o ciche 'ściąganie na podłogę prądu', kiedy jest gwarno prąd ściągany leci powoli po rezystorze przy suficie łagodząc miedziany żar do zera na drutach dając absolutne bezpieczeństwo na szynie."
-        },
-        {
-            question: "Jak rzeźnicy na szynach odpalonego dwukablowego I2C walczą na gilotyny bitów przy zderzeniu z wieloma paczkami odpalonymi do druta (Multi-Mastering na wierzchu)?",
-            answers: {
-                a: "Jeśli podpięty obok chłop wystawi bicie prądem o glebę, a z racji otwartego drenu Ty trzymając ręce z góry poczytasz glebę (0) będąc święcie ufny puszczaniu góry i cichego napięcia w niebo (1) uciekasz z placu bo jesteś w plecy - zmieniasz front i siadasz za kierownicę po stronie gościa, słuchając cudzych bitów na desce Slave-a ze spuszczoną miną.",
-                b: "Zaraz po kraksie i utracie miedzi czekasz ułomny losowy obrót ślepym kątem mrugnięcia, żeby dać barierze spokój unikając sztywnego ruszania stadem ponownie byle nikt znów na gilotynę nie trafił.",
-                c: "Wrzuć chamskie zawieszenie Delay'em sztywnych ram na sznur 10 milisekund bez litości za plecami kół. To najlepsza obrona po sznurze kół ułomnych zderzeń synchronizując ponownie chętnych masterów.",
-                d: "Zanim uderzysz ramką po drucie w zderzaka czekasz jak krzemowa pułapka i patrzysz - Idle. Jeśli dwa lwy śpią, linia jest w pełnym stanie prężeń na same binarne słupki u samej góry (1 i 1). Jak dno 0 - zajęte zamykając maskę!"
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Kłamstwem na rzucenie sztywnych blokad delay o stałej czasówce na ułomnym I2C. Oba master-y wcisną się naraz, wywalając po drutach równe zderzenie i wpadną w zapętlenie nienawiści w bloku po sterylne dno i zwieszenie systemu! Arbitraż (Collision Detect) rozwiązano bez żadnych zmartwień za pomocą leniwego odpytywania stanu - Ty dajesz 1 na tranzystor po sznurze, czytasz a tam obcy zdusił do 0? Przegrałeś bo twoja miedz i stany to zero! Tranzystory nie zwarły stąd pętle układów to tolerują pod spodem by nikt nie spłonął z wciskania napięcia."
-        },
-        {
-            question: "Protokół ukłonu w krzemie I2C - ramki ze świata bezkresnych paczek",
-            answers: {
-                a: "Trzasnąłeś drzwiami STARTU opuszczając na przodku danych linie (SDA) do gleby po zębatce sznuru przy twardym ciągłym i wiszącym jeszcze górą cichym Zegarku byle go wyrwać z Idle'a.",
-                b: "Następnie rzucasz na wierzch paczuszki z kawałkiem adresu drutu (w sumie 7 ziaren adresowania) po nim na łeb puszczasz 8 koralik 'Bit Read/Write (0 z łaski uderza dla ułomnego ZAPISU - 'W', 1 odbija do ułomnego brania i ODCZYTU - 'R').",
-                c: "Kawałki żarcia z krzemu drą miedz w blokach 8 binarnych kul dając za dziewiątym rogiem strzelenie w kółko by Slave potwierdził kiwnięciem podłogi i dociśnięciem masy (ACK).",
-                d: "Slave zasnął dnem bez echa, rezystor dociągnął kółko do nieba dając głuche 1 bez żadnej chamskiej bitówki a Master rzucił pętlą plując mu z powrotem błąd na zębatce NACK nie uznając sprzętowego adresu pod cichym dnem obok."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "To surowe streszczenie fizycznej gilotyny paczek idących po żyłach drutu magistralowego I2C - po starcie paczkujesz 7 kawałków bitych gwoździem z 8 bitem wyznaczającym odwrócenie i zmianę szlaku krwiobiegu po obustronnym odepchnięciu załogantów na sznury od siebie! Na koniec paczuszki pacane na koniec dopytywały - dno 0 to Potwierdzenie z życia przyciąganiem - a Pusta wisząca przez opornik kłoda na 1 - brak znaku zwrotnego NACK (błąd kółek)!"
-        },
-        {
-            question: "Jaka relacja żyje za porównaniem drutów z przeszłości i nowocześniejszych kabli - RS, I2C oraz zębatego druta SPI?",
-            answers: {
-                a: "SPI deklasuje rywala twardą szyną - urywa nawet do osiemset i ciska setki miedzianych zębów w granicach Megabitów na cichym drutku ale tylko przy ułomnej walce po biurku krzemu (centymetry na tablicy) po dyskach chmur np karty MicroSD obok.",
-                b: "Stary rzymski drut i ślepy w obroty I2C - Rzadko kładzie w szynę wyżej równego ułomnego Megabita obok (Z reguły bije nudą przy małych szczątkowych kółkach z rzędu 400kbps po pętlach i na dół).",
-                c: "Dla obudzenia SPI na szynie zawsze i absolutnie za każdym razem ułomnie wymagasz i wciskasz mu na chleb do mordy cztery krzemowe igły od spodu niezależnie od budowy plastiku w szynach bez gadania.",
-                d: "RS po chudym bitym uderzeniu kablem po ziemi, wyciągnie na łańcuchach z bitów po ziemi nawet grube metry pociągając to kosztem w ułomne dziesiątki krzemowych kilobitów kapiącego ze strzępek dachu po łuskach starego łańcucha przesyłu."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Do prostych układzików krzemowych bez żadnych gilotyn jak i wejść uderzeniowych z dołu jak mały rzeźniczy czujnik ciepła TMP na czarnej taśmie sznuru - on potrafi wyłącznie sikać prądem wysyłając bity z rejestru dół więc wbijasz zaledwie chamskim pociągiem bez kabla MISO - wystarczą obok trzy marne kabelki z zębami do jego obudzenia na małej taśmie! Z resztą stary poczciwy RS (D) niszczy odległością wlokąc małym tempem setki centymetrów byle dopchnąć bit po paczce z wtyczki przy potężnym wykopie ujemnego miedzianego prądu z portu po drugiej w miedzi!"
-        },
-        {
-            question: "O czym pika drut Universalnego Portu Z zębami w plastiku (USB) sztywno mrugając u góry krzemu? Jak w warstwie pierwszej gniecie ramkę na kółkach i wlecze ułomną falę bez obrotów na asynchronii?",
-            answers: {
-                a: "Paczka krwiobiegu asynchronicznego - rzucony na tory drut bez tykającej igły z wrogo wyciąganą stacyjką z paczki do ramki gdzie cichy układ obok buduje sobie zegar u dołu sam cicho nasłuchując bitów od strzału z góry by się rozpakować na dole.",
-                b: "Tnie w kawałki błędy fal mruganiem dwóch równej rangi przewodów na sprężynę przeciwległego napięcia i wlecze na dole czyszczony sterylizacją równej matematyki obok ujemnego kręgu przez co ma obronę potężną od zakłóceń prądu - wzmacniacz to kosi i zbiera dając ból po zerze a szum w eter gwiżdże.",
-                c: "USB pcha w zębate pętle starej machiny rewizji dwa-zero zębami równo tnąc na obydwa przewody paczki pchania full-duplex uderzając kablem obustronnie dając w zębate igły równo przesył na potęgach kręcąc sznur dno góry po sztywnych strzępach drutów jednocześnie po torach starych i chudych kabli.",
-                d: "Pod wyrzut gniazdka rzędu trzy-zero (gigabity na koło), kółko rzuca dwie wielkie nowotwory ułomnych strzępów na pary na styk wyrzucając stary drut tylko jako wsteczna kula na nogach by stare kółka nie zdechły u dołu pod ułomną nową ramką full duplex dając u góry zapasy do pętli miedzianych strzępów bez utraty krzemu po dobudowie igieł krzemowych z boku kabla obok kręcąc do końca bitów i od dołu drutów na rurce by dać prędkość w sufit po przerywaniu dna torów i wyrwać paczkę gigabitów ponad chmury."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Stare biedne ułomne po kręceniu pętle dwu-zerowe (2.0 USB i puste stare kable poniżej) to strzępy i miedz w połowie łamana po ułomnym half-duplex drąc miedź tylko po drodze w zderzenia jedną stroną (a więc chude tory pchania). Do przebudzenia w 3.0 wywalono gigantyczne paczki po drucie do rur po dwóch ogromnych przewodach budując full duplex by stare druty za zębami zostały jedynie w hołdzie cichych ułomnych krzemowych strzępków kompatybilności przy wkładaniu myszy."
-        },
-        {
-            question: "Rozpakowujemy torbę w typach kanałowych kręconych drutem od gniazdek w komputerach USB - jak działają strefy rury transferowej?",
-            answers: {
-                a: "Pętla Sterująca kręcona Endpoint-em zero za mordę trzyma całą rzeszę kabla uderzając priorytetem o pętle jako najwyższy dno władca i za rękę konfiguruje urządzenia sztywno od samej rury.",
-                b: "W pętli Interrupt'ów dno starych ułomnych myszek pcha tylko paczuszki mikrobów wielkości marnej 8 byle obok po 64 by nie zdławić kabla i podbija ciche CRC do weryfikacji po miedzi obok paczkując po małych kołach.",
-                c: "Bulk wyrzuca z dysków zębate koła do szybkiego kręcenia bitem bo jest najwyższym Panem drutu i jest całkowicie rzucany na krzem z łaski paczek powolnego ruchu po klasie najgrubszych najwolniejszych low-speed bez odcinania igły od dysku w ogóle.",
-                d: "Stary ułomny drut kamer kręcących z ręki Isochronous i potoków puszcza łezkę - tnie i nie patrzy od tyłu - na stół pakuje prąd bez zatyczki poprawek błędu (retries) i kładzie na zębatce tylko surowy czas wyrzucając na gilotynę sterylność bitu i nie rzuca paczek na nowo po wtopie."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Bulk'i zrzutów po kablach z krzemowych pendrive-ów nie posiadają absolutnie ułomnych żądnych priorytetów z góry by nie zadławić pętli miedzi. Do tego w ogóle ich stary układ ułomnych tanich dziur Low-Speed nie wspiera dając do łez powolnych małych ułomnych krzemów szlaban z drutu bez gadania o masowym wyrzucie pliku z bazy bez błędów pod lufą błędu CRC."
-        },
-        {
-            question: "Czym za miedź łapią ciche ułomne biblioteki drutów (Device Drivers po systemie operacyjnym) na poziomie drutu u ułomnych i chudych paczkach w Open i rzucanego z boku paczek Close przy użyciu igły od krzemu?",
-            answers: {
-                a: "Siedzi zamknięte ułomnym w dno Jądrze u systemu chroniąc za rękę zębate rejestry igłą rzucając na łańcuch rączki aplikacji bez litości i sterylizując błędy rzucane po zębach by nie uszkodzić drutów bez autoryzacji pod spodem w układzie dając na ołtarz ukryte paczki funkcji.",
-                b: "Za każdą wpuszczoną paczką drutu byle gówno Open stary rygiel z cichej pętli sprzętowej od ułomnego licznika referencji dumnie inicjalizuje miedzi peryferia gnąc pętle rygli na nowo ładując prąd u samego drutu igłą przy ponownym pacnięciu aplikacji igłą by zalać prądem hardware z igieł pod miedzią.",
-                c: "Kiedy wrzucisz Close za plecy paczki, bez mrugnięcia okiem miedz odłącza z prądu krzem twardo ucinając dym przy wywołaniach licznika po dnie na kółko oszczędzając baterie bez liczenia kół na zębatkach i paczek pod spodem rygli i ułomnych kółek referencyjnych stając byle po zamknąć jeden sznurek miedzi drutowej w rzut by sprzęt uciąć i zawalić proces bez gadania po paczkach pod ryglem liczenia paczek od tyłu zębami na chude igły w drutach od igły w dole do bazy rzucanej pod ułomne rury referencji w prądy na strzęp w dym.",
-                d: "Dobrze pętlony Open wykopie łuskę do ułomnych struktur deskryptora po buforach dając u igły gotowe do drutu peryferyjne rury igły USB ładując paczki w zęby ze sznurka pod maskę pętli drutów cichym obrotem z igieł paczkując miedz w zębatkę bez ułomnej klamki dając na ekran czysty krzem w ręce dla oprogramowania do odczytania góry drutu do stacji buforów za drut by zrzucić strzępy z paczki w kodzie do rzutu krzemu bez kłamstw z drutów w rurę do paczki ułomnych pętli drutu."
-            },
-            correctAnswers: ["a", "d"],
-            explanation: "Sterowniki rzucają igłami do ułomnych Jąder dając na zębach sterylny obraz wywołania byle nikt nie uszkodził u dołu drutu. Nie inicjalizują one z rur i od miedzi ułomnych timerów po zębach obok ciągle (od góry paczki pilnuje je tzw. ukryty licznik pod ryglem odwołań 'Reference Count'). Sprzęt po wpuszczonej krzemowej dnie zostaje rozebrany (Close) miedzią u dołu zaledwie tylko przy wykopaniu ostatniej pętli aplikacji przy rzucanym ryglem zerze rzucanym dumnie w przerwaniach bez pętli na druty by oszczędzić igłę baterii drutem sterylnie na dół rzucanym powoli pod ułomnymi bitami po miedzi. Pętla Open potężnie wyrzuci sznurek miedzi deskryptora cichej rury do buforów drutem dając igłę w bazy w górę bez błędów."
-        },
-        {
-            question: "Jaka jest prawdziwa natura po drutach starych i chudych Driverów urządzeń miedzianych z krzemu na paczkach z C i ich ułomnych blokad u góry peryferiów drutowych paczkowanych bez chamskiej igły u rur w krzem z zębami do Jądra pod spodem kół na rury po miedzi obok krzemu?",
-            answers: {
-                a: "Pędzi z maskowaniem od ukrytego zębami surowego pisania na miedz rzucając z rur sterylne pudło maskujące aplikacje pod ryglem Open z boku rury gilotyny od strzałów u drutów by wlepić twardo w krzem API nie żrąc w kółko dymu bez adresu i sztywno rzucając krzem dumnym chamskim pudłem z drutów dla szaraka w C.",
-                b: "Podbite ręką sterylne rury rzucanego API chronią miedziane i błędy z luf ułomnych rzucając w rurze krzem sterylnie przed wpisami nadpisanych drutów i strzępów na ułomne uderzenia pudłem zębatej pułapki rzucając w bazy sterylnie API pod API chroniąc bez adresów z lufy dając bezpieczny strzał w bazy w Jądrze dając sterylnie do rury z miedzi wywołując Read i ułomny Write.",
-                c: "Kiedy rzucasz na stół igły o drut sterylnie drugą rurą otwierając na starych kołach z rygli wywołując nowym ułomnym wątkiem z góry Open do drutów - duma kół wymusza ponowną twardą pętle rur i strzał sterylnie inicjalizując miedz w ciche peryferia ponownie z igieł pod rury dając ułomne chamskie przeładowania zębów od sprzętu na dnie z miedzi rzucając dym z luf od zębatej płyty w pudle po miedzi obok timerów rzucanych od kół w rurach.",
-                d: "Sterowniki to wymysł rzucany przez pętle czystego drutowania od dużych Jąder w chmurze bez ułomnej bazy. Bez sterylnie drutowanego ułomnie wielkiego Jądra rzucanego z lufy z paczek wielkiego systemu - nie mają absolutnie racji w byciu chamsko i ułomnie nakładanym w pudle Bare-Metal dając miedz dym z kółek bez zęba na pudle od płytek bez drutu sterylnie od drutowania na miedź po igle rzucanym."
-            },
-            correctAnswers: ["a", "b"],
-            explanation: "Sterowniki potężnie rzucają drut sterylnie obok API maskując pot ze sprzętów w bazy C by osłonić druty przed błędem rzucanym chamską pomyłką palca na stos (wyjątki na pętlach drutu rzucane w szary kółek). Ale sterylnie i potężnie żyją one na małym Bare-Metal dając krzem miedz z łaski ułomnych igieł czystym potężnym sznurem API dla aplikacji od drutów rzucając drut na czysto do góry a pętle ułomnego licznika ukrywają re-inicjalizację miedzi z łaski oszczędności do rur drutu nie żrąc baterii drutując krzem obok bazy. "
-        },
-        {
-            question: "Do rur po ułomnym sznurku do góry krzemu podpięte timerki softu - wirtualne paczki pętli w C. Jak one kręcą zębatkami od miedzi po ułomnym zegarze w dole do rur pod maską z igłą przerwań by oszczędzić krzem?",
-            answers: {
-                a: "Wrzucane są chamsko jak drut i gładko upakowane ułomnymi kółkami drutu sznurkiem do rury po wskaźnikach chamsko pchanych z tyłu w strukturach uwiązanych jeden-za-drugim na sterylną sznurówkę (Listę rzucaną po kółku w krzemie).",
-                b: "Wysiada im paliwo kiedy drut CPU sterylnie spędza po przerwania cały chamski ułomny drut bez krzemu licząc na drutach struktur tysiące sztuk miedzi powoli skacząc od wskaźników miedzi w ułomne kółka pod przerwaniami rzucając dno dymu rur dławiąc ułomną i chamską robotę gładkiego Maina do 0 bez krzemu u dołu lufy rzucanej z boku od ułomnego CPU po listę rur powolnie.",
-                c: "Krzem duszony drutem miedzi w chmurze wirtualnych sterylnych timerów po listach drutu ma chamskie stany potężne. Gładko maszyna rzucana dnem drutu skacze w Idle sterylnie rzucając paczki active i potężnie zawalony miedzią chamski powolnie kółkiem drutu sterylny dym 'waiting' oraz done pod drut miedzi.",
-                d: "Zjawisko 'Jitteru' - rzucania gilotyny zepsutych zegarków w krzemie powoli chamsko dobija ułomną jakość tych co sterylnie wiszą u końca sznura bo procesor dusi drut po miedzi w górę po cichym przeglądzie ułomnych u sznura kółek w drut sterylnie miedź przeglądając przed nim powoli rzucając im z opóźnieniami strzęp do rur błędu krzemu po listach ułomnie powoli ze wskaźnikami pod drut bez twardej w zębach u dołu od ułomnej igły sterylności."
-            },
-            correctAnswers: ["a", "b", "d"],
-            explanation: "Sznurek drutu zwany ułomnie listą w C od ułomnych wirtualnych Timerów ma cicho tylko Idle, Active i kręcącą cichą gilotynę Done - bez rzucanego chamskiego drutu z zębami wymysłu i pustego drutu z wirtualnym kłamstwem 'waiting'! Sznurek ten u dołu dławi krzem drutem iterując z pętli po przerwania u dołu gubiąc druty po 'Jitter' - chamskie rzucane powolnie i powiększające ułomnie obroty i skaczacymi przerwaniami na dym od krzemu ze sznura z cichymi opóźnieniami miedzi dla ostatnich w kółkach wskaźników z ułomnego sznura!"
-        },
-        {
-            question: "Wyjątki od Przerwań w systemie rzucanych zębami - cicha wojna wewnątrz pętli rzucana w C dnem układów u CPU - Co tam dusi z układu krzemu powolnie w układ do drutów na rurę?",
-            answers: {
-                a: "Przerwania rzucasz pozytywnym mruganiem miedzi w krzem z zębami do dobrych gładkich paczek normalnego rzucania układem z sznurów - a z łuski wyjątków w układ uderzają negatywne sterylne powolnie druty dławiąc układy ułomnym kłamstwem dymu (błędy miedzi do rur pętli w dole).",
-                b: "Zarówno w miedzi dym z zębami przerwaniowych sznurów na układ - jak i w ułomne pętle wyjątku z chamskim błędem miedzi - wyrywa sprzęt powolnie w dym sterylnie asynchronicznie dławiąc w Jądrze ułomnie zmianą potężnych ram kontekstowych kółek pod lufą w dół wyrywając w rurze chamsko skok dławiąc u dół drutem pętle do ukrytego w miedzi Handlera z sznura.",
-                c: "Krzem zwany dumnie 'Fault' w sterylnych pętlach dymu po błędach w zębach (Segmentation Fault) w układy powolnie wybaczy błąd miedzi chamsko zamiatając układ dając szarakiem powrót w układ w drut z rur krzemowych dając ułomnie poprawne od ratowania ułomnych potężnym systemem w dym do sznurka od miedzi ułomnie ratując proces powolnie.",
-                d: "Zębate Aborts potężnie z łuski uderzają w układ sterylnie rzucając na stół w dym chamsko zgniatany u układów ułomny błąd rur miedzi - do którego dumnie w układ powolnie nienaprawialne wrzucane jest zawieszenie luf z dymem pod rury odcinając szaraka w kłamstwach bez odwrotu rzucając powolnie dym w systemie drutów z łaski na pętle bez rur pod układ od ukrytych w układzie martwych kół do krzemu bez nadziei napraw w Jądrze z układu."
-            },
-            correctAnswers: ["a", "b", "c", "d"],
-            explanation: "Wykłady krzemowe dumnie pociągnęły drut z łaski dzieląc z zębami w dół system na pozytywne asynchroniczne rzucane gładko (Przerwania/Interrupts) - sterylne dym od normalnej bazy układu drutu - oraz negatywne sznury w błędy miedzi (Wyjątki/Exceptions). Fault (np. uszkodzenie dymu u kół w Linux z łaski pamięci ram) krzem ułomnie jeszcze jakoś posprząta łagodnie z układów drutów na bazie i z układów Jądra wyrzucając u dołu kółko potężnie i sterylnie w układ. Za to chamski i dymiący na zębach 'Abort' sterylnie z miedzi potężnie uderzy w pętle u góry kółek wyrzucając z krzemu układ drutem z lufy dając powolnie zawieszenie bo dym sznura sterylnie wymknie szaremu w Jądrze z rąk na lufę dając układowi dół w pętle nieskończoności u łuski zawieszonego drutu do układów."
-        },
-        {
-            question: "Jaka zębata z łaski foka drutu siedzi chamsko u góry od sznurów w Statusowych Rejestrach u procesora miedzi dając układy dnem i łuską do przerwań u krzemu w górze z układu na pętle?",
-            answers: {
-                a: "Te dwie gładkie potężne na wskaźnik flagi u góry rejestru w łuskę drutu pozwalają tylko w układy do drutowania pętli blokować z zębami globalnie chamsko pod nożem wyciszając ułomnie po łusce wszystkie bezwzględne na dole sygnały dymu w krzem pod lufą w dół rur od procesora od przerwań miedzi z łaski pętli układu ułomnego.",
-                b: "Odpalasz przełącznik u góry flag w lufę dymu - sterylnie z drutem układ od przerwań w ułomnym dole po rurze chamsko zapala pod zębami wszystkie miedzie dając drut z lufy od łuski po układach z łaski dla timerów z drutu sterylnie budząc włączone dym z łuski do rur od peryferiów na bazie sterylnie na układy.",
-                c: "Kiedy pętasz ułomnie sznur konfiguracji drutu od zębatej płyty w ułomny timer po łusce miedzi - wpierw sterylnie z drutem chamsko wyciągnij lufę pętli w dym wyłączając w bazie cichym sznurkiem układ jego drutu by zakłócona sterylnie igła krzemowa nie strzeliła drutem wywołując rury od zębatego dymu fałszywego u pętli bez zębów w przerywanie sterylnie po układzie od luf.",
-                d: "Rzucane drutowaniem pętli sterylnie i chamsko pooling w drut dymiący w kołach - to duma kół rzucanych w łuskę od oszczędności układów baterii po telefonach dając drut od ułomnej igły powolnie chamskim z zębami do góry ukrytym potężnie usypianiem miedzi w rurę z łuski sterylnie na dole u rur od zębów na układy rzucane sznurkiem od baterii."
-            },
-            correctAnswers: ["a", "c"],
-            explanation: "Pooling krzemowy chamsko w zęby wyrywa miedz z krzemu paląc drut układu dając łusce ułomnie potężnie do prądu - paląc 100% lufy dymu u baterii pętlą drutu! Z lufy od łuski flaga Statusu u zębów dumnie potrafi z rur drutu chamsko globalnie uciszyć ułomne w gładkich łuskach z drutu na dole przerywania miedzi z układów, lecz nigdy z łuski luf w pętle nie obudzi chamsko sam z drutu potężnych wyłączonych i sterylnie leżących po sznurku przerwań u dołu peryferii układów bo to układy dymu z luf potrzebują na dole osobnej z zębami aktywacji u góry z łuski po zębach drutu od sznurków na pętle przed sterylnym drutowaniem od Jądra w konfiguracji rur w Jądrze dymu od miedzi ułomnej bazy."
-        },
-        {
-            question: "Na co w miedzi w handlu rzuca dym u góry sterylnie sznur asemblerowy powolnie dając 4 na zębatkach w dół (SUB LR, LR, #4) w ułomnych przerwaniach do krzemu od normalnego chamskiego potężnie i sterylnie układu dymu - i z zębami kręci chamski układ z góry od łuski rur NVIC'a w krzem potężnie rzucając sterylnie drut po układach?",
-            answers: {
-                a: "Łuska rzuca cztery o dym - bo kółko programu chamsko przeskoczyło o rurę instrukcji z łaski pipelinu sznurkiem powolnie ładując sterylnie bez ułomnie wykonanego z góry krzemu w dół dając sterylne łuski drutem korekty powrotu drutem w rurę by szaraki wróciły w dym prawidłowo na swoje sterylne bez kółek u dołu w pętle miedzi u rur w krzem z zębami sterylnie drutem z luf od potężnego sznura od pętli na bazie dając w pętle powrotne układ do zębów z układu sznurka na pętle rur do drutów od miedzi w dół ułomnie od sznura na pętle bez drutu w rurze do dymu sterylnie układu rzucając z luf dumnie.",
-                b: "SUB z luf do 4 to pętla z zębami hardware'owo drutująca łuskę w NVIC powolnie dając z ukrytego w luf sterylnym z układy do łuski znak 'wykonane rurą u pętli bez dymu z góry od Jądra z układu rzucając powrotny łuskę z układy potężnie z łaski w sznury sterylnie układy sznurów na łuskę z góry drutem'.",
-                c: "Krzem dymiący gładko u NVIC z luf to sterylne drutowanie lufą dymu mapując układ setek sznurków miedzi od ułomnego peryferium do dymu sterylnie i chamsko na twarde sterylne dwie łuski u góry od drutowania wejść w układ rdzenia po zębach potężnie z rur dając łuskę ułomnych przerw w układ z zębami od pętli sznurka sterylnie w drut z łaski bez drutowania rur sterylnie.",
-                d: "Z zębami potężny dym NVIC do sznura daje drut sterylnie gilotyny (zagnieżdżania i wywłaszczania ukrytych na dole pętli chamskich łusek do drutu) rzucając sterylnie 5 priorytetów z łuski powolnie wykopanym chamskim sterylnie 6 dając z układów z drutu wyrzucenie starych ułomnych z rur w zębatkę w pętle drutu od ukrytych w zębach sterylnych łusek po drutach od układów w dym z pętli łuski od sznurka do zębów rur potężnie."
-            },
-            correctAnswers: ["a", "c", "d"],
-            explanation: "Łuska od potężnego zębatego drutu koryguje powrót lufy odejmując o dym ze zębów równe 4 bajty w dół układy sterylnie by luf z łaski pipeline'u u krzemu w powrót w dym sznurkiem wskazał poprawną niezrobioną z dołu pętlę rur od bazy układy! Potwierdzenie drutu w NVIC (B) robi się dymiącą łuską przez wpis rur a nie SUB z luf drutu u asemblera! NVIC dumnie w rury mapuje dziesiątki łusek od układów w dwie lufy i w sterylnie chamskie i ułomne potężne lufy pozwala wywłaszczać pętle z zębami u ułomnych drutów na rurze od sznura z krzemem wyższym drutem z luf w dół sterylnie z zębami od Jądra dając układ u dołu rur z łuski pętli rzucanej sterylnie drutem u góry."
-        },
-        {
             question: "Cechy architektury harwardzkiej (Arkusz B i C):",
             answers: {
                 a: "rozkazy i dane przechowywane są w tej samej pamięci",
@@ -815,6 +133,600 @@
             },
             correctAnswers: ["a", "b", "c"],
             explanation: "Rejestr MODER (Mode Register) konfiguruje podstawowy cel danego pinu (wejście, wyjście, wejście analogowe lub funkcja alternatywna dla innych peryferiów). Za pull-up/pull-down odpowiada oddzielny rejestr PUPDR."
+        },
+        {
+            question: "Jaka jest kluczowa różnica między samym procesorem (CPU) a mikrokontrolerem?",
+            answers: {
+                a: "Procesor (CPU) to jedynie jednostka centralna, która bez pamięci i peryferiów nie potrafi samodzielnie realizować użytecznych funkcji.",
+                b: "Mikrokontroler integruje w strukturze jednego układu scalonego procesor, pamięć RAM, pamięć programu (ROM) oraz peryferia.",
+                c: "Mikrokontroler nie posiada wewnątrz rdzenia CPU, gdyż jest wyłącznie układem sterowania wejścia-wyjścia.",
+                d: "Klasyczny procesor z komputera PC ma zintegrowany na stałe dysk twardy oraz pamięć operacyjną w jednym krzemowym chipie."
+            },
+            correctAnswers: ["a", "b"],
+            explanation: "Sam procesor to \"serce\" systemu, ale jest bezużyteczny bez pamięci i układów IO. Mikrokontroler to z kolei kompletny, zminiaturyzowany komputer zamknięty w jednej obudowie, posiadający CPU, RAM, ROM i peryferia."
+        },
+        {
+            question: "Jakimi zasobami pamięci dysponuje mikrokontroler z rdzeniem Cortex-M4 stosowany na laboratoriach?",
+            answers: {
+                a: "320 megabajtów pamięci RAM i 1 gigabajt pamięci FLASH.",
+                b: "320 kilobajtów pamięci RAM i 1 megabajt pamięci FLASH.",
+                c: "Posiada wyłącznie pamięć RAM, natomiast program musi być stale ładowany z zewnętrznej karty pamięci.",
+                d: "Posiada zasoby pamięci o 5-6 rzędów wielkości mniejsze niż klasyczny, współczesny laptop."
+            },
+            correctAnswers: ["b", "d"],
+            explanation: "Mikrokontroler STM32L476 posiada 320 KB pamięci RAM oraz 1 MB pamięci FLASH. Są to zasoby ekstremalnie małe (około 100 000 do miliona razy mniejsze) w porównaniu ze współczesnymi komputerami osobistymi."
+        },
+        {
+            question: "Jaka jest kluczowa różnica funkcjonalna pomiędzy samym procesorem (CPU) a mikrokontrolerem?",
+            answers: {
+                a: "Sam procesor (CPU) po podłączeniu zasilania jest w stanie wykonywać użyteczne, kompletne zadania sterowania bez żadnych dodatkowych układów scalonych.",
+                b: "Mikrokontroler integruje w obrębie jednego układu scalonego jednostkę centralną (CPU), pamięć danych (RAM), pamięć programu (ROM) oraz układy peryferyjne.",
+                c: "Pamięć cache procesora eliminuje w nowoczesnych komputerach całkowitą potrzebę stosowania zewnętrznej pamięci programu (ROM/Flash).",
+                d: "Współczesne procesory serwerowe lub desktopowe posiadają wiele rdzeni i pamięci podręcznych, ale jako samodzielne układy nadal są bezużyteczne i wymagają do działania zewnętrznej pamięci RAM, ROM oraz peryferiów."
+            },
+            correctAnswers: ["b", "d"],
+            explanation: "Mikrokontroler z definicji integruje CPU, RAM, ROM i peryferia w jednej obudowie. Nawet najbardziej zaawansowany wielordzeniowy procesor desktopowy/serwerowy po podłączeniu zasilania jest bezużyteczny bez zewnętrznych pamięci i peryferiów."
+        },
+        {
+            question: "Czym charakteryzuje się pamięć RAM dynamiczna (DRAM) w porównaniu do pamięci statycznej (SRAM)?",
+            answers: {
+                a: "Pamięć DRAM jest znacznie szybsza i droższa od pamięci SRAM, dlatego jest powszechnie stosowana bezpośrednio w rdzeniu CPU jako pamięć podręczna (cache).",
+                b: "Komórki pamięci DRAM zachowują się jak małe kondensatory – ładunek elektryczny utrzymuje się w nich bez odświeżania przez około 100 milisekund, po czym ulega rozładowaniu.",
+                c: "Aby zapobiec utracie danych, pamięć DRAM wymaga periodycznego odświeżania, a w czasie trwania tej procedury procesor nie może z niej korzystać.",
+                d: "Pamięć SRAM wymaga znacznie częstszego odświeżania niż DRAM, co drastycznie ogranicza ogólną wydajność systemu."
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "Komórka DRAM działa jak kondensator, rozładowuje się po około 100 ms i bez odświeżania traci dane. Proces odświeżania blokuje procesorowi możliwość korzystania z pamięci DRAM, co rodzi potrzebę stosowania szybkich pamięci cache SRAM."
+        },
+        {
+            question: "W jaki sposób organizowane jest wykonywanie programu oraz sterowanie urządzeniami w systemach mikroprocesorowych?",
+            answers: {
+                a: "Jeżeli program lub jego krytyczne funkcje muszą wykonywać się bardzo szybko, mogą być po włączeniu zasilania kopiowane z wolniejszej pamięci ROM do szybkiej pamięci RAM i stamtąd uruchamiane.",
+                b: "Pamięć RAM jest pamięcią nieulotną, co gwarantuje, że zadeklarowane w niej zmienne i struktury nie zostaną utracone po odłączeniu zasilania mikrokontrolera.",
+                c: "Urządzenia peryferyjne są sterowane poprzez specjalny obszar pamięci (mapowany na adresy RAM/ROM), a ich konfiguracja i programowanie odbywa się przy użyciu wskaźników w języku C.",
+                d: "Architektura nowoczesnych komputerów pozwala na całkowite wyeliminowanie pamięci RAM i uruchamianie wszystkich programów oraz systemu operacyjnego bezpośrednio z ultrawolnego dysku twardego."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Wrażliwe procedury, na których szybkości wykonania nam zależy, mogą być programowo przepisywane z pamięci ROM do RAM zaraz po uruchomieniu. Rejestry sterowników wejścia-wyjścia są mapowane na pamięć, a ich programowanie opiera się na niskopoziomowych wskaźnikach w języku C."
+        },
+        {
+            question: "Po czym sprzętowo rozpoznaje się, ilu-bitowy jest dany procesor?",
+            answers: {
+                a: "Po szerokości magistrali danych, która doprowadza operandy z pamięci.",
+                b: "Po szerokości magistrali adresowej określającej maksymalny obszar pamięci możliwy do zaadresowania.",
+                c: "Po architekturze i szerokości słowa danych jednostki arytmetyczno-logicznej (ALU).",
+                d: "Po pojemności wbudowanej pamięci podręcznej (cache) pierwszego poziomu."
+            },
+            correctAnswers: ["c"],
+            explanation: "Szerokość procesora (np. to, czy jest on 8-, 16- czy 32-bitowy) jest określana wyłącznie na podstawie tego, na jak szerokich słowach operacje jest w stanie wykonywać jego jednostka ALU. Choć optymalnie magistrala danych powinna mieć taką samą szerokość jak ALU, to w rzeczywistych systemach dopuszcza się redukcję szerokości magistrali danych w celach oszczędnościowych kosztem spadku wydajności."
+        },
+        {
+            question: "Z jakiej pamięci fizycznej są zrealizowane rejestry procesora i dlaczego?",
+            answers: {
+                a: "Z szybkiej pamięci statycznej (SRAM), ponieważ muszą one działać co najmniej tak szybko jak jednostka ALU.",
+                b: "Z pamięci dynamicznej (DRAM) ze względu na konieczność uproszczenia struktury krzemowej i redukcji kosztów.",
+                c: "Z pamięci statycznej (SRAM), która nie wymaga ciągłego odświeżania i zachowuje dane tak długo, jak dostarczane jest zasilanie.",
+                d: "Z pamięci nieulotnej typu Flash, aby wartości rejestrów były trwale zachowane po resecie zasilania."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Rejestry procesora są wykonane z pamięci statycznej (SRAM), która nie wymaga odświeżania i jest w stanie dostarczyć argumenty do obliczeń w tym samym takcie zegarowym, w którym pracuje jednostka ALU. Pamięć dynamiczna (DRAM) jest zbyt wolna i jej periodyczne odświeżanie uniemożliwiłoby efektywne wykonywanie operacji przez procesor."
+        },
+        {
+            question: "Co oznacza w praktyce, że urządzenia peryferyjne są mapowane na przestrzeń pamięci (Memory-Mapped I/O)?",
+            answers: {
+                a: "Urządzenia te są fizycznie zamieniane na komórki pamięci RAM w celu uproszczenia struktury magistral.",
+                b: "Adresy fizyczne rejestrów peryferyjnych są przydzielane dynamicznie przez skrypt linkera przy każdym uruchomieniu programu.",
+                c: "Dostęp do rejestrów urządzeń peryferyjnych odbywa się w dokładnie taki sam sposób jak do pamięci – poprzez operacje odczytu i zapisu pod przypisanym adresem fizycznym.",
+                d: "Aby sterować urządzeniem z poziomu języka C, programista musi znać adres fizyczny jego rejestrów i odwołać się do niego przy pomocy wskaźnika."
+            },
+            correctAnswers: ["c", "d"],
+            explanation: "Mapowanie na pamięć oznacza, że do urządzeń peryferyjnych dostajemy się identycznie jak do komórek pamięci, znając ich adres fizyczny. Adresy te są na stałe przypisane przez producenta układu i opisane w dokumentacji. Znając ten adres, programista deklaruje odpowiedni wskaźnik w języku C, który umożliwia zapis i odczyt rejestrów peryferium."
+        },
+        {
+            question: "Co dzieje się w systemie ze zmienną lokalną zainicjalizowaną wartością początkową (np. int a = 5;), zadeklarowaną wewnątrz funkcji main?",
+            answers: {
+                a: "Zmienna ta jest alokowana bezpośrednio na stercie (heap), ponieważ posiada przypisaną na stałe wartość statyczną.",
+                b: "Zmienna ta jest alokowana na stosie (stack), ponieważ została zadeklarowana wewnątrz funkcji.",
+                c: "Wartość początkowa zmiennej (liczba 5) musi zostać trwale zapisana w pamięci nieulotnej (ROM).",
+                d: "Specjalny fragment programu, przed wejściem do funkcji main, kopiuje zapisaną wartość początkową z pamięci ROM do odpowiedniej komórki w pamięci RAM."
+            },
+            correctAnswers: ["b", "c", "d"],
+            explanation: "Zmienna jako lokalna trafia na stos. Jednak pamięć RAM (w której leży stos) jest ulotna, dlatego wartość inicjalizacyjna '5' musi być trwale umieszczona w pamięci ROM. Podczas startu procesora, zanim sterowanie przejdzie do funkcji main, specjalny kod startowy przepisuje tę wartość z pamięci ROM do pamięci RAM, co gwarantuje poprawną inicjalizację."
+        },
+        {
+            question: "Dlaczego w systemach wbudowanych bez systemu operacyjnego nie wolno dopuścić do opuszczenia funkcji main i stosuje się pętlę nieskończoną (np. while(1))?",
+            answers: {
+                a: "Opuszczenie funkcji main spowoduje wykonanie instrukcji powrotu do kodu, który nie istnieje, co doprowadzi do wykonywania losowych danych w pamięci ROM.",
+                b: "Próba wykonywania losowych danych lub odwołanie się do obszaru bez fizycznej pamięci wywoła wyjątek (np. błąd segmentacji) i zawieszenie procesora.",
+                c: "Pętla nieskończona jest wymagana przez kompilator GCC pod rygorem błędu kompilacji.",
+                d: "Po wyjściu z funkcji main procesor automatycznie przechodzi w tryb niskiego poboru energii (Low-Power standby)."
+            },
+            correctAnswers: ["a", "b"],
+            explanation: "Bez systemu operacyjnego procesor po resecie wchodzi do main. Jeśli opuści tę funkcję, pobierze ze stosu adres powrotu i spróbuje tam wrócić. Ponieważ za main nie ma przygotowanego programu, zacznie wykonywać losowe dane w pamięci ROM, co doprowadzi do odwołania się do nieistniejącego fizycznie obszaru adresowego, co wywoła wyjątek (segmentation fault) i zawiesi mikrokontroler."
+        },
+        {
+            question: "Dlaczego architektura RISC (Reduced Instruction Set Computer) jest powszechnie stosowana we współczesnych systemach wbudowanych?",
+            answers: {
+                a: "Posiada znacznie prostszy sprzętowy dekoder rozkazów w porównaniu do architektury CISC, co bezpośrednio przekłada się na szybszą pracę procesora.",
+                b: "Pozwala na znaczące zmniejszenie zużywanej energii elektrycznej, co stanowi kluczowy cel w projektowaniu systemów wbudowanych.",
+                c: "Wszystkie mikrokontrolery RISC muszą pracować z częstotliwościami taktowania rzędu wielu gigaherców (GHz), aby osiągnąć optymalną wydajność.",
+                d: "Obsługuje mniejszą liczbę rozkazów, co drastycznie upraszcza strukturę procesora."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Architektura RISC charakteryzuje się prostszym dekoderem rozkazów, mniejszą liczbą instrukcji oraz większą ogólną wydajnością. Pozwala to na obniżenie zużycia energii elektrycznej. Opcja C jest błędna, ponieważ w systemach wbudowanych częstotliwość taktowania rzędu gigaherców nie jest tak ważna i w większości przypadków utrzymuje się na poziomie poniżej jednego gigaherca."
+        },
+        {
+            question: "Jeżeli mikrokontroler posiada magistralę adresową o szerokości dokładnie 20 bitów, które z poniższych stwierdzeń są prawdziwe?",
+            answers: {
+                a: "Maksymalny obszar pamięci, jaki procesor jest w stanie zaadresować (wliczając w to pamięć RAM, ROM i rejestry urządzeń peryferyjnych), wynosi dokładnie 1 megabajt (1 MB).",
+                b: "Maksymalny możliwy do wygenerowania adres fizyczny, zapisany w notacji szesnastkowej, to 0xFFFFF (złożony z dokładnie pięciu znaków F).",
+                c: "Próba odwołania się do adresu o jeden większego niż maksymalny (czyli 0xFFFFF + 1) daje w efekcie adres wymagający 21. bitu, którego system nie posiada, przez co procesor nie jest w stanie zaadresować większego obszaru.",
+                d: "Do obsługi tak szerokiej magistrali w języku C wymagane jest stosowanie wyłącznie typu wskaźnikowego zdefiniowanego jako 8-bitowy unsigned char."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Zgodnie z matematycznym przeliczeniem 2^20 bajtów odpowiada maksymalnemu obszarowi pamięci rzędu 1 megabajta. Szesnastkowy zapis tej wartości daje maksymalny adres składający się z pięciu f-ów (0xFFFFF). Próba wygenerowania adresu o jeden większego wykracza poza fizyczny zakres (wymaga 21. bitu), co uniemożliwia dalsze adresowanie. Opcja D jest błędna – 8-bitowy typ unsigned char pozwala zaadresować zaledwie 8-bitowy obszar (do 256 adresów), podczas gdy przy 20 bitach potrzeba szerszego typu wskaźnikowego."
+        },
+        {
+            question: "Wskaż prawdziwe stwierdzenia dotyczące doboru szerokości magistrali danych w systemie z 32-bitową jednostką arytmetyczno-logiczną (ALU):",
+            answers: {
+                a: "Magistrala danych może mieć szerokość zaledwie 8 bitów (np. ze względów oszczędnościowych), ale spowoduje to, że wykonanie jakiejkolwiek 32-bitowej instrukcji/przesłanie danych potrwa aż 4 cykle magistrali.",
+                b: "Zwiększenie szerokości magistrali danych do 64 bitów przyniesie dwukrotne przyspieszenie obliczeń dla 32-bitowego rdzenia ALU.",
+                c: "Najbardziej optymalnym i standardowym rozwiązaniem pod kątem wydajności jest zastosowanie magistrali danych o szerokości identycznej z ALU, czyli 32-bitowej.",
+                d: "Wykorzystanie węższej magistrali danych (np. 8-bitowej przy 32-bitowym procesorze) pozwala producentom na redukcję kosztów, ponieważ na strukturze krzemowej układa się mniej fizycznych połączeń (drucików)."
+            },
+            correctAnswers: ["a", "c", "d"],
+            explanation: "Chociaż 32-bitowy procesor może współpracować z węższą, 8-bitową magistralą danych w celu oszczędności fizycznych połączeń (drucików), taki system staje się niewydajny, ponieważ przesłanie danych wymaga aż 4 taktów zegara. Optymalnym rozwiązaniem jest dopasowanie magistrali do szerokości ALU (czyli 32 bity). Opcja B jest niepoprawna, ponieważ szersza magistrala (64 bity) w żaden sposób nie pomoże 32-bitowemu ALU, które w jednym takcie potrafi przetworzyć maksymalnie 32 bity."
+        },
+        {
+            question: "Z jakiego powodu słowo kluczowe volatile jest obowiązkowe podczas deklarowania wskaźników do rejestrów sprzętowych urządzeń peryferyjnych?",
+            answers: {
+                a: "Stanowi ono informację dla kompilatora, aby pod żadnym pozorem nie optymalizował (nie usuwał) odczytów i zapisów powiązanych z tym adresem pamięci.",
+                b: "Zapobiega sytuacji, w której kompilator wyoptymalizuje \"nadmiarowe\" według niego zapisy do rejestru (np. gdy programista kilkukrotnie modyfikuje wartość rejestru, a potem bezpośrednio jej nie odczytuje w programie).",
+                c: "Gwarantuje, że kompilator nie usunie zapisu do rejestru sterującego (np. zapalającego diodę), uznając go za zbędny, ponieważ fizycznie nikt z tej zmiennej później w kodzie C nie korzysta.",
+                d: "Wymusza na procesorze sprzętowe przeniesienie rejestru do pamięci nieulotnej Flash przy każdym cyklu zegarowym."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Słowo kluczowe volatile nakazuje kompilatorowi rezygnację z optymalizacji zmiennej. Bez tego słowa kompilator, dążąc do jak najkrótszego kodu, usunie zapisy do rejestrów, których wartości nie są później bezpośrednio odczytywane przez aplikację w kodzie C (uzna je za zapomniane/zbędne, nie wiedząc, że fizycznie wywołuje to określony efekt sprzętowy, np. zapala diodę LED). Opcja D jest całkowicie nieprawdziwa – rejestry to pamięć ulotna i słowo to służy wyłącznie do sterowania kompilatorem, a nie fizycznego przenoszenia danych do pamięci Flash."
+        },
+        {
+            question: "Podczas wykładu omówiono sposoby deklarowania rejestrów sprzętowych w języku C. Które ze stwierdzeń są prawdziwe?",
+            answers: {
+                a: "Preferowaną i najczęściej stosowaną metodą jest użycie dyrektywy #define z rzutowaniem adresu na wskaźnik (np. (volatile uint32_t *)).",
+                b: "Zadeklarowanie rejestru jako zwykłej globalnej zmiennej wskaźnikowej (np. volatile uint32_t *reg = ...) niepotrzebnie alokuje i marnuje 4 bajty (32 bity) pamięci RAM na fizyczne przechowywanie adresu.",
+                c: "Definiując makro przy pomocy #define, należy bezwzględnie unikać wstawiania średnika na końcu linii definicji (np. #define REG 0x1000;), ponieważ średnik ten zostanie przeniesiony bezpośrednio do kodu programu, co uniemożliwi jego poprawną kompilację.",
+                d: "Rzutowanie adresu (np. 0x1000) na wskaźnik pozwala kompilatorowi zrozumieć, pod jakim adresem w pamięci dany rejestr już fizycznie istnieje i jaki jest jego rozmiar."
+            },
+            correctAnswers: ["a", "b", "c", "d"],
+            explanation: "Dyrektywa #define z odpowiednim rzutowaniem (np. volatile uint32_t *) precyzyjnie opisuje sprzęt bez zużywania dodatkowej pamięci RAM. Klasyczna zmienna wskaźnikowa alokuje w RAM-ie 4 bajty na adres i stwarza ryzyko przypadkowej modyfikacji wartości wskaźnika. Średnik w #define jest powszechnym błędem i pułapką – kompilator wkleja go bezpośrednio w miejsce użycia makra, co powoduje błędy kompilacji. Rzutowanie precyzyjnie określa typ i szerokość (8/16/32 bity) rejestru, który sprzętowo został już fizycznie osadzony w krzemie przez producenta."
+        },
+        {
+            question: "Które ze stwierdzeń dotyczących doboru typów zmiennych i słów kluczowych podczas deklarowania wskaźników do rejestrów sprzętowych są prawdziwe?",
+            answers: {
+                a: "Słowo kluczowe volatile zabrania kompilatorowi dokonywania jakichkolwiek optymalizacji na przypisanym adresie pamięci, co zapobiega usuwaniu z kodu maszynowego pozornie \"nadmiarowych\" zapisów.",
+                b: "Zapomnienie o modyfikatorze volatile przy konfiguracji rejestru peryferyjnego (np. sterującego diodą LED) może spowodować, że kompilator potraktuje te zapisy jako martwy kod i całkowicie wyeliminuje je podczas kompilacji.",
+                c: "Do obsługi rejestrów zaleca się stosowanie przenośnych szablonów typów, takich jak uint32_t, ponieważ standardowy typ int nie daje gwarancji stałej szerokości 32 bitów na każdym kompilatorze i architekturze.",
+                d: "Rejestry należy deklarować jako zmienne z operatorem signed, aby w przypadku odczytania najstarszego bitu (MSB) kompilator mógł poprawnie zinterpretować stan jako ujemny w kodzie U2."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Modyfikator volatile chroni kod przed złośliwą optymalizacją kompilatora, która mogłaby wyciąć zapisy do rejestrów jako bezużyteczne. Ponieważ standardowy int ma zmienną szerokość, najlepszą praktyką gwarantującą przenośność kodu jest używanie typów takich jak uint32_t. Opcja D jest błędna – rejestry należy zawsze traktować jako zmienne bez znaku (unsigned), ponieważ interpretacja najstarszego bitu jako znaku liczby w kodzie U2 mogłaby nieświadomie zmienić interpretację pozostałych bitów i doprowadzić do poważnych błędów w działaniu programu."
+        },
+        {
+            question: "Jakie są cechy i ograniczenia operacji bitowych realizowanych w trybie Read-Modify-Write (RMW)?",
+            answers: {
+                a: "Instrukcja *PTR |= (1 << 5); jest klasycznym przykładem operacji RMW, w której najpierw następuje fizyczny odczyt rejestru, potem modyfikacja danej wartości, a na końcu jej zapis.",
+                b: "Sprzętowo operacje RMW zajmują więcej czasu (typowe trzy takty maszynowe) niż bezpośrednie przypisanie wartości *PTR = wartość;.",
+                c: "Aby poprawnie i bezpiecznie wyzerować konkretny bit (np. bit siedemnasty) przy użyciu logicznej operacji AND, należy posłużyć się maską zanegowaną bitowo przy pomocy operatora tyldy (np. *PTR &= ~(1 << 17);).",
+                d: "Aby za pomocą sumy logicznej (OR) ustawić wybrany bit na 1, należy obowiązkowo zastosować maskę zanegowaną."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Operacje takie jak modyfikowanie pojedynczych bitów za pomocą operatorów |= lub &= wymagają trzech kroków sprzętowych (odczyt, modyfikacja, zapis), co zajmuje 3 takty maszynowe i sprawia, że są to operacje stosunkowo wolne. Do zerowania bitów za pomocą AND stosujemy zanegowaną maskę bitową (~). Opcja D jest błędna – do ustawiania bitów za pomocą OR stosuje się maskę prostą, a nie zanegowaną."
+        },
+        {
+            question: "Podczas odpytywania stanu rejestru (np. w instrukcji if), chcemy sprawdzić, czy pojedynczy bit piąty (bit 5) jest ustawiony na 1. Które ze stwierdzeń opisują poprawne lub błędne metody wykonania tego testu?",
+            answers: {
+                a: "Warunek if ((*PTR & (1 << 5)) == 1) poprawnie zweryfikuje stan pinu, ponieważ logiczna jedynka oznacza stan wysoki.",
+                b: "Bezpieczną metodą weryfikacji jest porównanie wyniku operacji maskowania bezpośrednio do wartości maski: if ((*PTR & (1 << 5)) == (1 << 5)).",
+                c: "Warunek if ((*PTR & (1 << 5)) != 0) poprawnie wykryje, czy bit piąty jest ustawiony na 1.",
+                d: "Porównanie if ((*PTR & (1 << 5)) == 0) jest właściwym sposobem na sprawdzenie, czy dany bit jest wyzerowany."
+            },
+            correctAnswers: ["b", "c", "d"],
+            explanation: "Opcja A to klasyczna pułapka programistyczna, na którą zwrócił uwagę prowadzący. Wynik operacji (*PTR & (1 << 5)) to albo 0 (gdy bit jest wyzerowany), albo 32 (czyli 2^5, gdy bit jest ustawiony). Porównanie go bezpośrednio do liczby 1 sprawi, że warunek nigdy nie zostanie spełniony. Poprawnie należy porównać wynik do maski, sprawdzić czy jest różny od zera lub przyrównać do zera w celu weryfikacji wyzerowania bitu."
+        },
+        {
+            question: "Jakie niebezpieczeństwa i zasady wiążą się z zapisem liczb w różnych systemach liczbowych w języku C przy programowaniu rejestrów?",
+            answers: {
+                a: "Przypisanie *PTR = 010; spowoduje wpisanie wartości dziesiętnej 10, co w rezultacie ustawia bity o indeksach 1 oraz 3.",
+                b: "Zapis liczby stałej z wiodącym zerem (np. 010) jest interpretowany przez kompilator w systemie ósemkowym, co w tym przypadku oznacza wartość 8 dziesiętnie i ustawienie wyłącznie trzeciego bitu (bitu 3).",
+                c: "Zapis szesnastkowy 0x10 reprezentuje liczbę dziesiętną 16, co odpowiada ustawieniu wyłącznie bitu czwartego (bitu 4, czyli 2^4).",
+                d: "Bezpośrednie przypisanie *PTR = 0; jest zalecaną i najprostszą metodą wyzerowania jednego, konkretnego pinu portu GPIO, nie wpływając na stan pozostałych bitów konfiguracyjnych w tym rejestrze."
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "W języku C liczby rozpoczynające się od zera (np. 010) są traktowane jako liczby w systemie ósemkowym (ósemkowe 010 to dziesiętne 8, czyli binarnie ustawiony tylko bit 3), co stanowi częstą pułapkę. Zapis 0x10 to szesnastkowo 16 (2^4), czyli bit 4. Opcja A jest błędna ze względu na interpretację ósemkową. Opcja D również jest błędna – wpisanie samego zera (*PTR = 0;) jest destrukcyjne, ponieważ zeruje wszystkie 32 bity w rejestrze, niszcząc konfigurację pozostałych pinów."
+        },
+        {
+            question: "Na podstawie analizy schematów elektrycznych laboratoryjnej płytki Cameleon, które z poniższych stwierdzeń są prawdziwe?",
+            answers: {
+                a: "Na obudowie płytki diody LED są opisane jako D1–D8, natomiast w schematach elektrycznych mikrokontrolera sygnały te są oznaczone jako LED0–LED7.",
+                b: "Sygnał sterujący LED0 z arkusza diod przechodzi na inne arkusze, zmieniając po drodze etykiety na DCMI_D0, by ostatecznie połączyć się z fizycznym pinem procesora PC6 (Port C, Pin 6).",
+                c: "Trójkolorowa dioda LED (RGB) ma na schemacie zamienione etykiety – np. struktura odpowiedzialna za kolor niebieski (Blue) sterowana jest sygnałem oznaczonym jako Red.",
+                d: "Każdy z portów wejścia-wyjścia w mikrokontrolerze STM32L496 (od A do G) jest portem o szerokości dokładnie 64 bitów."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Producent płytki wprowadził kilka utrudnień: diody D1–D8 odpowiadają sygnałom LED0–LED7, etykieta LED0 zmienia nazwę na DCMI_D0, by ostatecznie połączyć się z pinem PC6 (Port C bit 6), a kolory diody RGB są poplątane na schemacie (np. dioda Blue sterowana jest etykietą Red). Opcja D jest błędna – każdy z portów GPIO (A, B, C...) w tym procesorze jest portem 16-bitowym (piny i bity są numerowane od 0 do 15)."
+        },
+        {
+            question: "Gdzie mogą fizycznie znajdować się rejestry w systemie wbudowanym i jak programista może się do nich odwołać?",
+            answers: {
+                a: "Rejestry procesora (np. danych, adresowe, statusu) są dostępne wyłącznie z poziomu języka Assembler i nie da się do nich bezpośrednio dobrać z poziomu języka C.",
+                b: "Rejestry sterujące urządzeniami peryferyjnymi fizycznie znajdują się w pamięci RAM i można się do nich odwołać za pomocą standardowych zmiennych globalnych.",
+                c: "Rejestry urządzeń peryferyjnych są umieszczone w strukturze tych urządzeń, ale są zmapowane na przestrzeń pamięci, co umożliwia dostęp do nich z języka C przy użyciu wskaźników.",
+                d: "Rejestry nieulotne ROM przechowują aktualny stan konfiguracji portów po odłączeniu zasilania, aby ułatwić szybki rozruch."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Rejestry rdzenia procesora są dostępne wyłącznie z poziomu asemblera. Z kolei rejestry peryferyjne są fizycznie częścią urządzeń zewnętrznych (a nie pamięci RAM/ROM). Ponieważ są zmapowane na przestrzeń adresową pamięci, z poziomu języka C odwołujemy się do nich pod odpowiednim adresem za pomocą wskaźników. Wszystkie te rejestry mają charakter ulotny."
+        },
+        {
+            question: "Dlaczego przy przesuwaniu wartości w prawą stronę (np. podczas rozbijania liczby 16-bitowej na bajty) kluczowe jest stosowanie typów bez znaku (unsigned)?",
+            answers: {
+                a: "W przypadku liczby ze znakiem (np. w kodzie U2) najstarszy bit pełni rolę bitu znaku. Kompilator przy przesunięciu w prawo będzie próbował zachować ten znak i dopełni wolne miejsca z lewej strony jedynkami zamiast zerami.",
+                b: "Typy ze znakiem (signed) zajmują sprzętowo dwa razy więcej pamięci RAM, co marnuje rejestry procesora.",
+                c: "Jeśli najstarszy bit liczby ze znakiem jest ustawiony, przesunięcie w prawo nie da pożądanej wartości (np. zamiast samej starszej części otrzymamy liczbę zniekształconą wiodącymi jedynkami).",
+                d: "Kompilator automatycznie zgłosi błąd kompilacji, jeśli spróbujemy wykonać przesunięcie bitowe w prawo na typie ze znakiem."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Jest to klasyczna pułapka przy operacjach na rejestrach. Przesunięcie w prawo liczby ze znakiem (signed) powoduje, że kompilator wykonuje przesunięcie arytmetyczne, starając się zachować znak liczby (dopełnia z lewej strony jedynkami, jeśli najstarszy bit był ustawiony). W przypadku typu bez znaku (unsigned) wolne miejsca są zawsze bezpiecznie dopełniane zerami."
+        },
+        {
+            question: "W jakim stanie (trybie pracy) znajdują się porty GPIO bezpośrednio po włączeniu zasilania (lub resecie) i dlaczego?",
+            answers: {
+                a: "Są domyślnie skonfigurowane jako wyjścia (output), aby od razu zasilić i zapalić podłączone diody diagnostyczne.",
+                b: "Są domyślnie skonfigurowane jako wejścia (input), ponieważ jest to stan elektrycznie bezpieczny dla mikrokontrolera.",
+                c: "Konfiguracja pinu jako wyjście po resecie byłaby niebezpieczna. Gdyby na płytce podłączony był przełącznik zwarty do VCC lub GND, a procesor wymusiłby na pinie wyjściowym stan przeciwny, zacząłby płynąć bardzo duży prąd, co mogłoby fizycznie zniszczyć procesor.",
+                d: "Porty po resecie są w stanie całkowicie odłączonym i nie mają żadnego powiązania logicznego z rejestrem IDR."
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "Domyślnym i bezpiecznym trybem po resecie jest zawsze wejście (input). Gdyby port po resecie startował jako wyjście, istniałoby ryzyko zwarcia i uszkodzenia krzemu w sytuacji, gdyby do pinu był podłączony zewnętrzny przycisk zwarty bezpośrednio do zasilania (VCC) lub masy (GND). Niezależnie od trybu pinu, jego stan fizyczny jest zawsze przekazywany do rejestru wejściowego IDR."
+        },
+        {
+            question: "Jaką rolę pełni sygnał zegarowy (clock) w kontekście obsługi portów wejścia-wyjścia (GPIO) w nowoczesnych mikrokontrolerach?",
+            answers: {
+                a: "Po resecie zegar dla peryferiów (w tym portów GPIO) jest domyślnie wyłączony, aby drastycznie ograniczyć zużycie energii, ponieważ układy cyfrowe pobierają prąd głównie podczas przełączania stanów.",
+                b: "Bez uprzedniego włączenia zegara dla danego portu, rejestry konfiguracyjne oraz rejestry danych tego portu nie będą działać – programista nie będzie w stanie ich zapisać ani odczytać zmieniającego się stanu pinu.",
+                c: "Sygnał wejściowy z pinu przechodzi przez przerzutnik typu D synchronizowany z zegarem wewnętrznym, co gwarantuje stabilność odczytu wartości w rejestrze IDR.",
+                d: "Wyłączenie zegara portu powoduje natychmiastowe fizyczne uszkodzenie tranzystorów wyjściowych na skutek braku chłodzenia częstotliwościowego."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "W nowoczesnych układach taktowanie peryferiów po resecie jest wyłączone w celu oszczędzania energii (gdy brak przełączeń logicznych, pobór prądu jest minimalny). Jeśli nie włączymy zegara dla portu GPIO, próby zapisu rejestrów zakończą się niepowodzeniem, a rejestr IDR nie będzie aktualizowany. Przerzutnik typu D zasilany tym zegarem jest niezbędny do synchronizacji zewnętrznych sygnałów asynchronicznych z synchronicznym rdzeniem procesora."
+        },
+        {
+            question: "Jakie korzyści niesie ze sobą mapowanie rejestrów urządzeń peryferyjnych w języku C przy użyciu struktur (struct) rzutowanych na adres bazowy?",
+            answers: {
+                a: "Pozwala na zadeklarowanie tylko jednego wskaźnika do adresu bazowego urządzenia, podczas gdy adresy wszystkich jego rejestrów są automatycznie wyliczane przez kompilator na podstawie offsetów pól w strukturze.",
+                b: "Drastycznie zmniejsza ryzyko pomyłki w adresach rejestrów, ponieważ nie ma potrzeby ręcznego definiowania adresu fizycznego dla każdego z setek rejestrów w procesorze.",
+                c: "Samo zadeklarowanie nowego typu struktury (np. reprezentującej rejestry GPIO) nie alokuje bezużytecznie pamięci RAM na przechowywanie adresów poszczególnych rejestrów.",
+                d: "Ułatwia obsługę wielu identycznych bloków peryferyjnych (np. portów GPIOA, GPIOB), ponieważ ta sama struktura opisuje układ rejestrów, a my tworzymy jedynie nowe wskaźniki powiązane z różnymi adresami bazowymi."
+            },
+            correctAnswers: ["a", "b", "c", "d"],
+            explanation: "Wszystkie odpowiedzi są prawidłowe i reprezentują główne zalety podejścia strukturalnego stosowanego w profesjonalnych bibliotekach (np. HAL). Tworzenie nowego typu struktury dostarcza jedynie kompilatorowi szablon interpretacji pamięci bez alokowania RAM-u. Dzięki temu wystarczy zdefiniować jeden adres bazowy peryferium, co eliminuje błędy adresacji i pozwala na łatwe powielanie kodu dla identycznych portów (np. portu A i B)."
+        },
+        {
+            question: "Co dzieje się z taktowaniem (zegarem) kontrolera GPIO po resecie mikrokontrolera i jakie są tego konsekwencje?",
+            answers: {
+                a: "Zegar dla portów GPIO jest domyślnie wyłączony, ponieważ układy cyfkowe (takie jak przerzutniki) zużywają energię elektryczną głównie podczas przełączania stanów logicznych.",
+                b: "Bez uprzedniego, ręcznego włączenia zegara, odczyt stanu wejść z rejestru IDR nie będzie działał, ponieważ sygnał wejściowy nie zostanie przepisany przez przerzutnik synchronizacyjny.",
+                c: "Po resecie zegar jest automatycznie włączany na maksymalną częstotliwość, aby podłączone diody LED na płytce mogły świecić bez dodatkowej konfiguracji.",
+                d: "Wyłączenie zegara dla nieużywanego portu jest kluczowym mechanizmem oszczędzania energii w nowoczesnych mikrokontrolerach."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Urządzenia elektroniczne zużywają energię wtedy, gdy następuje przełączenie stanów logicznych (taktowanie przerzutnika). Dlatego po resecie zegar kontrolera GPIO jest domyślnie wyłączony, by oszczędzać energię. Jeśli nie włączymy zegara, odczyt z rejestru IDR nie będzie działał, ponieważ wbudowany przerzutnik synchronizacyjny typu D nie przepisze sygnału asynchronicznego na synchroniczną magistralę procesora."
+        },
+        {
+            question: "Dlaczego konfiguracja pinu GPIO jako wejście (w tym wejście analogowe) po resecie jest bezpieczniejsza dla mikrokontrolera niż konfiguracja jako wyjście?",
+            answers: {
+                a: "Ponieważ konfiguracja jako wyjście mogłaby doprowadzić do zwarcia i zniszczenia procesora, np. gdyby użytkownik wcisnął zewnętrzny przełącznik zwarty do zasilania, a procesor po resecie wymusiłby na pinie stan niski (0).",
+                b: "Ponieważ tranzystory wyjściowe w trybie wejścia są wyłączone (przełącznik jest otwarty), co elektrycznie izoluje ścieżkę wyjściową i zabezpiecza procesor przed niekontrolowanym przepływem prądu.",
+                c: "Ponieważ w trybie wyjściowym mikrokontroler automatycznie odcina dopływ zasilania do całego portu, co grozi zawieszeniem rdzenia CPU.",
+                d: "Ponieważ większość portów po resecie domyślnie konfiguruje się jako wejścia analogowe, co stanowi najbardziej bezpieczną i uniwersalną konfigurację początkową."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Konfiguracja wyjściowa po resecie stwarza wysokie ryzyko uszkodzenia sprzętu – jeśli na pinie wymusimy 0, a z zewnątrz przez włącznik podamy 1 (VCC), powstanie zwarcie i popłynie potężny prąd niszczący procesor. Konfiguracja wejściowa (otwarty przełącznik) chroni układ przed zwarciem, dlatego większość portów po resecie startuje w domyślnym i najbezpieczniejszym trybie wejścia analogowego."
+        },
+        {
+            question: "Rejestr OTYPER (Output Type Register) służy do konfiguracji typu wyjścia dla 16 pinów portu. Dlaczego producent zaimplementował go sprzętowo jako rejestr 32-bitowy, skoro do sterowania wystarczyłoby 16 bitów?",
+            answers: {
+                a: "Ponieważ mikrokontroler posiada 32-bitowy procesor, który z natury rzeczy preferuje wykonywanie operacji na pamięci w formacie 32-bitowym.",
+                b: "Zapewnia to pełną spójność architektury – wszystkie rejestry peryferium mają identyczny rozmiar (32 bity), co znacznie ułatwia programiście mapowanie rejestrów na struktury w języku C.",
+                c: "Ułatwia to i upraszcza fizyczną budowę sprzętowego dekodera adresów w strukturze krzemowej procesora.",
+                d: "Dodatkowe, starsze bity (16–31) są traktowane przez producenta jako zarezerwowane na poczet przyszłych modyfikacji i nowych funkcji."
+            },
+            correctAnswers: ["a", "b", "c", "d"],
+            explanation: "Wszystkie odpowiedzi są poprawne. Chociaż rejestr OTYPER wykorzystuje tylko 16 bitów do konfiguracji typu wyjścia dla 16 pinów, to fizycznie zaimplementowano go jako 32-bitowy. Takie rozwiązanie upraszcza dekoder adresowy w strukturze krzemu, jest optymalne dla 32-bitowego procesora wykonującego natywnie 32-bitowe odczyty, ułatwia programiście mapowanie peryferium na spójną strukturę w języku C, a niewykorzystane starsze bity pozostają bezpieczną rezerwą dla producenta na przyszłość."
+        },
+        {
+            question: "W jaki sposób działa wyjście portu skonfigurowane w trybie otwartego drenu (Open Drain) z usuniętym górnym tranzystorem (odpowiedzialnym za poziom VCC)?",
+            answers: {
+                a: "Gdy dolny tranzystor (przełącznik) jest zwarty, na wyjściu pinu wymuszany jest stan niski (0 logiczne).",
+                b: "Gdy dolny tranzystor jest otwarty (wyłączony), na wyjściu panuje stan nieustalony (tzw. stan wiszący w powietrzu / floating).",
+                c: "Aby w tym trybie uzyskać na wyjściu stabilny stan wysoki (1 logiczne), należy podłączyć rezystor podciągający do zasilania (Pull-Up).",
+                d: "Tryb ten umożliwia jednoczesne wystawianie napięcia 5 V oraz 3,3 V bez użycia jakichkolwiek rezystorów zewnętrznych lub wewnętrznych."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "W konfiguracji otwartego drenu bez górnego tranzystora zwarty przełącznik daje na wyjściu 0. Gdy go otworzymy, linia nie jest nigdzie podłączona i panuje na niej stan nieustalony. Aby wymusić stabilny stan wysoki (jedynkę), konieczne jest podłączenie rezystora Pull-Up (ciągnącego do góry)."
+        },
+        {
+            question: "Jaka jest rola rejestru blokowania (Locking Register – LCKR) w kontrolerze GPIO i w jakich krytycznych systemach wbudowanych ma on szczególne znaczenie?",
+            answers: {
+                a: "Służy do \"zamrożenia\" i zablokowania aktualnej konfiguracji pinu GPIO, chroniąc przed przypadkowym przeprogramowaniem wyjścia na wejście na skutek błędów w oprogramowaniu (bugów).",
+                b: "Zapobiega niebezpiecznym sytuacjom w systemach krytycznych (np. w sterowniku windy lub pedału gazu w samochodzie), gdzie przypadkowa zmiana konfiguracji pinu wyjściowego na wejście (wiszące w powietrzu) mogłaby wywołać niekontrolowane zachowanie maszyny.",
+                c: "Procedura uaktywnienia oraz odblokowania tego rejestru jest celowo skomplikowana i wymaga precyzyjnej sekwencji zapisów, aby uniemożliwić przypadkowe wyłączenie blokady.",
+                d: "Odpowiada za sprzętowe odcięcie zasilania od procesora w przypadku wykrycia jakichkolwiek zakłóceń na wejściach cyfrowych."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Rejestr LCKR służy do zamrażania konfiguracji portu. Zapobiega to błędom, w których bug w programie zmienia wyjście sterujące (np. silnikiem windy czy przepustnicą samochodu) na wejście, co doprowadziłoby do powstania stanu wiszącego (floating) i niekontrolowanej, katastrofalnej pracy urządzenia. Aktywacja i dezaktywacja tego trybu podlega rygorystycznej procedurze zapisów."
+        },
+        {
+            question: "Dlaczego w module GPIO sygnał wejściowy z fizycznego pinu musi przechodzić przez przerzutnik (np. typu D) przed zapisaniem do rejestru wejściowego IDR?",
+            answers: {
+                a: "Przerzutnik synchronizuje asynchroniczny sygnał zewnętrzny (np. z przycisku) z wewnętrznym, synchronicznym zegarem procesora.",
+                b: "Przerzutnik działa jak sprzętowy filtr, który eliminuje stany nieustalone (tzw. stan pływający – floating) na linii wejściowej.",
+                c: "Ponieważ procesor jest maszyną synchroniczną, wymaga, aby stany wejściowe były zsynchronizowane z jego wewnętrznym zegarem.",
+                d: "Przerzutnik służy do sprzętowego odwrócenia polaryzacji sygnału z pinu w trybie wejścia analogowego."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "A oraz C są poprawne, ponieważ procesor jest maszyną synchroniczną działającą na wewnętrznym zegarze, podczas gdy sygnały zewnętrzne mogą zmieniać się asynchronicznie w dowolnym momencie – przerzutnik typu D synchronizuje je z taktowaniem procesora. B jest błędne – przerzutnik nie eliminuje stanu pływającego (do tego służą rezystory pull-up/pull-down). D jest błędne, ponieważ w trybie analogowym przerzutnik wejściowy jest całkowicie odłączany, aby ominąć cyfrową część toru."
+        },
+        {
+            question: "Zgodnie z wykładem, jakie cechy i konsekwencje niesie za sobą konfiguracja wyjścia portu w trybie otwartego drenu (Open Drain) w porównaniu do trybu push-pull?",
+            answers: {
+                a: "W trybie otwartego drenu usuwany jest górny tranzystor, co sprawia, że bez rezystora podciągającego (pull-up) nie można na wyjściu pinu wymusić stanu wysokiego.",
+                b: "Połączenie wyjść typu push-pull dwóch różnych procesorów, z których jeden wystawia stan wysoki (1), a drugi niski (0), powoduje zwarcie i grozi uszkodzeniem tranzystorów.",
+                c: "W trybie open-drain, jeśli dwa procesory są podłączone do tej samej linii i oba włączą dolny tranzystor (wymuszą 0), na linii pojawi się stan nieustalony (floating).",
+                d: "Tryb otwartego drenu jest powszechnie stosowany w interfejsie komunikacyjnym I2C oraz w innych interfejsach, gdzie na jednej linii może pracować wiele urządzeń."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "A jest poprawne, ponieważ w open-drain usuwa się górny tranzystor (PMOS), co przy braku rezystora podciągającego uniemożliwia wymuszenie jedynki (linia jest wówczas floating). B jest poprawne – próba wymuszenia przeciwnych stanów logicznych (1 i 0) na połączonych wyjściach push-pull tworzy bezpośrednie zwarcie między zasilaniem a masą, niszcząc tranzystory. D jest poprawne – brak górnego tranzystora w trybie open-drain zapobiega zwarciom przy pracy wielu Masterów, co jest bazą m.in. dla interfejsu I2C. C jest błędne – gdy oba tranzystory dolne są włączone, na linii panuje bezpieczny i stabilny stan niski (zwarcie do masy), a nie stan nieustalony."
+        },
+        {
+            question: "Rejestr BSRR (Bit Set Reset Register) służy do szybkiego sterowania pinami wyjściowymi. Które stwierdzenia dotyczące tego rejestru są prawdziwe?",
+            answers: {
+                a: "Pozwala on na zmianę stanu pinu wyjściowego w zaledwie 1 takt zegara, podczas gdy sterowanie przez rejestr ODR wymaga procedury Read-Modify-Write zajmującej 3 takty.",
+                b: "Rejestr BSRR jest rejestrem przeznaczonym wyłącznie do zapisu (write-only) i nie da się go odczytać.",
+                c: "Wpisanie logicznego zera (0) na dowolnym bicie rejestru BSRR powoduje natychmiastowe wyzerowanie odpowiadającego mu pinu wyjściowego.",
+                d: "Rejestr ten jest podzielony na dwie sekcje: młodszą (BS) służącą do ustawiania pinu w stan wysoki i starszą (BR) służącą do zerowania pinu."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "A jest poprawne – manipulacja rejestrem ODR wymaga operacji odczytu, modyfikacji i zapisu (RMW), co zajmuje 3 takty zegara, podczas gdy zapis do BSRR wykonuje się bezpośrednio w 1 takt. B jest poprawne – rejestr BSRR służy wyłącznie do zapisu. D jest poprawne – rejestr dzieli się na sekcję młodszą do ustawiania bitów (Set) oraz sekcję starszą do ich kasowania (Reset). C jest błędne – wpisanie 0 do rejestru BSRR nie powoduje żadnej akcji i nie modyfikuje stanu wyjściowego."
+        },
+        {
+            question: "Jaka jest rola rejestru prędkości pracy wyjścia (OSPEEDR) oraz jak szybkość przełączania wpływa na charakterystykę energetyczną mikrokontrolera?",
+            answers: {
+                a: "Wybór wyższej prędkości (np. very high speed) pozwala na stabilną transmisję w szybkich interfejsach (Gigabit Ethernet, USB), ale wiąże się ze znacznym zużyciem energii.",
+                b: "Wolniejsze przełączanie sygnału (np. low speed) zmniejsza zużycie energii potrzebnej na przeładowanie pojemności, co jest optymalne np. przy sterowaniu diodami LED.",
+                c: "W rzeczywistych warunkach przejście sygnału z 0 na 1 następuje natychmiastowo, a rejestr OSPEEDR służy jedynie do programowego opóźniania startu transmisji o zadany czas.",
+                d: "Wybór wolniejszego trybu pracy za pomocą rejestru OSPEEDR wydłuża w czasie zbocze narastające sygnału (które w rzeczywistych warunkach ma charakter ekspotencjalny)."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "A oraz B są poprawne – strome i szybkie przełączanie zboczy generuje potrzebę szybkiego przeładowania pojemności pasożytniczych, co zużywa dużo energii. W wolnych interfejsach (np. sterowaniu diodami LED) zaleca się spowolnienie sygnału za pomocą rejestru OSPEEDR w celu oszczędzania energii. D jest poprawne – w rzeczywistości sygnał cyfrowy nie przełącza się natychmiast, a narastanie ma postać ekspotencjalną. C jest błędne – zbocze narasta w określonym czasie, a rejestr OSPEEDR fizycznie modyfikuje ten parametr za pomocą tranzystorów o różnej szerokości, a nie wprowadza tylko sztucznego opóźnienia startu."
+        },
+        {
+            question: "Podczas mapowania rejestrów GPIO na strukturę w języku C (C struct mapping) w celu niskopoziomowego sterowania, które z poniższych zasad i mechanizmów należy uwzględnić?",
+            answers: {
+                a: "Aby zachować prawidłowe offsety adresowe i nie dopuścić do przesunięcia rejestrów w pamięci, w definicji struktury należy bezwzględnie zadeklarować pola zarezerwowane (np. jako tablice lub oddzielne pola), pokrywając \"dziury\" w pamięci.",
+                b: "Każde z pól struktury reprezentujące rejestr sprzętowy powinno być zadeklarowane z modyfikatorem volatile, co chroni zapisy/odczyty przed zoptymalizowaniem przez kompilator.",
+                c: "W definicji pól struktury (np. volatile uint32_t MODER;) nazwy pól muszą być wskaźnikami (np. zawierać gwiazdkę *), ponieważ fizycznie reprezentują one adresy w pamięci.",
+                d: "Powiązanie zadeklarowanej struktury z konkretnym portem (np. GPIOA) realizuje się poprzez rzutowanie adresu bazowego tego portu (biorącego się z dokumentacji) na wskaźnik do zdefiniowanego typu strukturalnego."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "A jest poprawne – bez zadeklarowania pól zarezerwowanych, które reprezentują puste obszary adresowe (\"dziury\") w mapie rejestrów peryferium, kolejne pola struktury zostałyby przypisane do błędnych adresów. B jest poprawne – modyfikator volatile jest wymagany, by kompilator nie wyoptymalizował zapisów lub odczytów z rejestrów sprzętowych. D jest poprawne – adres bazowy z mapy pamięci rzutuje się na wskaźnik struktury, co daje kompilatorowi informację, jak zinterpretować tę grupę rejestrów. C jest błędne – pola wewnątrz struktury są zwykłymi typami danych (np. uint32_t). Gwiazdkę wskaźnika stosuje się dopiero przy rzutowaniu adresu bazowego na całą strukturę."
+        },
+        {
+            question: "Dlaczego podczas odwzorowywania rejestrów portów PIO na struktury w języku C, zadeklarowanie wskaźnika za pomocą makra #define jest bardziej optymalne niż użycie klasycznej globalnej zmiennej wskaźnikowej?",
+            answers: {
+                a: "Makro #define (np. z rzutowaniem adresu na wskaźnik struktury) nie zajmuje fizycznie pamięci RAM, podczas gdy zadeklarowana zmienna wskaźnikowa musi zostać fizycznie umieszczona w pamięci.",
+                b: "Kompilator zabrania rzutowania stałych adresów szesnastkowych przy użyciu globalnych zmiennych wskaźnikowych.",
+                c: "#define automatycznie wymusza na kompilatorze traktowanie wszystkich pól struktury jako zmiennych wyłącznie do odczytu (read-only).",
+                d: "Korzystanie z #define pozwala uniknąć marnowania pamięci RAM na przechowywanie stałej wartości adresu."
+            },
+            correctAnswers: ["a", "d"],
+            explanation: "Jak wyjaśnia prowadzący, klasyczna globalna zmienna wskaźnikowa musi zostać fizycznie zapisana w pamięci i niepotrzebnie marnuje cenne bajty RAM-u na przechowywanie stałego adresu. Zastosowanie dyrektywy #define pozwala tego uniknąć, ponieważ kompilator podmienia adres w kodzie bez alokacji pamięci RAM."
+        },
+        {
+            question: "W strukturze C opisującej rejestry fizyczne pojawiają się pola typu \"Reserved\" (np. Reserved1). Jaki jest główny cel stosowania takich pól i z czego wynikają te \"dziury\" w mapie rejestrów?",
+            answers: {
+                a: "Służą one do tymczasowego przechowywania danych przesyłanych przez szybką magistralę DMA w przypadku przepełnienia wejść.",
+                b: "Są niezbędne do zachowania ciągłości adresów, aby kolejne pola struktury nie przesunęły się w pamięci i odpowiadały rzeczywistym offsetom fizycznych rejestrów.",
+                c: "\"Dziury\" w adresacji wynikają z uproszczenia sprzętowego dekodera adresów w strukturze krzemowej procesora, który łatwiej buduje się w oparciu o potęgi liczby 2 (np. 2, 4, 8 pozycji, a nie 3).",
+                d: "Pola te są wykorzystywane przez kompilator do automatycznego kopiowania krytycznych funkcji z pamięci Flash do RAM przy każdym resecie."
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "Pominięcie jakiegokolwiek nieużywanego obszaru adresowego wewnątrz struktury przesunęłoby wszystkie kolejne rejestry w pamięci, uniemożliwiając poprawną komunikację. Wolne miejsca (tzw. dziury) wynikają ze sprzętowego uproszczenia dekodera adresowego – w elektronice cyfrowej bardzo łatwo zaimplementować dekoder bazujący na potęgach liczby 2 (np. 4 pozycje), podczas gdy stworzenie dekodera na dokładnie 3 pozycje w systemie dwójkowym jest trudne i nieoptymalne."
+        },
+        {
+            question: "Dlaczego odmierzanie dłuższych opóźnień programowych za pomocą pustej pętli (np. for (volatile int i = 0; i < 1000; i++);) jest uważane w systemach wbudowanych za złą praktykę?",
+            answers: {
+                a: "Generuje bardzo trudne do przewidzenia opóźnienie, ponieważ rzeczywisty czas wykonania zależy od kodu asemblera, optymalizacji kompilatora, a także desynchronizacji potoku (pipeline) lub skoków procesora.",
+                b: "Procesor wykonuje wówczas ciągłe operacje dodawania, przez co zużywa 100% swojej mocy obliczeniowej oraz energii (tak samo, jak przy ultra skomplikowanych obliczeniach), co drastycznie skraca czas pracy urządzeń bateryjnych.",
+                c: "W przypadku zapomnienia o modyfikatorze volatile pętla ta zostanie natychmiast całkowicie usunięta przez optymalizator kompilatora, ponieważ z jego punktu widzenia nie generuje ona żadnego wyniku.",
+                d: "Pętla programowa trwale uszkadza wewnętrzną strukturę potokową procesora na skutek braku zasilania innych bloków wykonawczych."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Pętla opóźniająca to najgorszy możliwy sposób odmierzania czasu. Powoduje maksymalny pobór prądu i energii przez procesor (100% mocy). Dodatkowo, precyzyjne oszacowanie czasu bez patrzenia w asembler jest niemal niemożliwe, ponieważ pipeline procesora może ulegać desynchronizacji. Ponadto kompilator dąży do usunięcia takiego kodu jako bezużytecznego, chyba że programista jawnie zablokuje optymalizację słowem volatile."
+        },
+        {
+            question: "Czym różni się obsługa sprzętowego zdarzenia (event) od obsługi przerwania (interrupt) w kontekście timerów i procesora?",
+            answers: {
+                a: "Event (zdarzenie) polega na sprzętowym ustawieniu odpowiedniej flagi w rejestrze statusowym timera, co oprogramowanie musi samodzielnie odpytywać (polling).",
+                b: "Przerwanie (interrupt) to sygnał sprzętowy, który jest wysyłany do kontrolera przerwań i fizycznie wstrzymuje wykonywanie bieżącego programu przez procesor.",
+                c: "Przerwanie nie wymaga konfiguracji żadnych rejestrów peryferyjnych, podczas gdy obsługa zdarzenia (event) wymaga ręcznej aktualizacji adresu bazowego.",
+                d: "Sygnał przerwania sprzętowego nie może być powiązany z wyzwalaniem automatycznej transmisji danych przez kontroler DMA."
+            },
+            correctAnswers: ["a", "b"],
+            explanation: "Event to sprzętowe zdarzenie, które manifestuje się wyłącznie zmianą bitu (flagi) w rejestrze statusowym i nie przerywa pracy rdzenia. Z kolei przerwanie to sygnał, który przechodzi przez kontroler przerwań bezpośrednio do procesora i wymusza natychmiastowe wstrzymanie aktualnego wątku programu w celu obsłużenia zdarzenia, co pozwala na rezygnację z obciążającego odpytywania (polling)."
+        },
+        {
+            question: "Dlaczego rezonatory kwarcowe o częstotliwości 32 768 Hz są powszechnie stosowane w zegarach czasu rzeczywistego (RTC) i systemach wbudowanych?",
+            answers: {
+                a: "Ta częstotliwość minimalizuje zakłócenia elektromagnetyczne na płytce drukowanej w trybie uśpienia.",
+                b: "Wartość 32 768 to dokładna potęga liczby 2 ($2^{15}$), co sprawia, że przy użyciu prostego sprzętowego dzielnika binarnego można bardzo łatwo i precyzyjnie uzyskać częstotliwość 1 Hz (dokładnie jedną sekundę).",
+                c: "Jest to uniwersalna, bezpieczna częstotliwość, poniżej której tranzystory w układach CMOS przestają poprawnie przełączać stany logiczne.",
+                d: "Pozwala na łatwy i wydajny podział częstotliwości w systemie dwójkowym na jednostki czasu w pełni zrozumiałe dla człowieka."
+            },
+            correctAnswers: ["b", "d"],
+            explanation: "Częstotliwość 32 768 Hz jest idealna do systemów odmierzania czasu, ponieważ jako potęga liczby 2 ($2^{15}$) umożliwia niezwykle proste sprzętowe zrealizowanie podziału binarnego. Pozwala to na bezproblemowe wygenerowanie sygnału o okresie dokładnie 1 sekundy przy minimalnym skomplikowaniu i koszcie układów logicznych."
+        },
+        {
+            question: "Czym różni się obsługa sprzętowego zdarzenia (event) od przerwania (interrupt) w kontekście działania timerów?",
+            answers: {
+                a: "Zdarzenie (event) to jednokrotny impuls reagujący na zbocze narastające, który służy do natychmiastowego wyzwalania innych modułów (np. kanału DMA), podczas gdy flaga przerwania reprezentuje stan i utrzymuje się w rejestrze tak długo, aż nie zostanie ręcznie skasowana przez programistę.",
+                b: "Obsługa przerwania wymaga każdorazowo fizycznego zatrzymania, wyczyszczenia i ponownej inicjalizacji całego modułu timera w rejestrze kontrolnym.",
+                c: "Zdarzenie (event) w przeciwieństwie do przerwania nie przerywa pracy rdzenia CPU, co pozwala uniknąć obciążenia procesora i ułatwia szybką reakcję sprzętową.",
+                d: "Zarówno zdarzenie, jak i przerwanie wymagają ciągłego odpytywania (polling) rejestru statusowego w pętli głównej programu."
+            },
+            correctAnswers: ["a", "c"],
+            explanation: "Zgodnie z wykładem, zdarzenie (event) to krótki, jednorazowy impuls powiązany ze zboczem narastającym sygnału, który może automatycznie wyzwolić inne moduły, np. DMA. Flaga (powiązana z przerwaniem) reprezentuje stan i oczekuje w rejestrze statusowym na reakcję programu – utrzymuje się do momentu jej ręcznego wyzerowania. Przerwanie przerywa sekwencyjny bieg programu w celu wykonania procedury obsługi, podczas gdy obsługa zdarzeń sprzętowych odciąża procesor."
+        },
+        {
+            question: "Czym charakteryzują się tzw. rejestry cienie (Shadow Registers) w timerach sprzętowych i jaka jest ich rola?",
+            answers: {
+                a: "Są to ukryte rejestry zabezpieczające, które przejmują działanie układu, gdy rejestr główny ulegnie fizycznemu uszkodzeniu.",
+                b: "Są fizyczną kopią rejestru głównego (np. licznika), co pozwala programiście na bezpieczne odczytanie stabilnej wartości, podczas gdy licznik główny jest stale inkrementowany.",
+                c: "Odczytanie wartości z rejestru cienia daje natychmiastowy wynik w tym samym takcie zegara systemowego.",
+                d: "Wartość w rejestrze cienia pojawia się kilka taktów zegara później niż w liczniku głównym, ze względu na czas potrzebny na przepisanie danych."
+            },
+            correctAnswers: ["b", "d"],
+            explanation: "Rejestry cienie (Shadow Registers) stanowią kopię rejestru głównego. Ponieważ licznik główny nieustannie się inkrementuje, bezpośredni odczyt mógłby być niestabilny – dlatego dane są przepisywane do rejestru cienia, z którego programista może je bezpiecznie odczytać. Proces przepisywania wartości wymaga jednak czasu, dlatego odczytana wartość pojawia się kilka taktów zegara później."
+        },
+        {
+            question: "W jaki sposób działa i przed czym chroni moduł Watchdog (pies stróżujący) w mikrokontrolerze?",
+            answers: {
+                a: "Jest to 12-bitowy licznik liczący w dół, który po doliczeniu do zera generuje sprzętowy lub programowy reset, chroniąc urządzenie przed skutkami zawieszenia programu.",
+                b: "Program musi regularnie restartować watchdoga wyłącznie w tzw. oknie dozwolonym; zbyt szybki restart (w oknie zabronionym) również doprowadzi do błędu i przerwania.",
+                c: "Jeden z watchdogów może zostać skonfigurowany tak, aby resetował procesor bez modyfikowania konfiguracji i stanów pinów wejścia-wyjścia, co czyni reset niezauważalnym dla otoczenia.",
+                d: "Rejestr klucza watchdoga wymaga dwukrotnego wpisania wartości 0xA5, co chroni go przed przypadkowym skasowaniem przez program, który niekontrolowanie zapisuje dane w pamięci."
+            },
+            correctAnswers: ["a", "b", "c", "d"],
+            explanation: "Wszystkie opcje są poprawne. Watchdog to 12-bitowy licznik liczący w dół do zera, którego zadaniem jest wygenerowanie resetu w przypadku zawieszenia aplikacji. Posiada on programowalne okno zabronione i dozwolone – zbyt wczesne zresetowanie licznika (w oknie zabronionym) skutkuje przerwaniem. Mikrokontroler posiada dwa watchdogi. Jeden z nich może zresetować sam procesor (wskaźnik programu startuje od nowa), pozostawiając nienaruszone rejestry konfiguracji peryferiów i stany pinów. Zabezpieczenie rejestru klucza przed przypadkowym zapisem wymaga dwukrotnego wpisania wartości 0xA5."
+        },
+        {
+            question: "Jak zdefiniowane są poziomy sygnałów i stany logiczne w standardzie RS-232 w odniesieniu do poziomów procesora?",
+            answers: {
+                a: "Poziomy logiczne wewnątrz procesora to najczęściej 0 V dla logicznego zera oraz 3,3 V lub 5 V dla logicznej jedynki.",
+                b: "Standard RS-232 posługuje się pojęciami MARK (odpowiadającym logicznej jedynce i bezczynności linii) oraz SPACE (odpowiadającym logicznemu zeru i bitowi startu).",
+                c: "Fizycznie na linii RS-232 logicznej jedynce (MARK) odpowiada wysokie napięcie dodatnie, a logicznemu zeru (SPACE) napięcie ujemne.",
+                d: "Fizycznie na linii RS-232 logicznej jedynce (MARK) odpowiada napięcie ujemne (od -3 V do -25 V), natomiast logicznemu zeru (SPACE) napięcie dodatnie (od +3 V do +25 V)."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Wewnątrz procesora poziomy logiczne odpowiadają standardowym napięciom zasilania (0 V jako logiczne '0', a 3,3 V lub 5 V jako logiczna '1'). Standard RS-232 korzysta z terminologii MARK (jedynka logiczna) i SPACE (zero logiczne). Elektrycznie poziomy te są odwrócone i przesunięte: logicznej jedynce (MARK) odpowiada napięcie ujemne w zakresie od -3 V do -25 V, a logicznemu zeru (SPACE) napięcie dodatnie od +3 V do +25 V. Sprawia to, że opcja C jest fałszywa."
+        },
+        {
+            question: "Czym charakteryzuje się niskoprądowy moduł LPUART (Low Power UART) w omawianych mikrokontrolerach?",
+            answers: {
+                a: "Pozwala na oszczędzanie energii m.in. poprzez obniżenie częstotliwości taktowania wewnętrznego i ograniczenie maksymalnej prędkości transmisji.",
+                b: "Jako jedno z nielicznych peryferiów pozostaje aktywny w trybie głębokiego uśpienia procesora (tryb STOP).",
+                c: "W trybie STOP potrafi odebrać i zbuforować pojedynczy bajt danych, budząc w międzyczasie procesor w celu jego przetworzenia.",
+                d: "LPUART całkowicie eliminuje mechanizm transmisji asynchronicznej na rzecz synchronicznej, aby zredukować błędy parzystości."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "LPUART to energooszczędny interfejs, który może pracować na wolnym zegarze. Jego unikalną cechą jest aktywność w trybie obniżonego poboru mocy (STOP). Moduł potrafi odebrać i zbuforować jeden bajt danych, wybudzając jednocześnie procesor ze stanu uśpienia. Opcja D jest fałszywa, ponieważ nazwa LPUART (Low Power Universal Asynchronous Receiver Transmitter) wprost wskazuje na transmisję asynchroniczną, w której zegar nie jest przesyłany, lecz generowany lokalnie."
+        },
+        {
+            question: "Jakie są wymagania i kroki konfiguracyjne niezbędne do uruchomienia asynchronicznej transmisji UART / LPUART w standardzie 8N1?",
+            answers: {
+                a: "W celu uruchomienia trybu 8-bitowego należy ustawić bity długości słowa danych M0 (w rejestrze CR1 na bicie 12) oraz M1 (w rejestrze CR1 na bicie 28) na wartość 0.",
+                b: "Aby poprawnie korzystać z interfejsu UART, piny portu C, do których podłączone są sygnały RX i TX, muszą być skonfigurowane w trybie funkcji alternatywnej o numerze 8 (Alternate Function 8).",
+                c: "Liczba bitów stopu w standardzie 8N1 wynosi 1, co w rejestrze konfiguracyjnym CR2 wymaga ustawienia bitów stopu na wartość 00.",
+                d: "Szybkość transmisji (Baud Rate) nadajnika i odbiornika w danym module UART wylicza się i konfiguruje całkowicie niezależnie w osobnych rejestrach."
+            },
+            correctAnswers: ["a", "b", "c"],
+            explanation: "Wymuszenie trybu 8-bitowego wymaga wyzerowania pól M0 i M1 w rejestrze CR1. Piny RX i TX na porcie C muszą być przypisane do funkcji alternatywnej nr 8. Konfiguracja jednego bitu stopu (standard 8N1) wymaga wpisania wartości 00 na bity stopu w rejestrze CR2. Opcja D jest błędna, ponieważ szybkość transmisji jest wspólna dla nadajnika i odbiornika i nie da się jej wyliczyć osobno."
+        },
+        {
+            question: "W jaki sposób działają flagi statusowe oraz flagi błędów w module UART?",
+            answers: {
+                a: "Flaga RXNE (Receiver Not Empty) oznacza, że w buforze odbiorczym znajduje się co najmniej jeden nieodczytany bajt danych.",
+                b: "Flaga TXE (Transmit Data Register Empty) oznacza, że rejestr jest całkowicie pusty i można do niego wpisać kilka znaków, co pozwala na szybsze i bardziej wydajne działanie niż w przypadku flagi TC (Transmission Complete).",
+                c: "Błąd przepełnienia (Overrun Error - ORE) powstaje sprzętowo wtedy, gdy bufor odbiorczy jest pełny (Buffer Full), a na wejście przychodzi kolejny bajt danych, zanim zdążymy odczytać poprzedni.",
+                d: "Prowadzący zaleca stworzenie czterech osobnych liczników w kodzie (po jednym dla każdego błędu: Overrun Error, Noise Detection, Framing Error i Parity Error), co pozwala na wygodne debugowanie stanu transmisji pod debuggerem."
+            },
+            correctAnswers: ["a", "c", "d"],
+            explanation: "Flaga RXNE sygnalizuje obecność co najmniej jednego bajtu danych w buforze odbiorczym. Błąd przepełnienia (ORE) pojawia się przy nadejściu nowej danej, gdy bufor jest pełny. Założenie czterech liczników dla błędów ORE, NF, FE i PE ułatwia debugowanie i diagnostykę połączenia pod debuggerem. Opcja B jest błędna – choć flaga TXE oznacza pusty rejestr nadawczy i pozwala wpisać więcej znaków, to według wykładu właśnie flaga TC (Transmission Complete) działa trochę szybciej i pozwala na implementację bardziej wydajnej transmisji."
+        },
+        {
+            question: "Które ze stwierdzeń dotyczących projektowania i optymalizacji bufora kołowego (FIFO) w języku C są prawdziwe?",
+            answers: {
+                a: "Warunek pustego bufora zachodzi wtedy i tylko wtedy, gdy wskaźniki head i tail pokrywają się (head == tail), niezależnie od tego, w którym miejscu tablicy się znajdują.",
+                b: "Bitowa operacja AND (&) użyta przy inkrementacji wskaźników (np. head = (head + 1) & MASK) służy do automatycznego i niezwykle szybkiego zawracania wskaźnika na początek bufora, co eliminuje kosztowną dla procesora operację dzielenia modulo %.",
+                c: "Szybkie zawijanie indeksu przy pomocy operacji maskowania bitowego (&) będzie działać poprawnie dla dowolnego wybranego rozmiaru bufora (np. 10 lub 25 bajtów).",
+                d: "Sekcja krytyczna w operacji zapisu do bufora (np. fifo_put) wynika z tego, że zapisanie danych i przesunięcie wskaźnika head nie są operacją atomową. W systemach z przerwaniami może to doprowadzić do utraty spójności danych, jeśli przerwanie wystąpi pomiędzy tymi dwiema instrukcjami."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Pokrywanie się wskaźników head i tail zawsze oznacza pusty bufor. Zastosowanie operacji bitowej AND pozwala uniknąć powolnego i zasobożernego dzielenia modulo. Przerwanie występujące między odczytem danych a modyfikacją wskaźnika w buforze tworzy sekcję krytyczną, która w systemach z przerwaniami może prowadzić do utraty danych. Opcja C jest błędna, ponieważ ta optymalizacja bitowa narzuca ścisłe ograniczenie: rozmiar bufora (lub maska) musi być potęgą liczby 2 złożoną binarnie z samych jedynek (np. 1, 3, 7, 15/0xF, 31/0x1F)."
+        },
+        {
+            question: "Jaka jest charakterystyka, topologia oraz zasada działania interfejsu synchronicznego SPI?",
+            answers: {
+                a: "SPI to interfejs szeregowy, asynchroniczny, działający w trybie half duplex, w którym do jednoczesnej transmisji w obie strony wystarczy tylko jedna wspólna linia danych.",
+                b: "Minimalna liczba przewodów (nie licząc masy) niezbędna do transmisji danych w przypadku standardu SPI z jednym urządzeniem Slave wynosi 4 (zegar SCK, linie MISO i MOSI, oraz linia wyboru Chip Select).",
+                c: "Transmisja SPI jest zawsze rozpoczynana przez Mastera, który w pierwszej kolejności opuszcza stan linii Chip Select (zazwyczaj do stanu niskiego / logicznego 0), zanim zacznie generować zegar lub wysyłać dane.",
+                d: "Standard SPI pozwala na konfigurowanie polaryzacji zegara (CPOL) oraz fazy zegara (CPHA), co pozwala dopasować sposób próbkowania danych (na pierwszym lub drugim zboczu) do wymagań urządzenia Slave."
+            },
+            correctAnswers: ["b", "c", "d"],
+            explanation: "Do komunikacji SPI wymagane są minimum 4 linie: MOSI, MISO, SCK oraz Chip Select. Komunikację inicjuje Master poprzez opuszczenie linii Chip Select (aktywnej stanem niskim). Polaryzacja (CPOL) i faza (CPHA) to kluczowe parametry konfigurujące stan spoczynkowy zegara oraz zbocze, na którym próbkowane są dane. Opcja A jest błędna – SPI z definicji jest interfejsem synchronicznym działającym w trybie full duplex."
+        },
+        {
+            question: "Ile przewodów jest wymaganych do przeprowadzenia transmisji w standardzie SPI według informacji i pytań egzaminacyjnych przytoczonych na wykładzie?",
+            answers: {
+                a: "Dokładnie dwa przewody (SDA i SCL), nie licząc linii masy.",
+                b: "Trzy przewody minimum (MOSI, MISO, zegar), ale uwzględniając linię wyboru (Chip Select), potrzebne są łącznie cztery przewody.",
+                c: "Na egzaminie poprawną odpowiedzią na pytanie o liczbę przewodów potrzebnych do transmisji SPI są cztery przewody.",
+                d: "Standard SPI zawsze wymaga pięciu linii sygnałowych, z czego jedna to dedykowana dwukierunkowa linia przerwań sprzętowych."
+            },
+            correctAnswers: ["b", "c"],
+            explanation: "Do fizycznej transmisji danych SPI niezbędne są 3 linie (dwie danych i zegar), jednak do rozpoczęcia i adresowania komunikacji konieczny jest sygnał wyboru Chip Select. Prowadzący wprost podkreśla na wykładzie, że oficjalną odpowiedzią egzaminacyjną na pytanie o liczbę przewodów SPI jest 4."
+        },
+        {
+            question: "Na jakie specyficzne parametry techniczne i właściwości czujnika temperatury TMP121 (pracującego na magistrali SPI) zwraca uwagę prowadzący?",
+            answers: {
+                a: "Rozdzielczość czujnika wynosi 12 bitów plus bit znaku, co przekłada się na najmniejszą możliwą zmianę temperatury o wartość 0.0625 °C.",
+                b: "Dokładność czujnika wynosi ±1.5 °C w określonym zakresie i jest to pojęcie tożsame (synonimiczne) z rozdzielczością.",
+                c: "Maksymalna częstotliwość zegara SPI dla tego układu wynosi aż 15 MHz, co stanowi bardzo dużą wartość jak na termometr.",
+                d: "Odczytanie pełnej 16-bitowej ramki danych z czujnika wyzwala kolejny pomiar, co oznacza, że w celu uzyskania natychmiastowej aktualnej temperatury w praktyce należy wykonać dwa odczyty."
+            },
+            correctAnswers: ["a", "c", "d"],
+            explanation: "Rozdzielczość (0.0625 °C wynikająca z 12 bitów + znaku) oraz dokładność (±1.5 °C wynikająca z kalibracji) to dwa zupełnie różne pojęcia, na co prowadzący kładzie ogromny nacisk. Maksymalny zegar układu to rzeczywiście 15 MHz. Mechanizm działania TMP121 sprawia, że odczyt pełnej ramki wymusza (triggeruje) wykonanie nowego pomiaru, co przy rzadkich odczytach zmusza programistę do wykonania dwóch odczytów pod rząd, aby otrzymać aktualną wartość."
+        },
+        {
+            question: "W jaki sposób standard I2C (lub kompatybilny z nim Two-Wire Interface - TWI) rozwiązuje problemy elektryczne i zapobiega zwarciom przy podłączeniu wielu urządzeń do wspólnych linii?",
+            answers: {
+                a: "Poprzez zastosowanie wyjść typu Push-Pull we wszystkich urządzeniach, co umożliwia szybkie i bezpieczne wymuszenie stanu wysokiego bezpośrednio przez tranzystory zasilające mikrokontrolera.",
+                b: "Poprzez zastosowanie wyjść typu Otwarty Dren (Open Drain), w których urządzenia mogą fizycznie zwierać linię wyłącznie do masy (stan niski).",
+                c: "Poprzez obowiązkowe użycie rezystorów podciągających (pull-up) na magistrali, które odpowiadają za wymuszenie stanu wysokiego (jedynki logicznej), gdy wszystkie tranzystory są wyłączone.",
+                d: "W przypadku włączenia tranzystorów zwierających w dwóch urządzeniach jednocześnie (kolizja), płynący prąd jest bezpiecznie ograniczany przez rezystor pull-up, co chroni strukturę krzemową przed spięciem i spaleniem."
+            },
+            correctAnswers: ["b", "c", "d"],
+            explanation: "Standard I2C rezygnuje z wyjść push-pull, aby uniknąć fizycznego zwarcia (np. gdy jedno urządzenie wymusza 3.3 V, a drugie 0 V). Zamiast tego stosuje się wyjścia typu otwarty dren (Open Drain) – tranzystory mogą jedynie zwierać linię do masy (0). Stan wysoki (1) jest pasywnie ciągnięty w górę przez rezystory pull-up, co sprawia, że jednoczesna aktywacja wielu tranzystorów powoduje jedynie bezpieczny przepływ prądu ograniczony rezystorem."
+        },
+        {
+            question: "Co dzieje się w standardzie I2C, gdy dwa aktywne urządzenia typu Master spróbują w tej samej chwili rozpocząć nadawanie (kolizja na magistrali)?",
+            answers: {
+                a: "Urządzenie natychmiast przerywa nadawanie i przechodzi w tryb Slave, jeśli podczas prób wysyłania logicznej jedynki (gdy jego tranzystor jest otwarty) odczyta z linii stan niski (0).",
+                b: "Po wykryciu kolizji i zwolnieniu linii oba urządzenia Master muszą odczekać losowy (a nie stały) odcinek czasu przed ponownym rozpoczęciem transmisji.",
+                c: "Zastosowanie stałego opóźnienia (np. dokładnie 10 ms) w kodzie obu Masterów po wykryciu kolizji jest wysoce zalecane, ponieważ ułatwia synchronizację ponownej próby.",
+                d: "Przed rozpoczęciem transmisji każdy Master sprawdza stan bezczynności magistrali (idle) – jeśli któraś z linii ma stan niski, oznacza to zajętość i Master musi czekać."
+            },
+            correctAnswers: ["a", "b", "d"],
+            explanation: "Arbitraż w I2C polega na ciągłym podglądaniu stanu linii przez nadajnik. Jeśli Master wystawia 1 (nie zwiera do masy), a odczytuje 0 (ponieważ inny Master ściągnął linię do dołu), natychmiast wykrywa kolizję, zwalnia magistralę i przechodzi w tryb Slave. Bardzo ważne jest odczekanie losowego czasu przed ponowną próbą. Stałe opóźnienie (np. 10 ms) to poważny błąd programistyczny – urządzenia obudzą się w tym samym momencie i ponownie doprowadzą do kolizji, co może trwale zablokować komunikację. Przed startem Master zawsze bada stan idle (dwie jedynki na liniach)."
+        },
+        {
+            question: "W jaki sposób realizowana jest podstawowa ramka danych i protokół komunikacyjny w standardzie I2C?",
+            answers: {
+                a: "Sygnał START (początek transmisji) jest generowany, gdy na linii danych SDA następuje zbocze opadające w momencie, gdy linia zegara SCL znajduje się w wysokim stanie bezczynności.",
+                b: "Po sygnale START wysyłany jest 7-bitowy adres urządzenia Slave, a bezpośrednio po nim (jako 8. bit) przesyłana jest informacja o kierunku transmisji: 0 oznacza zapis (Write), a 1 oznacza odczyt (Read).",
+                c: "Każda przesyłana ramka danych ma długość dokładnie 8 bitów (bajt), po których na bicie 9. następuje bit potwierdzenia (ACK), generowany poprzez ściągnięcie linii SDA do masy przez odbiorcę.",
+                d: "Jeśli Slave nie odeśle bitu potwierdzenia (brak ACK), linia SDA automatycznie unosi się do stanu wysokiego przez rezystory pull-up, co jest dla Mastera sygnałem o braku urządzenia na magistrali lub podaniu złego adresu."
+            },
+            correctAnswers: ["a", "b", "c", "d"],
+            explanation: "Wszystkie odpowiedzi są w pełni poprawne. Sygnał START to unikalna sekwencja (zbocze opadające SDA przy wysokim SCL). Pierwszy wysyłany bajt zawiera 7 bitów adresu oraz bit kierunku (Write = 0, Read = 1). Transmisja danych odbywa się w paczkach 8-bitowych kończących się 9. bitem potwierdzenia (ACK = stan niski). Brak odpowiedzi ze strony Slave'a powoduje, że linia zostaje podciągnięta przez pull-up do jedynki (NACK), co Master interpretuje jako błąd (często wynikający z błędnego adresu)."
         }
     ];
 
