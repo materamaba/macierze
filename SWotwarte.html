@@ -113,9 +113,7 @@ Bin: .....................
         const valHex = randHex(size === 8 ? 1 : 2);
         const typeInC = size === 8 ? 'unsigned char' : (size === 16 ? 'unsigned short' : 'unsigned int');
 
-        // Generowanie kodu C jako rozwiązania
-        let structCode = `typedef struct {
-`;
+        let structCode = `typedef struct {\n`;
         let lastOffset = 0;
         registers.forEach((reg, index) => {
             let diff = offsets[index] - lastOffset;
@@ -123,33 +121,20 @@ Bin: .....................
             if (diff > 0) {
                 let paddingElements = diff / bytesPerReg;
                 if (paddingElements > 0) {
-                    structCode += `    ${typeInC} RESERVED_${index}[${paddingElements}];
-`;
+                    structCode += `    ${typeInC} RESERVED_${index}[${paddingElements}];\n`;
                 }
             }
-            structCode += `    volatile ${typeInC} ${reg.split('_')[1]};
-`;
+            structCode += `    volatile ${typeInC} ${reg.split('_')[1]};\n`;
             lastOffset = offsets[index] + bytesPerReg;
         });
-        structCode += `} GPIO_TypeDef;
-
-`;
-        structCode += `// Deklaracja wskaźnika pod adres bazowy
-`;
-        structCode += `#define GPIO ((GPIO_TypeDef *)${baseHex})
-
-`;
-        structCode += `void main() {
-`;
-        structCode += `    // Zapis do rejestru ODR
-`;
-        structCode += `    GPIO->ODR = ${valHex};
-
-`;
-        structCode += `    // Odczyt z rejestru IDR
-`;
-        structCode += `    unsigned int data = GPIO->IDR;
-`;
+        structCode += `} GPIO_TypeDef;\n\n`;
+        structCode += `// Deklaracja wskaźnika pod adres bazowy\n`;
+        structCode += `#define GPIO ((GPIO_TypeDef *)${baseHex})\n\n`;
+        structCode += `void main() {\n`;
+        structCode += `    // Zapis do rejestru ODR\n`;
+        structCode += `    GPIO->ODR = ${valHex};\n\n`;
+        structCode += `    // Odczyt z rejestru IDR\n`;
+        structCode += `    unsigned int data = GPIO->IDR;\n`;
         structCode += `}`;
 
         const html = `Zadanie 2. <span class="points">25 pkt</span>
@@ -174,33 +159,61 @@ ${tableHTML}Przy użyciu wskaźnika proszę zapisać daną ${valHex} do rejestru
         const maxBit = size - 1;
         const bits = getUniqueRandomBits(6, maxBit);
         
-        const setBits = [bits[0], bits[1]];
-        const clearBits = [bits[2], bits[3]];
-        const negBits = [bits[4], bits[5]];
-
         const typeInC = size === 8 ? 'uint8_t' : (size === 16 ? 'uint16_t' : 'uint32_t');
 
-        let bitCode = `// Definicja wskaźnika do rejestru
-`;
-        bitCode += `#define TIM_CR (*((volatile ${typeInC} *)${addr}))
+        let bitCode = `// Definicja wskaźnika do rejestru\n`;
+        bitCode += `#define TIM_CR (*((volatile ${typeInC} *)${addr}))\n\n`;
 
-`;
-        bitCode += `// Ustawianie bitów (OR)
-`;
-        bitCode += `TIM_CR |= (1 << ${setBits[0]}) | (1 << ${setBits[1]});
+        const variant = randInt(1, 3);
+        let taskDescription = "";
 
-`;
-        bitCode += `// Zerowanie bitów (AND z negacją)
-`;
-        bitCode += `TIM_CR &= ~((1 << ${clearBits[0]}) | (1 << ${clearBits[1]}));
+        if (variant === 1) {
+            // Wariant 1: Klasyczne ustawianie, zerowanie, negowanie
+            const setBits = [bits[0], bits[1]];
+            const clearBits = [bits[2], bits[3]];
+            const negBits = [bits[4], bits[5]];
 
-`;
-        bitCode += `// Negowanie bitów (XOR)
-`;
-        bitCode += `TIM_CR ^= (1 << ${negBits[0]}) | (1 << ${negBits[1]});`;
+            taskDescription = `Proszę napisać program w języku C ustawiający bity ${setBits.join(', ')}, zerujący bity ${clearBits.join(', ')} oraz negujący bity ${negBits.join(', ')}.`;
+
+            bitCode += `// Ustawianie bitów (OR)\n`;
+            bitCode += `TIM_CR |= (1 << ${setBits[0]}) | (1 << ${setBits[1]});\n\n`;
+            bitCode += `// Zerowanie bitów (AND z negacją)\n`;
+            bitCode += `TIM_CR &= ~((1 << ${clearBits[0]}) | (1 << ${clearBits[1]}));\n\n`;
+            bitCode += `// Negowanie bitów (XOR)\n`;
+            bitCode += `TIM_CR ^= (1 << ${negBits[0]}) | (1 << ${negBits[1]});`;
+
+        } else if (variant === 2) {
+            // Wariant 2: Instrukcja IF sprawdzająca bit
+            const checkBit = bits[0];
+            const toggleBit = bits[1];
+            const clearBit = bits[2];
+
+            taskDescription = `Proszę napisać program w języku C, który sprawdzi stan bitu ${checkBit}. Jeśli bit jest ustawiony (równy 1), należy zanegować bit ${toggleBit}. W przeciwnym razie należy wyzerować bit ${clearBit}.`;
+
+            bitCode += `// Sprawdzenie stanu bitu ${checkBit}\n`;
+            bitCode += `if (TIM_CR & (1 << ${checkBit})) {\n`;
+            bitCode += `    // Zanegowanie bitu ${toggleBit}\n`;
+            bitCode += `    TIM_CR ^= (1 << ${toggleBit});\n`;
+            bitCode += `} else {\n`;
+            bitCode += `    // Wyzerowanie bitu ${clearBit}\n`;
+            bitCode += `    TIM_CR &= ~(1 << ${clearBit});\n`;
+            bitCode += `}`;
+
+        } else if (variant === 3) {
+            // Wariant 3: Pętla WHILE aktywnego czekania
+            const waitBit = bits[0];
+            const toggleBits = [bits[1], bits[2]];
+
+            taskDescription = `Proszę napisać program w języku C, który wstrzyma wykonywanie programu (aktywne czekanie), dopóki bit ${waitBit} nie zostanie ustawiony (równy 1). Następnie należy zanegować bity ${toggleBits.join(', ')}.`;
+
+            bitCode += `// Oczekiwanie, aż bit ${waitBit} przyjmie wartość 1\n`;
+            bitCode += `while (!(TIM_CR & (1 << ${waitBit})));\n\n`;
+            bitCode += `// Zanegowanie bitów ${toggleBits.join(', ')} po wyjściu z pętli\n`;
+            bitCode += `TIM_CR ^= (1 << ${toggleBits[0]}) | (1 << ${toggleBits[1]});`;
+        }
 
         const html = `Zadanie 3. <span class="points">25 pkt</span>
-W pamięci procesora znajduje się ${size}-bitowy rejestr TIM${timerNum}_CR${crNum} pod adresem ${addr} dostępny w trybie zapisu oraz odczytu. Proszę napisać program w języku C ustawiający bity ${setBits.join(', ')}, zerujący bity ${clearBits.join(', ')} oraz negujący bity ${negBits.join(', ')}. Proszę użyć wskaźnika odpowiedniego typu podczas operacji na rejestrze.
+W pamięci procesora znajduje się ${size}-bitowy rejestr TIM${timerNum}_CR${crNum} pod adresem ${addr} dostępny w trybie zapisu oraz odczytu. Proszę użyć wskaźnika odpowiedniego typu podczas operacji na rejestrze. ${taskDescription}
 ` +
         `<button class="sol-btn" id="btn-sol-${id}" onclick="toggleSolution('${id}')">Pokaż rozwiązanie</button>` +
         `<div class="solution-box" id="sol-${id}">` +
